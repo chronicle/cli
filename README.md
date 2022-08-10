@@ -37,7 +37,7 @@ directory. If this file is not found, you need to specify it explicitly by
 adding the following argument to the sample's command-line:
 
 ```shell
---credentials_file <path>
+--credential_file <path>
 ```
 
 ## Run the chronicle_cli
