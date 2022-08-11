@@ -32,9 +32,10 @@ Go to root directory and execute following command:\
 ## Credentials
 
 Running the samples requires a JSON credentials file. By default, all the
-samples try to use the file `.chronicle_credentials.json` in the user's home
-directory. If this file is not found, you need to specify it explicitly by
-adding the following argument to the sample's command-line:
+samples try to use the file `.chronicle_credentials.json` from inside a hidden
+directory `.chronicle_cli` in the user's home directory. If this file is not 
+found, you need to specify it explicitly by adding the following argument to the
+sample's command-line:
 
 ```shell
 --credential_file <path>
