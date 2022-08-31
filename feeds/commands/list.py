@@ -19,39 +19,42 @@ from typing import AnyStr
 
 import click
 
+from common import api_utility
 from common import exception_handler
-from common import uri
+from common import file_utility
+from common import options
+from common.constants import key_constants
+from common.constants import status
 from feeds import feed_schema_utility
 from feeds import feed_templates
 from feeds import feed_utility
 from feeds.constants import schema
-from feeds.constants import status
 
 
 @click.command(name="list", help="List all feeds")
-@uri.url_option
-@uri.region_option
-@click.option("--export", help="Export output to specified file path")
+@options.url_option
+@options.region_option
+@options.export_option
 @click.option(
     "--file-format",
     type=click.Choice(["TXT", "CSV", "JSON"], case_sensitive=False),
     default="CSV",
     help="Format of the file to be exported")
-@feed_utility.verbose_option
-@feed_utility.credential_file_option
+@options.verbose_option
+@options.credential_file_option
 @exception_handler.catch_exception()
 def list_command(credential_file: AnyStr, verbose: bool, file_format: AnyStr,
                  export: AnyStr, region: str, url: str) -> None:
   """List all feeds.
 
   Args:
-    credential_file (AnyStr): Path of Service Account JSON
+    credential_file (AnyStr): Path of Service Account JSON.
     verbose (bool): Option for printing verbose output to console.
-    file_format (AnyStr): Format of the content to be exported
-    export (AnyStr): Path of file to export output of list command
+    file_format (AnyStr): Format of the content to be exported.
+    export (AnyStr): Path of file to export output of list command.
     region (str): Option for selecting regions. Available options - US, EUROPE,
-      ASIA_SOUTHEAST1
-    url (str): Base URL to be used for API calls
+      ASIA_SOUTHEAST1.
+    url (str): Base URL to be used for API calls.
 
   Raises:
     OSError: Failed to read the given file, e.g. not found, no read access
@@ -67,10 +70,11 @@ def list_command(credential_file: AnyStr, verbose: bool, file_format: AnyStr,
   method = "GET"
   list_feeds_response = feed_schema.client.request(method, full_url)
   status_code = list_feeds_response.status_code
-  feeds_response = feed_utility.check_content_type(list_feeds_response.text)
+  feeds_response = api_utility.check_content_type(list_feeds_response.text)
 
   if status_code != status.STATUS_OK:
-    error_message = feeds_response[schema.KEY_ERROR][schema.KEY_MESSAGE]
+    error_message = feeds_response[key_constants.KEY_ERROR][
+        key_constants.KEY_MESSAGE]
     click.echo(
         f"\nError while fetching list of feeds.\nResponse Code: {status_code}"
         f"\nError: {error_message}")
@@ -87,7 +91,7 @@ def list_command(credential_file: AnyStr, verbose: bool, file_format: AnyStr,
     try:
       detail_schema = feed_schema.get_detailed_schema(
           feed[schema.KEY_DETAILS][schema.KEY_FEED_SOURCE_TYPE],
-          feed[schema.KEY_DETAILS][schema.KEY_LOG_TYPE])
+          feed[schema.KEY_DETAILS][key_constants.KEY_LOG_TYPE])
       if detail_schema.error:
         list_feed_errors.append({
             "name": feed[schema.KEY_NAME][6:],
@@ -98,22 +102,30 @@ def list_command(credential_file: AnyStr, verbose: bool, file_format: AnyStr,
       flattened_response = feed_utility.flatten_dict(feed)
       field_response = feed_utility.get_feed_details(
           flattened_response, detail_schema.log_type_schema)
-
+      namespace = feed_utility.get_namespace(feed.get(schema.KEY_DETAILS, {}))
+      labels = feed_utility.get_labels(feed.get(schema.KEY_DETAILS, {}))
       feed_template_str = feed_templates.feed_template.substitute(
           # To fetch the id, we are trimming feeds/prefix here.
           feed_id=f"{feed[schema.KEY_NAME][6:]}",
           source_type=f"{detail_schema.display_source_type}",
           log_type=f"{detail_schema.log_type_schema[schema.KEY_DISPLAY_NAME]}",
           feed_state=f"{feed[schema.KEY_FEED_STATE]}",
-          feed_details=f"{field_response}")
+          feed_details=f"{field_response}",
+          namespace=f"{namespace}",
+          labels=f"{labels}")
 
       if export:
         feed_rows.append([
-            feed[schema.KEY_NAME][6:], detail_schema.display_source_type,
+            feed[schema.KEY_NAME][6:],
+            detail_schema.display_source_type,
             detail_schema.log_type_schema[schema.KEY_DISPLAY_NAME],
             feed[schema.KEY_FEED_STATE],
-            (field_response.replace("\n", "")[14:]).strip() if file_format
-            == feed_utility.FEED_FILE_FORMAT_CSV else field_response
+            (field_response.replace("\n", "")[14:]).strip()
+            if file_format == file_utility.FILE_FORMAT_CSV else field_response,
+            (namespace.replace("\n", "")[10:]).strip()
+            if file_format == file_utility.FILE_FORMAT_CSV else namespace,
+            (labels.replace("\n", "")[7:]).strip()
+            if file_format == file_utility.FILE_FORMAT_CSV else labels,
         ])
     except KeyError as e:
       list_feed_errors.append({
@@ -137,14 +149,13 @@ def list_command(credential_file: AnyStr, verbose: bool, file_format: AnyStr,
 
   if export:
     export_path = os.path.abspath(export) + f".{file_format.lower()}"
-    if file_format == feed_utility.FEED_FILE_FORMAT_CSV:
+    if file_format == file_utility.FILE_FORMAT_CSV:
       feed_utility.export_csv(export_path, feed_rows)
-    elif file_format == feed_utility.FEED_FILE_FORMAT_JSON:
-      feed_utility.export_json(export_path, feeds)
+    elif file_format == file_utility.FILE_FORMAT_JSON:
+      file_utility.export_json(export_path, feeds)
     else:
       feed_utility.export_txt(export_path, feed_rows)
     click.echo(f"\nFeed list details exported successfully to: {export_path}")
 
   if verbose:
-    feed_utility.print_request_details(full_url, method, None,
-                                       feeds_response)
+    api_utility.print_request_details(full_url, method, None, feeds_response)

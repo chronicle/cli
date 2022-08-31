@@ -22,11 +22,13 @@ from typing import Any, AnyStr, Dict, List, Optional, Tuple
 
 import click
 
+from common import api_utility
 from common import chronicle_auth
 from common import uri
+from common.constants import key_constants
+from common.constants import status
 from feeds import feed_utility
 from feeds.constants import schema
-from feeds.constants import status
 
 
 @dataclasses.dataclass
@@ -45,9 +47,9 @@ class FeedSchema:
     """Fetch feed schema.
 
     Args:
-      credential_file_path (str): Path of credential file
-      region (str): Region (US, EUROPE, ASIA_SOUTHEAST1)
-      custom_url (str): Base URL to be used for API calls
+      credential_file_path (str): Path of credential file.
+      region (str): Region (US, EUROPE, ASIA_SOUTHEAST1).
+      custom_url (str): Base URL to be used for API calls.
     """
     self.client = chronicle_auth.initialize_http_session(credential_file_path)
     self.current_time = datetime.datetime.utcnow()
@@ -60,7 +62,7 @@ class FeedSchema:
     """Get feed schema from API.
 
     Returns:
-      Dict[str, str]: Feed schema response
+      Dict[str, str]: Feed schema response.
 
     Raises:
       Exception: Raised when status code is not 200.
@@ -68,9 +70,10 @@ class FeedSchema:
     feed_schema_response = self.client.request(
         "GET", get_feed_schema_url(self.region, self.custom_url))
     status_code = feed_schema_response.status_code
-    response = feed_utility.check_content_type(feed_schema_response.text)
+    response = api_utility.check_content_type(feed_schema_response.text)
     if status_code != status.STATUS_OK:
-      error_message = response[schema.KEY_ERROR][schema.KEY_MESSAGE]
+      error_message = response[key_constants.KEY_ERROR][
+          key_constants.KEY_MESSAGE]
       raise Exception(error_message)
     return response
 
@@ -79,20 +82,20 @@ class FeedSchema:
     """Get detailed schema for specific source and log type.
 
     Args:
-      user_source_type (str): Source type
-      user_log_type (str): Log type
+      user_source_type (str): Source type.
+      user_log_type (str): Log type.
 
     Returns:
       dataclass: Consists of -
         1. Display nane of Source type
         2. Schema of Log type
-        3. Error message
+        3. Error message.
     """
     all_schema = self.schema_response[schema.KEY_FEED_SOURCE_TYPE_SCHEMAS]
     for source_type in all_schema:
       if user_source_type == source_type[schema.KEY_FEED_SOURCE_TYPE]:
         for logtype_schema in source_type[schema.KEY_LOG_TYPE_SCHEMAS]:
-          if user_log_type == logtype_schema[schema.KEY_LOG_TYPE]:
+          if user_log_type == logtype_schema[key_constants.KEY_LOG_TYPE]:
             return DetailedSchema(source_type[schema.KEY_DISPLAY_NAME],
                                   logtype_schema, None)
 
@@ -103,7 +106,7 @@ class FeedSchema:
 
     Returns:
       Dict: Map of source type and its display name and corresponding log
-      types
+      types.
         Example)
         {
           'AMAZON_S3': {
@@ -131,7 +134,7 @@ class FeedSchema:
       log_types = []
       for each_log_type in source_type[schema.KEY_LOG_TYPE_SCHEMAS]:
         if not each_log_type.get(schema.KEY_READ_ONLY):
-          log_types.append((each_log_type[schema.KEY_LOG_TYPE],
+          log_types.append((each_log_type[key_constants.KEY_LOG_TYPE],
                             each_log_type[schema.KEY_DISPLAY_NAME]))
 
       source_log_mapping[source_type[schema.KEY_FEED_SOURCE_TYPE]][
@@ -144,7 +147,7 @@ class FeedSchema:
     """Prompt inputs for given schema and generate request body.
 
     Args:
-      detailed_schema : List of schema dictionaries for fields
+      detailed_schema (List): List of schema dictionaries for fields
       flattened_response (Dict): Flattened response of existing feed.
     """
     for each in detailed_schema:
@@ -153,11 +156,7 @@ class FeedSchema:
         enum_choices.append((each_choice[schema.KEY_DISPLAY_NAME],
                              each_choice[schema.KEY_FIELD_VALUE]))
 
-      if flattened_response and each[
-          schema.KEY_FIELD_PATH] in flattened_response:
-        existing_value = flattened_response.get(each[schema.KEY_FIELD_PATH], "")
-      else:
-        existing_value = ""
+      existing_value = flattened_response.get(each[schema.KEY_FIELD_PATH], "")
 
       field_value = process_field_input(each, enum_choices, existing_value)
       self.pre_body.update({f"{each[schema.KEY_FIELD_PATH]}": field_value})
@@ -177,16 +176,16 @@ class FeedSchema:
 
     Args:
       detailed_schema: Feed schema for selected source and log type.
-      selected_source_type (str): Source type
-      selected_log_type (str): Log type
+      selected_source_type (str): Source type.
+      selected_log_type (str): Log type.
       flattened_response (Dict): Flattened response of existing feed.
 
     Returns:
-      AnyStr: Request body
+      AnyStr: Request body.
       flattened_response (Dict): Flattened response of existing feed.
     """
     schema_set_choices = []
-    # Evaluating Feed Schema Alternative options
+    # Evaluating Feed Schema Alternative options.
     for each_alternative in detailed_schema.get(
         schema.KEY_DETAILS_FEED_SCHEMA_ALT, []):
       click.echo("\nChoose from following available options:")
@@ -218,12 +217,61 @@ class FeedSchema:
     self.process_input_detailed_schema(
         detailed_schema[schema.KEY_DETAILED_FEED_SCHEMAS], flattened_response)
 
+    self.process_namespace_input(flattened_response)
+    self.process_labels_input(flattened_response)
+
     request_body = feed_utility.deflatten_dict(self.pre_body)
+
     request_body[schema.KEY_DETAILS].update({
         schema.KEY_FEED_SOURCE_TYPE: selected_source_type,
-        schema.KEY_LOG_TYPE: selected_log_type
+        key_constants.KEY_LOG_TYPE: selected_log_type
     })
     return json.dumps(request_body), flattened_response
+
+  def process_namespace_input(self, flattened_response: Dict[str, Any]) -> None:
+    """Prompt input for namespace field.
+
+    Args:
+      flattened_response (Dict): Flattened response of existing feed.
+    """
+    existing_value = flattened_response.get("details.namespace", "")
+
+    namespace = click.prompt(
+        "\nNamespace (The asset namespace to apply to "
+        "all logs ingested through this feed.)",
+        default=existing_value,
+        show_default=bool(existing_value),
+        prompt_suffix="\n=> ",
+    )
+    flattened_response[schema.KEY_DETAILS_NAMESPACE] = namespace
+    self.pre_body[schema.KEY_DETAILS_NAMESPACE] = namespace
+
+  def process_labels_input(self, flattened_response: Dict[str, Any]) -> None:
+    """Prompt input for lables field.
+
+    Args:
+      flattened_response (Dict): Flattened response of existing feed.
+    """
+    click.echo("\nLabels (The ingestion metadata labels in 'key:value' format"
+               " to apply to all logs ingested through this feed, "
+               "as well as the resulting normalized data.)\n"
+               "Enter/Paste your content. On a new line, press Ctrl-D (Linux)"
+               " / Ctrl-Z (Windows) to save it:")
+
+    contents = []
+    while True:
+      try:
+        line = input()
+      except EOFError:
+        break
+      contents.append(line)
+
+    labels = []
+    for kv in contents:
+      key, value = kv.split(":")
+      labels.append({"key": key, "value": value})
+    flattened_response[schema.KEY_DETAILS_LABELS] = labels
+    self.pre_body[schema.KEY_DETAILS_LABELS] = labels
 
 
 def process_field_input(field: Dict[str, Any],
@@ -232,12 +280,12 @@ def process_field_input(field: Dict[str, Any],
   """Generate prompts according to field type.
 
   Args:
-    field (Dict): Schema for each field
-    choices (List): Enum choices
-    existing_value (str): Existing value of field for update command
+    field (Dict): Schema for each field.
+    choices (List): Enum choices.
+    existing_value (str): Existing value of field for update command.
 
   Returns:
-    Field value for request body
+    Field value for request body.
   """
   prompt_text = (f"\n{field[schema.KEY_DISPLAY_NAME]} "
                  f"({field[schema.KEY_DESCRIPTION]})")
@@ -334,10 +382,10 @@ def get_feed_schema_url(region: str, custom_url: str) -> str:
   """Get feed schema URL according to selected region.
 
   Args:
-    region (str): Region (US, EUROPE, ASIA_SOUTHEAST1)
-    custom_url (str): Base URL to be used for API calls
+    region (str): Region (US, EUROPE, ASIA_SOUTHEAST1).
+    custom_url (str): Base URL to be used for API calls.
 
   Returns:
-    str: Feed schema URL
+    str: Feed schema URL.
   """
   return uri.get_base_url(region, custom_url) + "/feedSchema"

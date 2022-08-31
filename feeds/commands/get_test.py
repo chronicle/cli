@@ -21,7 +21,8 @@ from click.testing import CliRunner
 
 from feeds.commands.get import get
 from feeds.tests.fixtures import *  # pylint: disable=wildcard-import
-from feeds.tests.fixtures import MockResponse
+from mock_test_utility import MockResponse
+
 
 runner = CliRunner()
 
@@ -104,7 +105,9 @@ def test_get_200(input_patch: mock.MagicMock, mock_client: mock.MagicMock,
   expected_output = ("\nFeed Details:\n  ID: 123\n  Source type: Dummy Source"
                      " Type\n  Log type: Dummy LogType\n  "
                      "State: INACTIVE\n  Feed Settings:\n    "
-                     "Field 1: abc.dummy.com\n    Field 2: ID")
+                     "Field 1: abc.dummy.com\n    Field 2: ID\n"
+                     "  Namespace: sample_namespace\n"
+                     "  Labels:\n    k: v\n")
   assert expected_output in result.output
 
 

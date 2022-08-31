@@ -17,7 +17,7 @@
 from unittest import mock
 from click.testing import CliRunner
 from feeds.commands.delete import delete
-from feeds.tests.fixtures import MockResponse
+from mock_test_utility import MockResponse
 
 runner = CliRunner()
 
@@ -130,4 +130,4 @@ def test_delete_feed_not_provided(input_patch: mock.MagicMock) -> None:
 
   # Method Call
   result = runner.invoke(delete)
-  assert "Feed ID is not provided. Please enter Feed ID." in result.output
+  assert "Feed ID not provided. Please enter Feed ID." in result.output

@@ -47,7 +47,7 @@ def test_get_feed_details(get_flattened_response: Dict[str, str],
     get_flattened_response (dict): Test input data
     get_detailed_schema (dict): Test input data
   """
-  expected_output = ("Feed Settings:\n    API Hostname: abc.workday.com\n    "
+  expected_output = ("  Feed Settings:\n    API Hostname: abc.workday.com\n    "
                      "Tenant: ID\n")
   assert feed_utility.get_feed_details(
       get_flattened_response,
@@ -67,3 +67,19 @@ def test_lower_or_none() -> None:
 def test_lower_or_none_none() -> None:
   """Test return of string as None if string is None."""
   assert feed_utility.lower_or_none(None) is None
+
+
+def test_get_labels() -> None:
+  """Test printing of key-value pair of labels field."""
+  expected_output = ("  Labels:\n    k: v\n")
+  assert feed_utility.get_labels({"labels": [{
+      "key": "k",
+      "value": "v"
+  }]}) == expected_output
+
+
+def test_namespace() -> None:
+  """"Test printing of namespace field."""
+  expected_output = ("  Namespace: sample_namespace\n")
+  assert feed_utility.get_namespace({"namespace": "sample_namespace"
+                                    }) == expected_output

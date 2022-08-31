@@ -16,18 +16,6 @@
 
 import string
 
-request_details_template = string.Template("""\
-==========================================
-========== HTTP Request Details ==========
-==========================================
-Request:
-  URL: ${request_url}
-  Method: ${method}
-  Body: ${request_body}
-Response:
-  Body: ${response_body}
-""")
-
 feed_template = string.Template("""\
 
 Feed Details:
@@ -35,7 +23,9 @@ Feed Details:
   Source type: ${source_type}
   Log type: ${log_type}
   State: ${feed_state}
-  ${feed_details}""")
+${feed_details}\
+${namespace}\
+${labels}""")
 
 properties_template = string.Template("""\
 ====================================

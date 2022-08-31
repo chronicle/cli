@@ -21,34 +21,37 @@ from typing import Any, Dict, Optional
 
 import click
 
+from common import api_utility
 from common import chronicle_auth
 from common import exception_handler
-from common import uri
+from common import file_utility
+from common import options
+from common.constants import key_constants
+from common.constants import status
 from feeds import feed_schema_utility
 from feeds import feed_templates
 from feeds import feed_utility
 from feeds.constants import schema
-from feeds.constants import status
 
 UPDATE_BACKUP_FILE = os.path.join(chronicle_auth.CHRONICLE_CLI_ROOT_DIR,
                                   "feeds", "update_backup.json")
 
 
 @click.command(help="Update feed details using Feed ID")
-@uri.url_option
-@uri.region_option
-@feed_utility.verbose_option
-@feed_utility.credential_file_option
+@options.url_option
+@options.region_option
+@options.verbose_option
+@options.credential_file_option
 @exception_handler.catch_exception()
 def update(credential_file: str, verbose: bool, region: str, url: str) -> None:
   """Update feed.
 
   Args:
-    credential_file (AnyStr): Path of Service Account JSON
+    credential_file (AnyStr): Path of Service Account JSON.
     verbose (bool): Option for printing verbose output to console.
     region (str): Option for selecting regions. Available options - US, EUROPE,
-      ASIA_SOUTHEAST1
-    url (str): Base URL to be used for API calls
+      ASIA_SOUTHEAST1.
+    url (str): Base URL to be used for API calls.
 
   Raises:
     OSError: Failed to read the given file, e.g. not found, no read access
@@ -63,7 +66,7 @@ def update(credential_file: str, verbose: bool, region: str, url: str) -> None:
 
   feed_id = click.prompt("Enter Feed ID", default="", show_default=False)
   if not feed_id:
-    click.echo("Feed ID is not provided. Please enter Feed ID.")
+    click.echo("Feed ID not provided. Please enter Feed ID.")
     return
   # Checking condition that backup file exists for any pending feed.
   if os.path.exists(
@@ -82,12 +85,12 @@ def update(credential_file: str, verbose: bool, region: str, url: str) -> None:
     if backup_id == feed_id:
       retry = click.confirm(f"{retry_template_str}", default=None)
     if not retry:
-      feed_utility.remove_file(UPDATE_BACKUP_FILE)
+      file_utility.remove_file(UPDATE_BACKUP_FILE)
 
   # Here we set the backup data to the process for taking existing values.
   if retry:
     selected_source_type = backup_data[schema.KEY_FEED_SOURCE_TYPE]
-    selected_log_type = backup_data[schema.KEY_LOG_TYPE]
+    selected_log_type = backup_data[key_constants.KEY_LOG_TYPE]
     flattened_response = backup_data
   else:
     request_data = fetch_feed_request_data(feed_schema, region, url, feed_id)
@@ -116,9 +119,10 @@ def update(credential_file: str, verbose: bool, region: str, url: str) -> None:
   update_feeds_response = feed_schema.client.request(method, full_url,
                                                      updated_body)
 
-  update_response = feed_utility.check_content_type(update_feeds_response.text)
+  update_response = api_utility.check_content_type(update_feeds_response.text)
   if update_feeds_response.status_code != status.STATUS_OK:
-    error_msg = update_response[schema.KEY_ERROR][schema.KEY_MESSAGE]
+    error_msg = update_response[key_constants.KEY_ERROR][
+        key_constants.KEY_MESSAGE]
     click.echo("\nError occurred while updating feed. Response code: "
                f"{update_feeds_response.status_code}.\nError: "
                f"{error_msg}")
@@ -134,11 +138,11 @@ def update(credential_file: str, verbose: bool, region: str, url: str) -> None:
 
   click.echo("\nFeed updated successfully with Feed ID: "
              f"{update_response[schema.KEY_NAME][6:]}")
-  feed_utility.remove_file(UPDATE_BACKUP_FILE)
+  file_utility.remove_file(UPDATE_BACKUP_FILE)
 
   if verbose:
-    feed_utility.print_request_details(full_url, method, updated_body,
-                                       update_response)
+    api_utility.print_request_details(full_url, method, updated_body,
+                                      update_response)
 
 
 @dataclasses.dataclass
@@ -157,8 +161,8 @@ def fetch_feed_request_data(feed_schema: Any, region: str, url: str,
   Args:
     feed_schema (object): Object of the FeedSchema class.
     region (str): Option for selecting regions. Available options - US, EUROPE,
-      ASIA_SOUTHEAST1
-    url (str): Base URL to be used for API calls
+      ASIA_SOUTHEAST1.
+    url (str): Base URL to be used for API calls.
     feed_id (str): ID of the Feed to be updated.
 
   Returns:
@@ -167,11 +171,11 @@ def fetch_feed_request_data(feed_schema: Any, region: str, url: str,
   """
   get_feed_response = feed_schema.client.request(
       "GET", f"{feed_utility.get_feed_url(region, url)}/{feed_id}")
-  response = feed_utility.check_content_type(get_feed_response.text)
+  response = api_utility.check_content_type(get_feed_response.text)
 
   status_code = get_feed_response.status_code
   if status_code != status.STATUS_OK:
-    error_msg = response[schema.KEY_ERROR][schema.KEY_MESSAGE]
+    error_msg = response[key_constants.KEY_ERROR][key_constants.KEY_MESSAGE]
     click.echo("\nError occurred while updating feed. Response code: "
                f"{get_feed_response.status_code}.\nError = "
                f"{error_msg}")
@@ -180,6 +184,6 @@ def fetch_feed_request_data(feed_schema: Any, region: str, url: str,
   flattened_response = feed_utility.flatten_dict(response)
   selected_source_type = response[schema.KEY_DETAILS][
       schema.KEY_FEED_SOURCE_TYPE]
-  selected_log_type = response[schema.KEY_DETAILS][schema.KEY_LOG_TYPE]
+  selected_log_type = response[schema.KEY_DETAILS][key_constants.KEY_LOG_TYPE]
   return RequestData(selected_log_type, selected_source_type,
                      flattened_response, None)

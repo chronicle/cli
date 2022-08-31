@@ -21,10 +21,10 @@ from click.testing import CliRunner
 
 from feeds.commands.list import list_command
 from feeds.tests.fixtures import *  # pylint: disable=wildcard-import
-from feeds.tests.fixtures import MockResponse
 from feeds.tests.fixtures import TEMP_EXPORT_CSV_FILE
 from feeds.tests.fixtures import TEMP_EXPORT_JSON_FILE
 from feeds.tests.fixtures import TEMP_EXPORT_TXT_FILE
+from mock_test_utility import MockResponse
 
 runner = CliRunner()
 
@@ -69,7 +69,21 @@ def test_list_200(mock_client: mock.MagicMock, get_feed_schema: Dict[str, str],
 
   # Method Call
   result = runner.invoke(list_command)
-  assert "Field 1: abc.dummy.com" in result.output
+  assert """
+Feed Details:
+  ID: 123
+  Source type: Dummy Source Type
+  Log type: Dummy LogType
+  State: INACTIVE
+  Feed Settings:
+    Field 1: abc.dummy.com
+    Field 2: ID
+  Namespace: sample_namespace
+  Labels:
+    k: v
+
+============================================================
+""" in result.output
 
 
 @mock.patch(
@@ -109,7 +123,8 @@ def test_credential_file_invalid(mock_client: mock.MagicMock) -> None:
   # Method Call
   expected_message = "Failed with exception: Credential Path not found."
 
-  result = runner.invoke(list_command, ["--credential_file", "dummy.json"])
+  result = runner.invoke(list_command,
+                         ["--credential_file", "dummy.json", "--region", "us"])
   assert expected_message in result.output
 
 

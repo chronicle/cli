@@ -21,7 +21,8 @@ from click.testing import CliRunner
 
 from feeds.commands.enable import enable
 from feeds.tests.fixtures import *  # pylint: disable=wildcard-import
-from feeds.tests.fixtures import MockResponse
+from mock_test_utility import MockResponse
+
 
 runner = CliRunner()
 
