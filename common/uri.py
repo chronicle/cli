@@ -14,30 +14,21 @@
 #
 """Helper functions to make Chronicle API URLs."""
 
-import click
-
 REGION_EUROPE = "europe"
 REGION_ASIA_SOUTHEAST1 = "asia-southeast1"
 BASE_URL = "https://backstory.googleapis.com/v1"
 BASE_URL_EUROPE = "https://europe-backstory.googleapis.com/v1"
 BASE_URL_ASIA_SOUTHEAST1 = "https://asia-southeast1-backstory.googleapis.com/v1"
-
-region_option = click.option(
-    "--region",
-    type=click.Choice(["US", "ASIA-SOUTHEAST1", "EUROPE"],
-                      case_sensitive=False),
-    default="US",
-    help="Select region")
-
-url_option = click.option("--url", help="Base URL to be used for API calls")
+CHRONICLE_TEST_API_V1_URL = "https://test-backstory.sandbox.googleapis.com/v1"
 
 
-def get_base_url(region: str, custom_url: str) -> str:
+def get_base_url(region: str, custom_url: str, env: str = "prod") -> str:
   """Get base URL according to selected region.
 
   Args:
     region (str): Region (US, EUROPE, ASIA_SOUTHEAST1)
     custom_url (str): Base URL to be used for API calls
+    env (str): Environment for API calls (prod, test)
 
   Returns:
     str: Base URL
@@ -49,4 +40,6 @@ def get_base_url(region: str, custom_url: str) -> str:
     return BASE_URL_EUROPE
   if region == REGION_ASIA_SOUTHEAST1:
     return BASE_URL_ASIA_SOUTHEAST1
+  if env == "test":
+    return CHRONICLE_TEST_API_V1_URL
   return BASE_URL

@@ -23,7 +23,7 @@ import pytest
 
 from feeds import feed_schema_utility
 from feeds.tests.fixtures import *  # pylint: disable=wildcard-import
-from feeds.tests.fixtures import MockResponse
+from mock_test_utility import MockResponse
 
 
 def test_get_latest_schema(get_schema_response: List[Any],
@@ -124,35 +124,45 @@ def test_process_input_detailed_schema(mock_process_field_input: mock.MagicMock,
   assert client.pre_body == {"api.key": "value"}
 
 
+@mock.patch("feeds.feed_schema_utility.input")
 @mock.patch(
     "feeds.commands.create.click.prompt")
 @mock.patch(
     "feeds.feed_schema_utility.process_field_input"
 )
 def test_prepare_request_body(mock_process_field_input: mock.MagicMock,
-                              input_patch: mock.MagicMock,
+                              mock_click_prompt: mock.MagicMock,
+                              mock_input: mock.MagicMock,
                               client: feed_schema_utility.FeedSchema,
                               get_detailed_schema: Any):
   """Test generation of request body.
 
   Args:
     mock_process_field_input: Mock object
-    input_patch: Mock object
+    mock_click_prompt: Mock object
+    mock_input: Mock object
     client: Mock object
     get_detailed_schema: Test input data
   """
-  input_patch.return_value = 1
+  mock_click_prompt.side_effect = [1, "sample_namespace"]
   mock_process_field_input.side_effect = ["dummy", "dummy", "dummy"]
+  mock_input.side_effect = ["k:v", EOFError]
   result = client.prepare_request_body(get_detailed_schema.log_type_schema,
                                        "API", "WORKDAY", {})
   # pylint: disable=implicit-str-concat
   expected_output = (
       '{"details": {"httpSettings": {"oauthAccessToken": "dummy"}, '
       '"workdaySettings": {"hostname": "dummy", "tenantId": "dummy"}, '
-      '"feedSourceType": "API", "logType": "WORKDAY"}}', {
+      '"namespace": "sample_namespace", "labels": [{"key": "k", "value": '
+      '"v"}], "feedSourceType": "API", "logType": "WORKDAY"}}', {
           "details.http_settings.oauth_access_token": "dummy",
           "details.workday_settings.hostname": "dummy",
-          "details.workday_settings.tenant_id": "dummy"
+          "details.workday_settings.tenant_id": "dummy",
+          "details.namespace": "sample_namespace",
+          "details.labels": [{
+              "key": "k",
+              "value": "v"
+          }]
       })
   assert result == expected_output
 
@@ -309,3 +319,32 @@ def test_process_field_input_str_multiline(input_patch: mock.MagicMock):
   }
   result_value = feed_schema_utility.process_field_input(test_field_data, [])
   assert result_value == "k:v"
+
+
+@mock.patch(
+    "feeds.feed_schema_utility.click.prompt")
+def test_process_namespace_input(mock_input: mock.MagicMock,
+                                 client: feed_schema_utility.FeedSchema):
+  """Test processing of input namespace.
+
+  Args:
+    mock_input: Mock object
+    client: Mock object
+  """
+  mock_input.return_value = "sample_namespace"
+  client.process_namespace_input({})
+  assert client.pre_body == {"details.namespace": "sample_namespace"}
+
+
+@mock.patch("feeds.feed_schema_utility.input")
+def test_process_labels_input(input_patch: mock.MagicMock,
+                              client: feed_schema_utility.FeedSchema):
+  """Test processing of input labels.
+
+  Args:
+    input_patch: Mock object for click prompt
+    client: Mock object
+  """
+  input_patch.side_effect = ["k:v", EOFError]
+  client.process_labels_input({})
+  assert client.pre_body == {"details.labels": [{"key": "k", "value": "v"}]}

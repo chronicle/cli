@@ -18,20 +18,22 @@ from typing import AnyStr
 
 import click
 
+from common import api_utility
 from common import exception_handler
-from common import uri
+from common import options
+from common.constants import key_constants
+from common.constants import status
 from feeds import feed_schema_utility
 from feeds import feed_templates
 from feeds import feed_utility
 from feeds.constants import schema
-from feeds.constants import status
 
 
 @click.command(help="Get feed details using Feed ID")
-@uri.url_option
-@uri.region_option
-@feed_utility.verbose_option
-@feed_utility.credential_file_option
+@options.url_option
+@options.region_option
+@options.verbose_option
+@options.credential_file_option
 @exception_handler.catch_exception()
 def get(credential_file: AnyStr, verbose: bool, region: str,
         url: AnyStr) -> None:
@@ -41,8 +43,8 @@ def get(credential_file: AnyStr, verbose: bool, region: str,
     credential_file (str): Path of Service Account JSON.
     verbose (bool): Option for printing verbose output to console.
     region (str): Option for selecting regions. Available options - US, EUROPE,
-      ASIA_SOUTHEAST1
-    url (str): Base URL to be used for API calls
+      ASIA_SOUTHEAST1.
+    url (str): Base URL to be used for API calls.
 
   Raises:
     OSError: Failed to read the given file, e.g. not found, no read access
@@ -61,14 +63,14 @@ def get(credential_file: AnyStr, verbose: bool, region: str,
   full_url = f"{feed_utility.get_feed_url(region, url)}/{feed_id}"
   method = "GET"
   get_feed_response = feed_schema.client.request(method, full_url)
-  response = feed_utility.check_content_type(get_feed_response.text)
+  response = api_utility.check_content_type(get_feed_response.text)
 
   status_code = get_feed_response.status_code
 
   if status_code == status.STATUS_OK:
     detail_schema = feed_schema.get_detailed_schema(
         response[schema.KEY_DETAILS][schema.KEY_FEED_SOURCE_TYPE],
-        response[schema.KEY_DETAILS][schema.KEY_LOG_TYPE])
+        response[schema.KEY_DETAILS][key_constants.KEY_LOG_TYPE])
     if detail_schema.error:
       click.echo(detail_schema.error)
       return
@@ -76,14 +78,17 @@ def get(credential_file: AnyStr, verbose: bool, region: str,
     flattened_response = feed_utility.flatten_dict(response)
     field_response = feed_utility.get_feed_details(
         flattened_response, detail_schema.log_type_schema)
-
+    namespace = feed_utility.get_namespace(response.get(schema.KEY_DETAILS, {}))
+    labels = feed_utility.get_labels(response.get(schema.KEY_DETAILS, {}))
     click.echo(
         feed_templates.feed_template.substitute(
             feed_id=feed_id,
             source_type=detail_schema.display_source_type,
             log_type=detail_schema.log_type_schema[schema.KEY_DISPLAY_NAME],
             feed_state=response[schema.KEY_FEED_STATE],
-            feed_details=field_response))
+            feed_details=field_response,
+            namespace=namespace,
+            labels=labels))
 
   elif status_code == status.STATUS_NOT_FOUND:
     click.echo("Invalid Feed ID. Please enter valid Feed ID.")
@@ -92,7 +97,7 @@ def get(credential_file: AnyStr, verbose: bool, region: str,
   else:
     click.echo(
         f"Error while fetching feed.\nResponse Code: {status_code}\nError: "
-        f"{response[schema.KEY_ERROR][schema.KEY_MESSAGE]}")
+        f"{response[key_constants.KEY_ERROR][key_constants.KEY_MESSAGE]}")
 
   if verbose:
-    feed_utility.print_request_details(full_url, method, None, response)
+    api_utility.print_request_details(full_url, method, None, response)

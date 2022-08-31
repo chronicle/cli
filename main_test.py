@@ -22,4 +22,15 @@ runner = CliRunner()
 def test_main() -> None:
   """Test case for main."""
   result = runner.invoke(cli)
-  assert "feeds  Feed Management Workflows" in result.output
+  assert """Usage: cli [OPTIONS] COMMAND [ARGS]...
+
+  Chronicle CLI is a CLI tool for managing Chronicle user workflows for e.g.
+  Feed Management workflows.
+
+Options:
+  -h, --help  Show this message and exit.
+
+Commands:
+  feeds   Feed Management Workflows
+  parser  Manage config based parsers
+""" == result.output

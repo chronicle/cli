@@ -22,34 +22,37 @@ from typing import Any, Dict
 import click
 from click._compat import WIN
 
+from common import api_utility
 from common import chronicle_auth
 from common import exception_handler
-from common import uri
+from common import file_utility
+from common import options
+from common.constants import key_constants
+from common.constants import status
 from feeds import feed_schema_utility
 from feeds import feed_templates
 from feeds import feed_utility
 from feeds.constants import schema
-from feeds.constants import status
 
 CREATE_BACKUP_FILE = os.path.join(chronicle_auth.CHRONICLE_CLI_ROOT_DIR,
                                   "feeds", "create_backup.json")
 
 
 @click.command(help="Create a feed")
-@uri.url_option
-@uri.region_option
-@feed_utility.verbose_option
-@feed_utility.credential_file_option
+@options.url_option
+@options.region_option
+@options.verbose_option
+@options.credential_file_option
 @exception_handler.catch_exception()
 def create(credential_file: str, verbose: bool, region: str, url: str) -> None:
   """Create feed.
 
   Args:
-    credential_file (AnyStr): Path of Service Account JSON
+    credential_file (AnyStr): Path of Service Account JSON.
     verbose (bool): Option for printing verbose output to console.
     region (str): Option for selecting regions. Available options - US, EUROPE,
-      ASIA_SOUTHEAST1
-    url (str): Base URL to be used for API calls
+      ASIA_SOUTHEAST1.
+    url (str): Base URL to be used for API calls.
 
   Raises:
     OSError: Failed to read the given file, e.g. not found, no read access
@@ -74,12 +77,12 @@ def create(credential_file: str, verbose: bool, region: str, url: str) -> None:
         log_type=backup_data[schema.KEY_DISPLAY_LOG_TYPE])
     retry = click.confirm(f"{retry_template_str}", default=None)
     if not retry:
-      feed_utility.remove_file(CREATE_BACKUP_FILE)
+      file_utility.remove_file(CREATE_BACKUP_FILE)
 
   # Here we set the backup data to the process for taking existing values.
   if retry:
     selected_source_type = backup_data[schema.KEY_FEED_SOURCE_TYPE]
-    selected_log_type = backup_data[schema.KEY_LOG_TYPE]
+    selected_log_type = backup_data[key_constants.KEY_LOG_TYPE]
     flattened_response = backup_data
   else:
     properties = log_source_types_from_user(properties_map)
@@ -103,12 +106,13 @@ def create(credential_file: str, verbose: bool, region: str, url: str) -> None:
   full_url = feed_utility.get_feed_url(region, url)
   method = "POST"
   api_response = feed_schema.client.request(method, full_url, request_body)
-  response = feed_utility.check_content_type(api_response.text)
+  response = api_utility.check_content_type(api_response.text)
 
   if api_response.status_code != status.STATUS_OK:
-    click.echo("\nError occurred while creating feed.\nResponse Code: "
-               f"{api_response.status_code}.\nError: "
-               f"{response[schema.KEY_ERROR][schema.KEY_MESSAGE]}")
+    click.echo(
+        "\nError occurred while creating feed.\nResponse Code: "
+        f"{api_response.status_code}.\nError: "
+        f"{response[key_constants.KEY_ERROR][key_constants.KEY_MESSAGE]}")
 
     # "flattened_response" is updated with the Source Type and Log Type
     # and written to the backup file in case of failure to create feed.
@@ -122,9 +126,9 @@ def create(credential_file: str, verbose: bool, region: str, url: str) -> None:
 
   click.echo("\nFeed created successfully with Feed ID: "
              f"{response[schema.KEY_NAME][6:]}")
-  feed_utility.remove_file(CREATE_BACKUP_FILE)
+  file_utility.remove_file(CREATE_BACKUP_FILE)
   if verbose:
-    feed_utility.print_request_details(full_url, method, request_body, response)
+    api_utility.print_request_details(full_url, method, request_body, response)
 
 
 @dataclasses.dataclass

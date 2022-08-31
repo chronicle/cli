@@ -23,8 +23,9 @@ from click.testing import CliRunner
 from feeds.commands.update import update
 from feeds.tests.fixtures import *  # pylint: disable=wildcard-import
 from feeds.tests.fixtures import create_backup_file
-from feeds.tests.fixtures import MockResponse
 from feeds.tests.fixtures import TEMP_UPDATE_BACKUP_FILE
+from mock_test_utility import MockResponse
+
 
 runner = CliRunner()
 
@@ -173,7 +174,7 @@ def test_feed_id_absent(mock_input: mock.MagicMock, mock_client: mock.MagicMock,
       }
   }, {})
 
-  expected_output = "Feed ID is not provided. Please enter Feed ID."
+  expected_output = "Feed ID not provided. Please enter Feed ID."
   result = runner.invoke(update, ["--credential_file", ""])
   assert expected_output in result.output
 

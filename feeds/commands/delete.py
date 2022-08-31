@@ -18,19 +18,20 @@ from typing import AnyStr
 
 import click
 
+from common import api_utility
 from common import chronicle_auth
 from common import exception_handler
-from common import uri
+from common import options
+from common.constants import key_constants
+from common.constants import status
 from feeds import feed_utility
-from feeds.constants import schema
-from feeds.constants import status
 
 
 @click.command(help="Delete a feed")
-@uri.url_option
-@uri.region_option
-@feed_utility.verbose_option
-@feed_utility.credential_file_option
+@options.url_option
+@options.region_option
+@options.verbose_option
+@options.credential_file_option
 @exception_handler.catch_exception()
 def delete(credential_file: AnyStr, verbose: bool, region: str,
            url: str) -> None:
@@ -40,8 +41,8 @@ def delete(credential_file: AnyStr, verbose: bool, region: str,
     credential_file (AnyStr): Path of Service Account JSON.
     verbose (bool): Option for printing verbose output to console.
     region (str): Option for selecting regions. Available options - US, EUROPE,
-      ASIA_SOUTHEAST1
-    url (str): Base URL to be used for API calls
+      ASIA_SOUTHEAST1.
+    url (str): Base URL to be used for API calls.
 
   Raises:
     OSError: Failed to read the given file, e.g. not found, no read access
@@ -53,7 +54,7 @@ def delete(credential_file: AnyStr, verbose: bool, region: str,
   url = feed_utility.lower_or_none(url)
   feed_id = click.prompt("Enter Feed ID", default="", show_default=False)
   if not feed_id:
-    click.echo("Feed ID is not provided. Please enter Feed ID.")
+    click.echo("Feed ID not provided. Please enter Feed ID.")
     return
 
   http_client = chronicle_auth.initialize_http_session(credential_file)
@@ -61,7 +62,7 @@ def delete(credential_file: AnyStr, verbose: bool, region: str,
   method = "DELETE"
   delete_feeds_response = http_client.request(method, full_url)
   status_code = delete_feeds_response.status_code
-  response = feed_utility.check_content_type(delete_feeds_response.text)
+  response = api_utility.check_content_type(delete_feeds_response.text)
 
   if status_code == status.STATUS_OK:
     click.echo(f"\nFeed (ID: {feed_id}) deleted successfully.")
@@ -70,9 +71,9 @@ def delete(credential_file: AnyStr, verbose: bool, region: str,
   elif status_code == status.STATUS_BAD_REQUEST:
     click.echo("Feed does not exist.")
   else:
-    error_message = response[schema.KEY_ERROR][schema.KEY_MESSAGE]
+    error_message = response[key_constants.KEY_ERROR][key_constants.KEY_MESSAGE]
     click.echo(f"\nError while deleting feed.\nResponse Code: {status_code}"
                f"\nError: {error_message}")
 
   if verbose:
-    feed_utility.print_request_details(full_url, method, None, response)
+    api_utility.print_request_details(full_url, method, None, response)

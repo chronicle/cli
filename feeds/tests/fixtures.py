@@ -23,6 +23,7 @@ from unittest import mock
 import pytest
 
 from feeds import feed_schema_utility
+from mock_test_utility import MockResponse
 
 TEST_DATA_DIR = os.path.dirname(__file__)
 TEMP_EXPORT_TXT_FILE = os.path.join(TEST_DATA_DIR, "dummy.txt")
@@ -34,13 +35,6 @@ TEMP_SERVICE_ACCOUNT_FILE = os.path.join(TEST_DATA_DIR, "service_account.json")
 # Permissions are required to be set for test_data directory recursively,
 # otherwise the test cases are failed.
 os.system(f"chmod -R +rw {TEST_DATA_DIR}")
-
-
-class MockResponse:
-
-  def __init__(self, status_code: int, text: str):
-    self.status_code = status_code
-    self.text = text
 
 
 @pytest.fixture()
@@ -66,6 +60,7 @@ def list_feeds_data() -> MockResponse:
       status_code=200,
       text="""{"feeds": [{"name": "feeds/123", "details": {
           "logType": "DUMMY_LOGTYPE", "feedSourceType": "DUMMY",
+          "namespace": "sample_namespace", "labels": [{"key": "k", "value": "v"}],
             "dummySettings": {"field1": "abc.dummy.com", "field2": "ID"}},
             "feedState": "INACTIVE"}]}""")
   return data
@@ -190,6 +185,7 @@ def get_feed_data() -> MockResponse:
   data = MockResponse(
       status_code=200,
       text="""{"name": "feeds/123", "details": {"logType": "DUMMY_LOGTYPE",
+        "namespace": "sample_namespace", "labels": [{"key": "k", "value": "v"}],
         "feedSourceType": "DUMMY",
             "dummySettings": {"field1": "abc.dummy.com", "field2": "ID"}},
             "feedState": "INACTIVE"}""")

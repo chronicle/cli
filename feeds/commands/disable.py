@@ -18,19 +18,20 @@ from typing import AnyStr
 
 import click
 
+from common import api_utility
 from common import exception_handler
-from common import uri
+from common import options
+from common.constants import key_constants
+from common.constants import status
 from feeds import feed_schema_utility
 from feeds import feed_utility
-from feeds.constants import schema
-from feeds.constants import status
 
 
 @click.command(help="Disable feed with a given feed id.")
-@uri.url_option
-@uri.region_option
-@feed_utility.verbose_option
-@feed_utility.credential_file_option
+@options.url_option
+@options.region_option
+@options.verbose_option
+@options.credential_file_option
 @exception_handler.catch_exception()
 def disable(credential_file: AnyStr, verbose: bool, region: str,
             url: AnyStr) -> None:
@@ -40,8 +41,8 @@ def disable(credential_file: AnyStr, verbose: bool, region: str,
     credential_file (str): Path of Service Account JSON.
     verbose (bool): Option for printing verbose output to console.
     region (str): Option for selecting regions. Available options - US, EUROPE,
-      ASIA_SOUTHEAST1
-    url (str): Base URL to be used for API calls
+      ASIA_SOUTHEAST1.
+    url (str): Base URL to be used for API calls.
 
   Raises:
     OSError: Failed to read the given file, e.g. not found, no read access
@@ -60,7 +61,7 @@ def disable(credential_file: AnyStr, verbose: bool, region: str,
   full_url = f"{feed_utility.get_feed_url(region, url)}/{feed_id}:disable"
   method = "POST"
   disable_feed_response = feed_schema.client.request(method, full_url, {})
-  response = feed_utility.check_content_type(disable_feed_response.text)
+  response = api_utility.check_content_type(disable_feed_response.text)
 
   status_code = disable_feed_response.status_code
 
@@ -73,7 +74,7 @@ def disable(credential_file: AnyStr, verbose: bool, region: str,
   else:
     click.echo(
         f"Error while disabling feed.\nResponse Code: {status_code}\nError: "
-        f"{response[schema.KEY_ERROR][schema.KEY_MESSAGE]}")
+        f"{response[key_constants.KEY_ERROR][key_constants.KEY_MESSAGE]}")
 
   if verbose:
-    feed_utility.print_request_details(full_url, method, None, response)
+    api_utility.print_request_details(full_url, method, None, response)

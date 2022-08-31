@@ -24,8 +24,9 @@ from feeds.commands.create import create
 from feeds.commands.create import Properties
 from feeds.tests.fixtures import *  # pylint: disable=wildcard-import
 from feeds.tests.fixtures import create_backup_file
-from feeds.tests.fixtures import MockResponse
 from feeds.tests.fixtures import TEMP_CREATE_BACKUP_FILE
+from mock_test_utility import MockResponse
+
 
 runner = CliRunner()
 

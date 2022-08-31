@@ -4,7 +4,7 @@ Command line tool to interact with Chronicle's APIs.
 
 Chronicle CLI allows customers to manage various operations that can be
 performed on Chronicle. This script provides a command line tool to interact 
-with Feed APIs initially, but will gradually expand to cover other APIs.
+with Feed and Parser APIs. It will gradually expand to cover other APIs.
 
 ## Setup
 
@@ -48,7 +48,7 @@ sample's command-line:
 ## Unit test case execution
 
 Execute the following command from root directory:\
-```$ python3 -m pytest feeds/tests --cov=feeds/ --cov-report term-missing -vv```
+```$ python3 -m pytest --cov=./ --cov-report term-missing -vv```
 
 
 ## Documentation

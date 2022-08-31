@@ -13,13 +13,16 @@
 # limitations under the License.
 #
 """Starting point for the Chronicle CLI."""
+
 import os
 import subprocess
-import click
 
+import click
 from click._compat import WIN
+
 from common import chronicle_auth
 from feeds.feeds import feeds
+from parser.parser import parser
 
 
 @click.group(
@@ -41,6 +44,7 @@ def cli() -> None:
 
 
 cli.add_command(feeds)
+cli.add_command(parser)
 
 if __name__ == "__main__":
   cli()

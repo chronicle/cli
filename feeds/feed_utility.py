@@ -17,68 +17,49 @@
 import collections
 import csv
 import json
-import os
 import re
-from typing import Any, AnyStr, Dict, List, Optional
+from typing import Any, AnyStr, Dict, List
 
-import click
-
-from common import chronicle_auth
 from common import uri
+from common.constants import key_constants
 from feeds import feed_templates
 from feeds.constants import schema
 
-FEED_COLUMN_HEADER = ["ID", "Source type", "Log type", "State", "Feed Settings"]
-FEED_FILE_FORMAT_CSV = "CSV"
-FEED_FILE_FORMAT_JSON = "JSON"
-
-verbose_option = click.option(
-    "--verbose", is_flag=True, help="Prints verbose output to the console.")
-
-credential_file_option = click.option(
-    "-c",
-    "--credential_file",
-    help=f"Path of Service Account JSON. Default: {chronicle_auth.default_cred_file_path}"
-)
+FEED_COLUMN_HEADER = [
+    "ID", "Source type", "Log type", "State", "Feed Settings", "Namespace",
+    "Labels"
+]
 
 
-def print_request_details(url: AnyStr, method: AnyStr,
-                          request_body: Optional[Dict[str, Any]],
-                          response_body: Dict[str, Any]):
-  """Prints HTTP request details to the console.
+def get_namespace(feed_response: Dict[str, Any]) -> str:
+  """Return namespace.
 
   Args:
-    url (AnyStr): Request url
-    method (AnyStr): Request method
-    request_body (Optional[Dict[str,Any]]): Request body
-    response_body (Dict[str,Any]): Response body
-  """
-
-  click.echo(
-      feed_templates.request_details_template.substitute(
-          request_url=url,
-          method=method,
-          request_body=request_body,
-          response_body=response_body,
-      ))
-
-
-def check_content_type(feed_response: AnyStr) -> Any:
-  """Return JSON based content for the response data.
-
-  Args:
-    feed_response (AnyStr): API response
+    feed_response (Dict): Feed response.
 
   Returns:
-    JSON: Response data.
-
-  Raises:
-    TypeError: If response data is not JSON.
+    str: Namespace to be displayed on console.
   """
-  try:
-    return json.loads(feed_response)
-  except json.JSONDecodeError:
-    raise TypeError("URL is not reachable.") from None
+  if feed_response.get("namespace", ""):
+    return f"  Namespace: {feed_response.get('namespace', '')}\n"
+  return ""
+
+
+def get_labels(feed_response: Dict[str, Any]) -> str:
+  """Return key-value pair after correlation with labels.
+
+  Args:
+    feed_response (Dict): Feed response.
+
+  Returns:
+    str: Labels to be displayed on console.
+  """
+  labels = []
+  for label in feed_response.get("labels", []):
+    labels.append(f"    {label['key']}: {label['value']}\n")
+  if labels:
+    return "  Labels:\n" + "".join(labels)
+  return ""
 
 
 def get_feed_details(flattened_response: Dict[str, Any],
@@ -86,11 +67,11 @@ def get_feed_details(flattened_response: Dict[str, Any],
   """Return key-value pair after correlation with schema.
 
   Args:
-    flattened_response (Dict): Flattened feed response
-    detailed_schema (Dict): Feed schema for specific log type and source type
+    flattened_response (Dict): Flattened feed response.
+    detailed_schema (Dict): Feed schema for specific log type and source type.
 
   Returns:
-    str: Feed details to be displayed on console
+    str: Feed details to be displayed on console.
   """
   field_response = []
   for field in detailed_schema.get(schema.KEY_DETAILED_FEED_SCHEMAS, []):
@@ -100,7 +81,7 @@ def get_feed_details(flattened_response: Dict[str, Any],
           f"{flattened_response[field[schema.KEY_FIELD_PATH]]}\n")
 
   if field_response:
-    return "Feed Settings:\n" + "".join(field_response)
+    return "  Feed Settings:\n" + "".join(field_response)
   return ""
 
 
@@ -108,10 +89,10 @@ def swap_with_underscore(key: AnyStr) -> AnyStr:
   """Convert camelcase key name to snakecase key name.
 
   Args:
-    key (AnyStr): Camelcase key name
+    key (AnyStr): Camelcase key name.
 
   Returns:
-    AnyStr: Snakecase key name
+    AnyStr: Snakecase key name.
   """
   s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", key)
   return re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
@@ -129,7 +110,7 @@ def flatten_dict(input_dict: Dict[str, Any],
     sep (AnyStr): The seperator indicates by which the name will be formed for
       the flattened data.  Example - input_dict - {'name': 'feeds/123',
       'details': {'logType': 'WORKDAY'}} Output - {'name': 'feeds/123',
-      'details.log_type': 'WORKDAY'}
+      'details.log_type': 'WORKDAY'}.
 
   Returns:
     Dict[str]: Flattened dictionary.
@@ -150,10 +131,10 @@ def deflatten_dict(input_dict: Dict[AnyStr, Any]) -> Dict[AnyStr, Any]:
   """Convert flattened dictionary in format required by request body.
 
   Args:
-    input_dict (dict): Dictionary with flattened keys
+    input_dict (dict): Dictionary with flattened keys.
 
   Returns:
-    output_dict (dict): Dictionary in format required by request body
+    output_dict (dict): Dictionary in format required by request body.
   """
   output_dict = {}
   for key, value in input_dict.items():
@@ -169,10 +150,10 @@ def snake_to_camel(word: AnyStr) -> AnyStr:
   """Convert snakecase word to camelcase word.
 
   Args:
-    word (str): Snakecase word
+    word (str): Snakecase word.
 
   Returns:
-    str: Camelcase word
+    str: Camelcase word.
   """
   components = word.split("_")
   # We capitalize the first letter of each component except the first one
@@ -184,11 +165,11 @@ def get_feed_url(region: str, custom_url: str) -> str:
   """Get feed URL according to selected region.
 
   Args:
-    region (str): Region (US, EUROPE, ASIA_SOUTHEAST1)
-    custom_url (str): Base URL to be used for API calls
+    region (str): Region (US, EUROPE, ASIA_SOUTHEAST1).
+    custom_url (str): Base URL to be used for API calls.
 
   Returns:
-    str: Feed URL
+    str: Feed URL.
   """
   return uri.get_base_url(region, custom_url) + "/feeds"
 
@@ -214,25 +195,17 @@ def export_txt(export_path: AnyStr, feed_rows: List[List[str]]) -> None:
     feed_rows (List[List[str]]): Array of all listed feed details.
   """
   with open(export_path, "w") as file_out:
-    for feed_id, source_type, log_type, feed_state, feed_details in feed_rows:
+    for feed_id, source_type, log_type, feed_state, feed_details, namespace, labels in feed_rows:
       feed_template_str = feed_templates.feed_template.substitute(
           feed_id=f"{feed_id}",
           source_type=f"{source_type}",
           log_type=f"{log_type}",
           feed_state=f"{feed_state}",
-          feed_details=f"{feed_details}")
+          feed_details=f"{feed_details}",
+          namespace=f"{namespace}",
+          labels=f"{labels}")
       file_out.write(feed_template_str)
       file_out.write(f"\n{'=' * 60}\n")
-
-
-def remove_file(file_path: str) -> None:
-  """Removes the file if the path exists.
-
-  Args:
-    file_path (str): Path of the file to be removed.
-  """
-  if os.path.exists(file_path):
-    os.remove(file_path)
 
 
 def write_backup(filename: str, flattened_response: Dict[str, Any],
@@ -251,20 +224,9 @@ def write_backup(filename: str, flattened_response: Dict[str, Any],
   with open(filename, "w") as file:
     flattened_response[schema.KEY_FEED_SOURCE_TYPE] = source_type
     flattened_response[schema.KEY_DISPLAY_SOURCE_TYPE] = display_source_type
-    flattened_response[schema.KEY_LOG_TYPE] = log_type
+    flattened_response[key_constants.KEY_LOG_TYPE] = log_type
     flattened_response[schema.KEY_DISPLAY_LOG_TYPE] = display_log_type
     file.write(json.dumps(flattened_response))
-
-
-def export_json(export_path: AnyStr, feeds_json: Dict[str, Any]) -> None:
-  """Write feeds data into JSON file.
-
-  Args:
-    export_path (AnyStr): Path of file to export output of list command.
-    feeds_json (Dict): JSON of all the feeds.
-  """
-  with open(export_path, "w") as file:
-    file.write(json.dumps(feeds_json, indent=2))
 
 
 def lower_or_none(input_str: AnyStr) -> Any:

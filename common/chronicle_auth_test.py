@@ -15,7 +15,9 @@
 """Unit tests for chronicle_auth.py."""
 
 from unittest import mock
+
 from google.oauth2 import service_account
+
 from common import chronicle_auth
 from feeds.tests.fixtures import create_service_account_file
 from feeds.tests.fixtures import TEMP_SERVICE_ACCOUNT_FILE
