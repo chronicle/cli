@@ -120,7 +120,7 @@ def flatten_dict(input_dict: Dict[str, Any],
     new_key = parent_key + sep + str(k) if parent_key else str(k)
     if isinstance(v, collections.abc.MutableMapping):
       items.extend(
-          flatten_dict(v, swap_with_underscore(new_key), sep=sep).items())
+          flatten_dict(v, swap_with_underscore(new_key), sep=sep).items())  # pytype: disable=wrong-arg-types
     else:
       items.append((swap_with_underscore(new_key), v))
 
