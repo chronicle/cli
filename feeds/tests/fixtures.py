@@ -58,7 +58,7 @@ def list_feeds_data() -> MockResponse:
   """Test input data."""
   data = MockResponse(
       status_code=200,
-      text="""{"feeds": [{"name": "feeds/123", "details": {
+      text="""{"feeds": [{"name": "feeds/123","displayName": "Dummy feed display name","details": {
           "logType": "DUMMY_LOGTYPE", "feedSourceType": "DUMMY",
           "namespace": "sample_namespace", "labels": [{"key": "k", "value": "v"}],
             "dummySettings": {"field1": "abc.dummy.com", "field2": "ID"}},
@@ -71,7 +71,7 @@ def list_missing_key_feeds_data() -> MockResponse:
   """Test input data."""
   data = MockResponse(
       status_code=200,
-      text="""{"feeds": [{"name": "feeds/123", "details": {
+      text="""{"feeds": [{"name": "feeds/123", "displayName": "Dummy feed display name", "details": {
           "logType": "DUMMY_LOGTYPE", "feedSourceType": "DUMMY",
             "dummySettings": {"field1": "abc.dummy.com", "field2": "ID"}},
             "feedState": "INACTIVE"},
@@ -184,7 +184,7 @@ def get_feed_data() -> MockResponse:
   """Test input data."""
   data = MockResponse(
       status_code=200,
-      text="""{"name": "feeds/123", "details": {"logType": "DUMMY_LOGTYPE",
+      text="""{"name": "feeds/123", "displayName": "Dummy feed display name","details": {"logType": "DUMMY_LOGTYPE",
         "namespace": "sample_namespace", "labels": [{"key": "k", "value": "v"}],
         "feedSourceType": "DUMMY",
             "dummySettings": {"field1": "abc.dummy.com", "field2": "ID"}},
@@ -197,7 +197,7 @@ def get_fail_feed_data() -> MockResponse:
   """Test input data."""
   data = MockResponse(
       status_code=200,
-      text="""{"name": "feeds/123", "details": {"logType": "TEMP_LOGTYPE",
+      text="""{"name": "feeds/123", "displayName": "Dummy feed display name", "details": {"logType": "TEMP_LOGTYPE",
             "feedSourceType": "DUMMY",
             "dummySettings": {"field1": "abc.dummy.com", "field2": "ID"}},
             "feedState": "INACTIVE"}""")
@@ -224,6 +224,7 @@ def get_flattened_response() -> Dict[str, str]:
   """Test input data."""
   data = {
       "name": "feeds/123",
+      "displayName": "Dummy feed display name",
       "details.log_type": "WORKDAY",
       "details.feed_source_type": "API",
       "details.workday_settings.hostname": "abc.workday.com",
@@ -439,7 +440,7 @@ def get_active_feed_data() -> MockResponse:
   """Test input data."""
   data = MockResponse(
       status_code=200,
-      text="""{"name": "feeds/123", "details": {"logType": "DUMMY_LOGTYPE",
+      text="""{"name": "feeds/123", "displayName": "Dummy feed display name", "details": {"logType": "DUMMY_LOGTYPE",
         "feedSourceType": "DUMMY",
             "dummySettings": {"field1": "abc.dummy.com", "field2": "ID"}},
             "feedState": "ACTIVE"}""")

@@ -107,6 +107,7 @@ def list_command(credential_file: AnyStr, verbose: bool, file_format: AnyStr,
       feed_template_str = feed_templates.feed_template.substitute(
           # To fetch the id, we are trimming feeds/prefix here.
           feed_id=f"{feed[schema.KEY_NAME][6:]}",
+          feed_display_name=feed_utility.get_feed_display_name(feed),
           source_type=f"{detail_schema.display_source_type}",
           log_type=f"{detail_schema.log_type_schema[schema.KEY_DISPLAY_NAME]}",
           feed_state=f"{feed[schema.KEY_FEED_STATE]}",
@@ -117,6 +118,7 @@ def list_command(credential_file: AnyStr, verbose: bool, file_format: AnyStr,
       if export:
         feed_rows.append([
             feed[schema.KEY_NAME][6:],
+            feed.get(schema.KEY_DISPLAY_NAME),
             detail_schema.display_source_type,
             detail_schema.log_type_schema[schema.KEY_DISPLAY_NAME],
             feed[schema.KEY_FEED_STATE],
@@ -139,6 +141,7 @@ def list_command(credential_file: AnyStr, verbose: bool, file_format: AnyStr,
           "error": f"Failed with exception: {str(e)}"
       })
       continue
+
     click.echo(feed_template_str)
     click.echo("=" * 60)
 

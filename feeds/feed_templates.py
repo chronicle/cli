@@ -19,7 +19,8 @@ import string
 feed_template = string.Template("""\
 
 Feed Details:
-  ID: ${feed_id}
+  ID: ${feed_id}\
+${feed_display_name}
   Source type: ${source_type}
   Log type: ${log_type}
   State: ${feed_state}

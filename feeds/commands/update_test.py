@@ -76,7 +76,7 @@ def test_update_success(mock_input: mock.MagicMock, mock_client: mock.MagicMock,
       get_feed_schema, get_feed_data,
       MockResponse(status_code=200, text="""{"name": "feeds/123"}""")
   ]
-  mock_input.side_effect = [1, 1]
+  mock_input.side_effect = [1, 1, "Dummy feed display name"]
   mock_request_body.return_value = ({
       "details": {
           "key": "value",
@@ -120,7 +120,7 @@ def test_update_error_code(mock_input: mock.MagicMock,
       get_feed_schema, get_feed_data,
       MockResponse(status_code=400, text="""{"error": {"message": "test"}}""")
   ]
-  mock_input.side_effect = [1, 1]
+  mock_input.side_effect = [1, 1, "Dummy feed display name"]
   mock_request_body.return_value = ({
       "details": {
           "key": "value",
@@ -253,6 +253,7 @@ def test_update_retry_true(mock_confirm: mock.MagicMock,
   """
   content = {
       "name": "feeds/123",
+      "displayName": "Dummy feed display name",
       "details.log_type": "DUMMY_LOGTYPE",
       "details.feed_source_type": "DUMMY",
       "details.key": "value",
@@ -265,7 +266,7 @@ def test_update_retry_true(mock_confirm: mock.MagicMock,
   create_backup_file(TEMP_UPDATE_BACKUP_FILE, content)
   mock_client.return_value = mock.Mock()
   mock_confirm.side_effect = [True]
-  mock_input.side_effect = ["123"]
+  mock_input.side_effect = ["123", "Dummy feed display name"]
   mock_client.return_value.request.side_effect = [
       get_feed_schema, get_feed_data,
       MockResponse(status_code=200, text="""{"name": "feeds/123"}""")
@@ -312,6 +313,7 @@ def test_update_retry_true_400(mock_confirm: mock.MagicMock,
   """
   content = {
       "name": "feeds/123",
+      "displayName": "Dummy feed display name",
       "details.log_type": "DUMMY_LOGTYPE",
       "details.feed_source_type": "TEST",
       "details.key": "value",
@@ -324,7 +326,7 @@ def test_update_retry_true_400(mock_confirm: mock.MagicMock,
   create_backup_file(TEMP_UPDATE_BACKUP_FILE, content)
   mock_client.return_value = mock.Mock()
   mock_confirm.side_effect = [True]
-  mock_input.side_effect = ["123"]
+  mock_input.side_effect = ["123", "Dummy feed display name"]
   mock_client.return_value.request.side_effect = [
       get_feed_schema,
       MockResponse(
@@ -371,6 +373,7 @@ def test_update_retry_id_unmatched(mock_input: mock.MagicMock,
   """
   content = {
       "name": "feeds/123",
+      "displayName": "Dummy feed display name",
       "details.log_type": "DUMMY_LOGTYPE",
       "details.feed_source_type": "DUMMY",
       "details.key": "value",
@@ -382,7 +385,7 @@ def test_update_retry_id_unmatched(mock_input: mock.MagicMock,
   }
   create_backup_file(TEMP_UPDATE_BACKUP_FILE, content)
   mock_client.return_value = mock.Mock()
-  mock_input.side_effect = ["321"]
+  mock_input.side_effect = ["321", "Dummy feed display name"]
   mock_client.return_value.request.side_effect = [
       get_feed_schema, get_feed_data,
       MockResponse(status_code=200, text="""{"name": "feeds/123"}""")
@@ -431,6 +434,7 @@ def test_update_retry_false_400(mock_confirm: mock.MagicMock,
   """
   content = {
       "name": "feeds/123",
+      "displayName": "Dummy feed display name",
       "details.log_type": "DUMMY_LOGTYPE",
       "details.feed_source_type": "DUMMY",
       "details.key": "value",
@@ -443,7 +447,7 @@ def test_update_retry_false_400(mock_confirm: mock.MagicMock,
   create_backup_file(TEMP_UPDATE_BACKUP_FILE, content)
   mock_client.return_value = mock.Mock()
   mock_confirm.side_effect = [False]
-  mock_input.side_effect = ["123"]
+  mock_input.side_effect = ["123", "Dummy feed display name"]
   mock_client.return_value.request.side_effect = [
       get_feed_schema, get_feed_not_exist_data,
       MockResponse(status_code=200, text="""{"name": "feeds/123"}""")

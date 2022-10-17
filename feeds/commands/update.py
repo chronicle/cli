@@ -91,6 +91,7 @@ def update(credential_file: str, verbose: bool, region: str, url: str) -> None:
   if retry:
     selected_source_type = backup_data[schema.KEY_FEED_SOURCE_TYPE]
     selected_log_type = backup_data[key_constants.KEY_LOG_TYPE]
+    feed_display_name = backup_data.get(schema.KEY_DISPLAY_NAME)
     flattened_response = backup_data
   else:
     request_data = fetch_feed_request_data(feed_schema, region, url, feed_id)
@@ -98,6 +99,7 @@ def update(credential_file: str, verbose: bool, region: str, url: str) -> None:
       return
     selected_log_type = request_data.selected_log_type
     selected_source_type = request_data.selected_source_type
+    feed_display_name = request_data.feed_display_name
     flattened_response = request_data.flattened_response
 
   detail_schema = feed_schema.get_detailed_schema(selected_source_type,
@@ -108,11 +110,15 @@ def update(credential_file: str, verbose: bool, region: str, url: str) -> None:
 
   click.echo("Press Enter if you don't want to update.")
 
+  feed_display_name = click.prompt(
+      f"\nEnter feed display name[{feed_display_name}]",
+      show_default=False,
+      default=feed_display_name)
   # "flattened_response" is received along with the response body,
   # for storing the existing data into the backup file.
   updated_body, flattened_response = feed_schema.prepare_request_body(
       detail_schema.log_type_schema, selected_source_type, selected_log_type,
-      flattened_response)
+      flattened_response, feed_display_name)
 
   full_url = f"{feed_utility.get_feed_url(region, url)}/{feed_id}"
   method = "PATCH"
@@ -120,6 +126,7 @@ def update(credential_file: str, verbose: bool, region: str, url: str) -> None:
                                                      updated_body)
 
   update_response = api_utility.check_content_type(update_feeds_response.text)
+
   if update_feeds_response.status_code != status.STATUS_OK:
     error_msg = update_response[key_constants.KEY_ERROR][
         key_constants.KEY_MESSAGE]
@@ -133,7 +140,7 @@ def update(credential_file: str, verbose: bool, region: str, url: str) -> None:
         UPDATE_BACKUP_FILE, flattened_response,
         detail_schema.display_source_type, selected_source_type,
         detail_schema.log_type_schema[schema.KEY_DISPLAY_NAME],
-        selected_log_type)
+        selected_log_type, feed_display_name)
     return
 
   click.echo("\nFeed updated successfully with Feed ID: "
@@ -150,6 +157,7 @@ class RequestData:
   """Dataclass for preparing update request body."""
   selected_log_type: Optional[str]
   selected_source_type: Optional[str]
+  feed_display_name: Optional[str]
   flattened_response: Optional[Dict[str, Any]]
   error: Optional[str]
 
@@ -179,11 +187,12 @@ def fetch_feed_request_data(feed_schema: Any, region: str, url: str,
     click.echo("\nError occurred while updating feed. Response code: "
                f"{get_feed_response.status_code}.\nError = "
                f"{error_msg}")
-    return RequestData(None, None, None, error_msg)
+    return RequestData(None, None, None, None, error_msg)
 
   flattened_response = feed_utility.flatten_dict(response)
   selected_source_type = response[schema.KEY_DETAILS][
       schema.KEY_FEED_SOURCE_TYPE]
   selected_log_type = response[schema.KEY_DETAILS][key_constants.KEY_LOG_TYPE]
-  return RequestData(selected_log_type, selected_source_type,
+  feed_display_name = response.get(schema.KEY_DISPLAY_NAME)
+  return RequestData(selected_log_type, selected_source_type, feed_display_name,
                      flattened_response, None)

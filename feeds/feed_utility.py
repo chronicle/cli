@@ -26,8 +26,8 @@ from feeds import feed_templates
 from feeds.constants import schema
 
 FEED_COLUMN_HEADER = [
-    "ID", "Source type", "Log type", "State", "Feed Settings", "Namespace",
-    "Labels"
+    "ID", "Display Name", "Source type", "Log type", "State", "Feed Settings",
+    "Namespace", "Labels"
 ]
 
 
@@ -195,9 +195,11 @@ def export_txt(export_path: AnyStr, feed_rows: List[List[str]]) -> None:
     feed_rows (List[List[str]]): Array of all listed feed details.
   """
   with open(export_path, "w") as file_out:
-    for feed_id, source_type, log_type, feed_state, feed_details, namespace, labels in feed_rows:
+    for feed_id, feed_display_name, source_type, log_type, feed_state, feed_details, namespace, labels in feed_rows:
       feed_template_str = feed_templates.feed_template.substitute(
           feed_id=f"{feed_id}",
+          feed_display_name=get_feed_display_name(
+              {"displayName": feed_display_name}),
           source_type=f"{source_type}",
           log_type=f"{log_type}",
           feed_state=f"{feed_state}",
@@ -210,7 +212,8 @@ def export_txt(export_path: AnyStr, feed_rows: List[List[str]]) -> None:
 
 def write_backup(filename: str, flattened_response: Dict[str, Any],
                  display_source_type: str, source_type: str,
-                 display_log_type: str, log_type: str) -> None:
+                 display_log_type: str, log_type: str,
+                 feed_display_name: str) -> None:
   """Write the data to the backup file.
 
   Args:
@@ -220,12 +223,14 @@ def write_backup(filename: str, flattened_response: Dict[str, Any],
     source_type (str): Source Type value in string.
     display_log_type (str): Display name of the Log Type.
     log_type (str): Log Type value in string.
+    feed_display_name (str): Feed display name
   """
   with open(filename, "w") as file:
     flattened_response[schema.KEY_FEED_SOURCE_TYPE] = source_type
     flattened_response[schema.KEY_DISPLAY_SOURCE_TYPE] = display_source_type
     flattened_response[key_constants.KEY_LOG_TYPE] = log_type
     flattened_response[schema.KEY_DISPLAY_LOG_TYPE] = display_log_type
+    flattened_response[schema.KEY_DISPLAY_NAME] = feed_display_name
     file.write(json.dumps(flattened_response))
 
 
@@ -239,3 +244,16 @@ def lower_or_none(input_str: AnyStr) -> Any:
     str: String in lower case if not None.
   """
   return input_str.lower() if input_str else None
+
+
+def get_feed_display_name(feed: Dict[str, str]) -> str:
+  """Provide feed display name if exist in feed dictionary.
+
+  Args:
+    feed: input dictionary
+
+  Returns:
+    str: return display name if exist in dictionary.
+  """
+  return f"\n  Display Name: {feed.get(schema.KEY_DISPLAY_NAME)}" if feed.get(
+      schema.KEY_DISPLAY_NAME) else ""
