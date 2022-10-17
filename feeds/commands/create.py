@@ -17,7 +17,7 @@
 import dataclasses
 import json
 import os.path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import click
 from click._compat import WIN
@@ -83,12 +83,13 @@ def create(credential_file: str, verbose: bool, region: str, url: str) -> None:
   if retry:
     selected_source_type = backup_data[schema.KEY_FEED_SOURCE_TYPE]
     selected_log_type = backup_data[key_constants.KEY_LOG_TYPE]
+    feed_display_name = backup_data.get(schema.KEY_DISPLAY_NAME)
     flattened_response = backup_data
   else:
     properties = log_source_types_from_user(properties_map)
     selected_source_type = properties.selected_source_type
     selected_log_type = properties.selected_log_type
-
+    feed_display_name = properties.feed_display_name
   feed_detailed_schema = feed_schema.get_detailed_schema(
       selected_source_type, selected_log_type)
 
@@ -101,7 +102,7 @@ def create(credential_file: str, verbose: bool, region: str, url: str) -> None:
   # for storing the existing data into the backup file.
   request_body, flattened_response = feed_schema.prepare_request_body(
       feed_detailed_schema.log_type_schema, selected_source_type,
-      selected_log_type, flattened_response)
+      selected_log_type, flattened_response, feed_display_name)
 
   full_url = feed_utility.get_feed_url(region, url)
   method = "POST"
@@ -121,7 +122,7 @@ def create(credential_file: str, verbose: bool, region: str, url: str) -> None:
         properties_map[selected_source_type].get(schema.KEY_DISPLAY_NAME),
         selected_source_type,
         feed_detailed_schema.log_type_schema[schema.KEY_DISPLAY_NAME],
-        selected_log_type)
+        selected_log_type, feed_display_name)
     return
 
   click.echo("\nFeed created successfully with Feed ID: "
@@ -136,6 +137,7 @@ class Properties:
   """Properties dataclass."""
   selected_log_type: str
   selected_source_type: str
+  feed_display_name: Optional[str]
 
 
 def log_source_types_from_user(properties_map: Dict[str, Any]) -> Any:
@@ -181,4 +183,6 @@ def log_source_types_from_user(properties_map: Dict[str, Any]) -> Any:
   selected_log_type = log_types[choice - 1][0]
   click.echo("\nYou have selected " +
              click.style(f"{log_types[choice - 1][1]}", bold=True))
-  return Properties(selected_log_type, selected_source_type)
+  feed_display_name = click.prompt(
+      "\nEnter feed display name", show_default=False, default="")
+  return Properties(selected_log_type, selected_source_type, feed_display_name)

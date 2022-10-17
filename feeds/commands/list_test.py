@@ -72,6 +72,7 @@ def test_list_200(mock_client: mock.MagicMock, get_feed_schema: Dict[str, str],
   assert """
 Feed Details:
   ID: 123
+  Display Name: Dummy feed display name
   Source type: Dummy Source Type
   Log type: Dummy LogType
   State: INACTIVE

@@ -102,7 +102,8 @@ def test_get_200(input_patch: mock.MagicMock, mock_client: mock.MagicMock,
 
   # Method Call
   result = runner.invoke(get)
-  expected_output = ("\nFeed Details:\n  ID: 123\n  Source type: Dummy Source"
+  expected_output = ("\nFeed Details:\n  ID: 123\n  Display Name: "
+                     "Dummy feed display name\n  Source type: Dummy Source"
                      " Type\n  Log type: Dummy LogType\n  "
                      "State: INACTIVE\n  Feed Settings:\n    "
                      "Field 1: abc.dummy.com\n    Field 2: ID\n"
@@ -208,9 +209,12 @@ def test_get_verbose_option(input_patch: mock.MagicMock,
 
   # Method Call
   result = runner.invoke(get, ["--verbose"])
-  expected_output = ("\nFeed Details:\n  ID: 123\n  Source type: Dummy Source"
+  expected_output = ("\nFeed Details:\n  ID: 123\n  Display Name: "
+                     "Dummy feed display name\n  Source type: Dummy Source"
                      " Type\n  Log type: Dummy LogType\n  "
                      "State: INACTIVE\n  Feed Settings:\n    "
-                     "Field 1: abc.dummy.com\n    Field 2: ID")
+                     "Field 1: abc.dummy.com\n    Field 2: ID\n"
+                     "  Namespace: sample_namespace\n"
+                     "  Labels:\n    k: v\n")
   assert expected_output in result.output
   assert "HTTP Request Details" in result.output

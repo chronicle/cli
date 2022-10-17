@@ -169,9 +169,12 @@ class FeedSchema:
         flattened_response[each[schema.KEY_FIELD_PATH]] = field_value
 
   def prepare_request_body(
-      self, detailed_schema: Any, selected_source_type: AnyStr,
+      self,
+      detailed_schema: Any,
+      selected_source_type: AnyStr,
       selected_log_type: AnyStr,
-      flattened_response: Dict[str, Any]) -> Tuple[AnyStr, Dict[str, Any]]:
+      flattened_response: Dict[str, Any],
+      feed_display_name: Optional[str] = None) -> Tuple[AnyStr, Dict[str, Any]]:
     """Prepare request body for create command.
 
     Args:
@@ -179,6 +182,8 @@ class FeedSchema:
       selected_source_type (str): Source type.
       selected_log_type (str): Log type.
       flattened_response (Dict): Flattened response of existing feed.
+      feed_display_name (str): Feed display name.
+
 
     Returns:
       AnyStr: Request body.
@@ -224,8 +229,9 @@ class FeedSchema:
 
     request_body[schema.KEY_DETAILS].update({
         schema.KEY_FEED_SOURCE_TYPE: selected_source_type,
-        key_constants.KEY_LOG_TYPE: selected_log_type
+        key_constants.KEY_LOG_TYPE: selected_log_type,
     })
+    request_body[schema.KEY_DISPLAY_NAME] = feed_display_name
     return json.dumps(request_body), flattened_response
 
   def process_namespace_input(self, flattened_response: Dict[str, Any]) -> None:

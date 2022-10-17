@@ -83,6 +83,7 @@ def get(credential_file: AnyStr, verbose: bool, region: str,
     click.echo(
         feed_templates.feed_template.substitute(
             feed_id=feed_id,
+            feed_display_name=feed_utility.get_feed_display_name(response),
             source_type=detail_schema.display_source_type,
             log_type=detail_schema.log_type_schema[schema.KEY_DISPLAY_NAME],
             feed_state=response[schema.KEY_FEED_STATE],

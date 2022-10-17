@@ -148,13 +148,15 @@ def test_prepare_request_body(mock_process_field_input: mock.MagicMock,
   mock_process_field_input.side_effect = ["dummy", "dummy", "dummy"]
   mock_input.side_effect = ["k:v", EOFError]
   result = client.prepare_request_body(get_detailed_schema.log_type_schema,
-                                       "API", "WORKDAY", {})
+                                       "API", "WORKDAY", {},
+                                       "Dummy feed display name")
   # pylint: disable=implicit-str-concat
   expected_output = (
       '{"details": {"httpSettings": {"oauthAccessToken": "dummy"}, '
       '"workdaySettings": {"hostname": "dummy", "tenantId": "dummy"}, '
       '"namespace": "sample_namespace", "labels": [{"key": "k", "value": '
-      '"v"}], "feedSourceType": "API", "logType": "WORKDAY"}}', {
+      '"v"}], "feedSourceType": "API", "logType": "WORKDAY"}, "displayName": '
+      '"Dummy feed display name"}', {
           "details.http_settings.oauth_access_token": "dummy",
           "details.workday_settings.hostname": "dummy",
           "details.workday_settings.tenant_id": "dummy",

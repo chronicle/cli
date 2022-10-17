@@ -27,7 +27,6 @@ from feeds.tests.fixtures import create_backup_file
 from feeds.tests.fixtures import TEMP_CREATE_BACKUP_FILE
 from mock_test_utility import MockResponse
 
-
 runner = CliRunner()
 
 
@@ -75,7 +74,7 @@ def test_create_success(mock_input: mock.MagicMock, mock_client: mock.MagicMock,
       get_feed_schema,
       MockResponse(status_code=200, text="""{"name": "feeds/123"}""")
   ]
-  mock_input.side_effect = [2, 1]
+  mock_input.side_effect = [2, 1, "Dummy feed display name"]
   mock_request_body.return_value = ({
       "details": {
           "key": "value",
@@ -147,7 +146,7 @@ def test_create_error_code(mock_input: mock.MagicMock,
       get_feed_schema,
       MockResponse(status_code=400, text="""{"error": {"message": "test"}}""")
   ]
-  mock_input.side_effect = [1, 1]
+  mock_input.side_effect = [1, 1, "Dummy feed display name"]
   mock_request_body.return_value = ({
       "details": {
           "key": "value",
@@ -187,6 +186,7 @@ def test_create_retry_true(mock_confirm: mock.MagicMock,
   """
   content = {
       "details.key": "value",
+      "displayName": "Dummy feed display name",
       "feed_state": "INACTIVE",
       "feedSourceType": "DUMMY",
       "display_source_type": "Dummy Source Type",
@@ -247,6 +247,7 @@ def test_create_retry_false_400(mock_input: mock.MagicMock,
   """
   content = {
       "details.key": "value",
+      "displayName": "Dummy feed display name",
       "feed_state": "INACTIVE",
       "feedSourceType": "TEST",
       "display_source_type": "Dummy Source Type",
@@ -260,8 +261,9 @@ def test_create_retry_false_400(mock_input: mock.MagicMock,
       MockResponse(status_code=400, text="""{"error": {"message": "test"}}""")
   ]
   mock_confirm.side_effect = [False]
-  mock_input.side_effect = [1, 1]
-  mock_user_log_source.return_value = Properties("DUMMY_LOGTYPE", "TEST")
+  mock_input.side_effect = [1, 1, "Dummy feed display name"]
+  mock_user_log_source.return_value = Properties("DUMMY_LOGTYPE", "TEST",
+                                                 "DUMMY_FEED_DISPLAY_NAME")
   mock_request_body.return_value = ({
       "details": {
           "key": "value",
@@ -304,6 +306,7 @@ def test_create_retry_false(mock_input: mock.MagicMock,
   """
   content = {
       "details.key": "value",
+      "displayName": "Dummy feed display name",
       "feed_state": "INACTIVE",
       "feedSourceType": "TEST",
       "display_source_type": "Dummy Source Type",
@@ -317,7 +320,7 @@ def test_create_retry_false(mock_input: mock.MagicMock,
       MockResponse(status_code=200, text="""{"name": "feeds/123"}""")
   ]
   mock_confirm.side_effect = [False]
-  mock_input.side_effect = [1, 1]
+  mock_input.side_effect = [1, 1, "Dummy feed display name"]
   mock_request_body.return_value = ({
       "details": {
           "key": "value",
@@ -356,6 +359,7 @@ def test_create_retry_true_400(mock_confirm: mock.MagicMock,
   """
   content = {
       "details.key": "value",
+      "displayName": "Feed Display Name",
       "feed_state": "INACTIVE",
       "feedSourceType": "TEST",
       "display_source_type": "Dummy Source Type",
@@ -411,7 +415,7 @@ def test_create_success_empty_backup(mock_input: mock.MagicMock,
       get_feed_schema,
       MockResponse(status_code=200, text="""{"name": "feeds/123"}""")
   ]
-  mock_input.side_effect = [1, 1]
+  mock_input.side_effect = [1, 1, "Dummy feed display name"]
   mock_request_body.return_value = ({
       "details": {
           "key": "value",

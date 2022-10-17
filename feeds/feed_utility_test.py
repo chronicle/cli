@@ -79,7 +79,19 @@ def test_get_labels() -> None:
 
 
 def test_namespace() -> None:
-  """"Test printing of namespace field."""
+  """Test printing of namespace field."""
   expected_output = ("  Namespace: sample_namespace\n")
   assert feed_utility.get_namespace({"namespace": "sample_namespace"
                                     }) == expected_output
+
+
+def test_get_feed_display_name() -> None:
+  """Test feed display name if exist in feed dictionary."""
+  expected_output = "\n  Display Name: Dummy feed display name"
+  assert feed_utility.get_feed_display_name(
+      {"displayName": "Dummy feed display name"}) == expected_output
+
+
+def test_get_feed_display_name_none() -> None:
+  """Test feed display name if not exist in feed dictonary."""
+  assert not feed_utility.get_feed_display_name({})
