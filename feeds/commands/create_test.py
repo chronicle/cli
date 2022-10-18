@@ -18,6 +18,7 @@ import os
 from typing import Tuple
 from unittest import mock
 
+from click._compat import WIN
 from click.testing import CliRunner
 
 from feeds.commands.create import create
@@ -26,6 +27,7 @@ from feeds.tests.fixtures import *  # pylint: disable=wildcard-import
 from feeds.tests.fixtures import create_backup_file
 from feeds.tests.fixtures import TEMP_CREATE_BACKUP_FILE
 from mock_test_utility import MockResponse
+
 
 runner = CliRunner()
 
@@ -83,7 +85,38 @@ def test_create_success(mock_input: mock.MagicMock, mock_client: mock.MagicMock,
       }
   }, {})
   result = runner.invoke(create, ["--credential_file", ""])
-  assert """========== Set Properties ==========
+  if WIN:
+    assert """========== Set Properties ==========
+====================================
+
+List of Source types:
+1. Dummy Source Type
+2. Dummy Source Type 2
+3. Dummy Source Type 3
+
+You have selected Dummy Source Type 2
+List of Log types:
+
+(i) How to select log type?
+  - Press ENTER key (scrolls one line at a time) or SPACEBAR key (display next screen).
+  - Note down the choice number for the log type that you want to select.
+  - Press 'q' to quit and enter that choice number.
+=============================================================================
+1. Dummy LogType2 (DUMMY_LOGTYPE2)
+
+
+You have selected Dummy LogType2
+
+
+======================================
+=========== Input Parameters =========
+======================================
+(*) - Required fields.
+Password/secret inputs are hidden.
+
+Feed created successfully with Feed ID: 123""" in result.output
+  else:
+    assert """========== Set Properties ==========
 ====================================
 
 List of Source types:

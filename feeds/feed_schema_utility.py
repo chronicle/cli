@@ -333,7 +333,7 @@ def process_field_input(field: Dict[str, Any],
   ]:
     click.echo(f"{prompt_text}\n"
                "Enter/Paste your content. On a new line, press Ctrl-D (Linux)"
-               " / Ctrl-Z (Windows) to save it:")
+               " / [Ctrl-Z + Enter] (Windows) to save it:")
 
     contents = []
     while True:

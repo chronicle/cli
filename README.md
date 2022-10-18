@@ -45,6 +45,9 @@ sample's command-line:
 
 ```$ chronicle_cli --help```
 
+Note: On MacOS, you might have to run below command first :\
+```$ alias chronicle_cli="python3 main.py"```
+
 ## Unit test case execution
 
 Execute the following command from root directory:\
