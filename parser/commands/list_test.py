@@ -17,6 +17,7 @@
 import os
 from unittest import mock
 
+from click._compat import WIN
 from click.testing import CliRunner
 
 from common import file_utility
@@ -209,7 +210,15 @@ def test_list_command_export(mock_url: mock.MagicMock,
   assert f"""Parser details exported successfully to:\
  {os.path.join(os.getcwd(), TEMP_TEST_TXT_FILE)}""" in result.output
   output = file_utility.read_file(TEMP_TEST_TXT_FILE)
-  assert output.decode("utf-8") == """\
+  output = output.decode("utf-8")
+
+  # "\n" is the Unix/linux for new line whereas "\r\n" is the default Windows
+  # style for line separator. Hence, below condition is to handle the tests for
+  # Windows OS platform.
+  if WIN:
+    output = "\n".join(output.splitlines()) + "\n"
+
+  assert output == """\
 
 Parser Details:
   Config ID: test_config_id
@@ -248,7 +257,15 @@ def test_list_command_export_json(mock_url: mock.MagicMock,
   assert f"""Parser details exported successfully to:\
  {os.path.join(os.getcwd(), TEMP_TEST_JSON_FILE)}""" in result.output
   test_file_content = file_utility.read_file(TEMP_TEST_JSON_FILE)
-  assert test_file_content.decode("utf-8") == """{
+  test_file_content = test_file_content.decode("utf-8")
+
+  # "\n" is the Unix/linux for new line whereas "\r\n" is the default Windows
+  # style for line separator. Hence, below condition is to handle the tests for
+  # Windows OS platform.
+  if WIN:
+    test_file_content = "\n".join(test_file_content.splitlines())
+
+  assert test_file_content == """{
   "cbnParsers": [
     {
       "configId": "test_config_id",
