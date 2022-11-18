@@ -94,8 +94,8 @@ def list_command(credential_file: AnyStr, verbose: bool, region: str, env: str,
           sha256=f"{parser[parser_constants.KEY_SHA256]}",
           author=f'{parser.get(parser_constants.KEY_AUTHOR, "-")}',
           submit_time=f"{parser[parser_constants.KEY_SUBMIT_TIME]}",
-          last_live_time=f"{parser[parser_constants.KEY_LAST_LIVE_TIME]}",
-          state_last_changed_time=f"{parser[parser_constants.KEY_STATE_LAST_CHANGED_TIME]}"
+          last_live_time=f'{parser.get(parser_constants.KEY_LAST_LIVE_TIME, "-")}',
+          state_last_changed_time=f'{parser.get(parser_constants.KEY_STATE_LAST_CHANGED_TIME, "-")}',
       )
     except KeyError as e:
       parser_details += f"\nKey {str(e)} not found in the response."
