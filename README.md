@@ -4,7 +4,7 @@ Command line tool to interact with Chronicle's APIs.
 
 Chronicle CLI allows customers to manage various operations that can be
 performed on Chronicle. This script provides a command line tool to interact 
-with Feed and Parser APIs. It will gradually expand to cover other APIs.
+with Feed, Parser and BigQuery APIs. It will gradually expand to cover other APIs.
 
 ## Setup
 

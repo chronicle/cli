@@ -31,6 +31,7 @@ Options:
   -h, --help  Show this message and exit.
 
 Commands:
-  feeds   Feed Management Workflows
-  parser  Manage config based parsers
+  bigquery  Manage Big Query export
+  feeds     Feed Management Workflows
+  parser    Manage config based parsers
 """ == result.output
