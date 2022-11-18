@@ -12,26 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Unit tests for main.py."""
-from click.testing import CliRunner
-from main import cli
+"""Templates for printing output to console."""
 
-runner = CliRunner()
+import string
 
+errors_response_template = string.Template("""\
 
-def test_main() -> None:
-  """Test case for main."""
-  result = runner.invoke(cli)
-  assert """Usage: cli [OPTIONS] COMMAND [ARGS]...
+Error while providing access:
+  Response code: ${error_code}
+  Error: ${error_msg}""")
 
-  Chronicle CLI is a CLI tool for managing Chronicle user workflows for e.g.
-  Feed Management workflows.
+success_response_template = string.Template("""\
 
-Options:
-  -h, --help  Show this message and exit.
-
-Commands:
-  bigquery  Manage Big Query export
-  feeds     Feed Management Workflows
-  parser    Manage config based parsers
-""" == result.output
+Access provided to email: ${email}""")

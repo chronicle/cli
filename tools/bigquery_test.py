@@ -12,26 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Unit tests for main.py."""
+"""Unit tests for bigquery.py."""
 from click.testing import CliRunner
-from main import cli
+from tools.bigquery import bigquery
 
 runner = CliRunner()
 
 
-def test_main() -> None:
-  """Test case for main."""
-  result = runner.invoke(cli)
-  assert """Usage: cli [OPTIONS] COMMAND [ARGS]...
-
-  Chronicle CLI is a CLI tool for managing Chronicle user workflows for e.g.
-  Feed Management workflows.
-
-Options:
-  -h, --help  Show this message and exit.
-
-Commands:
-  bigquery  Manage Big Query export
-  feeds     Feed Management Workflows
-  parser    Manage config based parsers
-""" == result.output
+def test_bigquery() -> None:
+  """Test case for bigquery."""
+  result = runner.invoke(bigquery)
+  expected_output = """Commands:
+  provide_access  Give permission to an email to access Big Query."""
+  assert expected_output in result.output

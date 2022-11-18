@@ -12,26 +12,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Unit tests for main.py."""
-from click.testing import CliRunner
-from main import cli
-
-runner = CliRunner()
-
-
-def test_main() -> None:
-  """Test case for main."""
-  result = runner.invoke(cli)
-  assert """Usage: cli [OPTIONS] COMMAND [ARGS]...
-
-  Chronicle CLI is a CLI tool for managing Chronicle user workflows for e.g.
-  Feed Management workflows.
-
-Options:
-  -h, --help  Show this message and exit.
-
-Commands:
-  bigquery  Manage Big Query export
-  feeds     Feed Management Workflows
-  parser    Manage config based parsers
-""" == result.output

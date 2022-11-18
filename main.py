@@ -23,6 +23,7 @@ from click._compat import WIN
 from common import chronicle_auth
 from feeds.feeds import feeds
 from parser.parser import parser
+from tools.bigquery import bigquery
 
 
 @click.group(
@@ -45,6 +46,7 @@ def cli() -> None:
 
 cli.add_command(feeds)
 cli.add_command(parser)
+cli.add_command(bigquery)
 
 if __name__ == "__main__":
   cli()
