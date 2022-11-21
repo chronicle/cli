@@ -22,6 +22,7 @@ from click._compat import WIN
 
 from common import chronicle_auth
 from feeds.feeds import feeds
+from forwarders.forwarders import forwarders
 from parser.parser import parser
 from tools.bigquery import bigquery
 
@@ -45,6 +46,7 @@ def cli() -> None:
 
 
 cli.add_command(feeds)
+cli.add_command(forwarders)
 cli.add_command(parser)
 cli.add_command(bigquery)
 
