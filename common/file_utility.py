@@ -13,10 +13,10 @@
 # limitations under the License.
 #
 """Utility for file related operations."""
-
+import csv
 import json
 import os
-from typing import Any, AnyStr, Dict
+from typing import Any, AnyStr, Dict, List
 
 FILE_FORMAT_CSV = "CSV"
 FILE_FORMAT_JSON = "JSON"
@@ -54,6 +54,21 @@ def export_json(file_path: AnyStr, json_data: Dict[str, Any]) -> None:
   """
   with open(file_path, "w") as file:
     file.write(json.dumps(json_data, indent=2))
+
+
+def export_csv(export_path: AnyStr, column_headers: List[str],
+               rows: List[List[str]]) -> None:
+  """Writes list of rows into csv file.
+
+  Args:
+    export_path (AnyStr): Path of file to export output of list command.
+    column_headers (List[str]): List of all column name.
+    rows (List[List[str]]): Array with row values.
+  """
+  with open(export_path, "w") as file:
+    file_writer = csv.writer(file, delimiter=",")
+    file_writer.writerow(column_headers)
+    file_writer.writerows(rows)
 
 
 def export_txt(file_path: AnyStr, data: str) -> None:

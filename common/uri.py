@@ -16,10 +16,10 @@
 
 REGION_EUROPE = "europe"
 REGION_ASIA_SOUTHEAST1 = "asia-southeast1"
-BASE_URL = "https://backstory.googleapis.com/v1"
-BASE_URL_EUROPE = "https://europe-backstory.googleapis.com/v1"
-BASE_URL_ASIA_SOUTHEAST1 = "https://asia-southeast1-backstory.googleapis.com/v1"
-CHRONICLE_TEST_API_V1_URL = "https://test-backstory.sandbox.googleapis.com/v1"
+BASE_URL = "https://backstory.googleapis.com"
+BASE_URL_EUROPE = "https://europe-backstory.googleapis.com"
+BASE_URL_ASIA_SOUTHEAST1 = "https://asia-southeast1-backstory.googleapis.com"
+CHRONICLE_TEST_API_URL = "https://test-backstory.sandbox.googleapis.com"
 
 
 def get_base_url(region: str, custom_url: str, env: str = "prod") -> str:
@@ -41,5 +41,5 @@ def get_base_url(region: str, custom_url: str, env: str = "prod") -> str:
   if region == REGION_ASIA_SOUTHEAST1:
     return BASE_URL_ASIA_SOUTHEAST1
   if env == "test":
-    return CHRONICLE_TEST_API_V1_URL
+    return CHRONICLE_TEST_API_URL
   return BASE_URL

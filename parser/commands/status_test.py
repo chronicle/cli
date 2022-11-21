@@ -61,7 +61,7 @@ Parser Details:
 """ in result.output
   mock_client.return_value.request.assert_called_once_with(
       "GET",
-      f"{uri.BASE_URL}/tools/cbnParsers/test_config_id",
+      f"{uri.BASE_URL}/v1/tools/cbnParsers/test_config_id",
       timeout=url.HTTP_REQUEST_TIMEOUT_IN_SECS)
 
 

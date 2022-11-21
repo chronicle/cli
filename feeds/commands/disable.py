@@ -19,6 +19,7 @@ from typing import AnyStr
 import click
 
 from common import api_utility
+from common import commands_utility
 from common import exception_handler
 from common import options
 from common.constants import key_constants
@@ -51,7 +52,7 @@ def disable(credential_file: AnyStr, verbose: bool, region: str,
     KeyError: Required key is not present in dictionary.
     TypeError: If response data is not JSON.
   """
-  url = feed_utility.lower_or_none(url)
+  url = commands_utility.lower_or_none(url)
   feed_schema = feed_schema_utility.FeedSchema(credential_file, region, url)
   feed_id = click.prompt("Enter Feed ID", default="", show_default=False)
   if not feed_id:

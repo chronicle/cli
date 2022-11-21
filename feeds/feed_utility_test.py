@@ -59,16 +59,6 @@ def test_snake_to_camel() -> None:
   assert feed_utility.snake_to_camel("feed_schema") == "feedSchema"
 
 
-def test_lower_or_none() -> None:
-  """Test conversion of string to lowercase string."""
-  assert feed_utility.lower_or_none("TEST") == "test"
-
-
-def test_lower_or_none_none() -> None:
-  """Test return of string as None if string is None."""
-  assert feed_utility.lower_or_none(None) is None
-
-
 def test_get_labels() -> None:
   """Test printing of key-value pair of labels field."""
   expected_output = ("  Labels:\n    k: v\n")

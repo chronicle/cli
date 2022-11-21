@@ -15,7 +15,6 @@
 """Utility functions."""
 
 import collections
-import csv
 import json
 import re
 from typing import Any, AnyStr, Dict, List
@@ -25,10 +24,7 @@ from common.constants import key_constants
 from feeds import feed_templates
 from feeds.constants import schema
 
-FEED_COLUMN_HEADER = [
-    "ID", "Display Name", "Source type", "Log type", "State", "Feed Settings",
-    "Namespace", "Labels"
-]
+API_VERSION = "v1"
 
 
 def get_namespace(feed_response: Dict[str, Any]) -> str:
@@ -171,20 +167,7 @@ def get_feed_url(region: str, custom_url: str) -> str:
   Returns:
     str: Feed URL.
   """
-  return uri.get_base_url(region, custom_url) + "/feeds"
-
-
-def export_csv(export_path: AnyStr, feed_rows: List[List[str]]) -> None:
-  """Write feed list data into csv file.
-
-  Args:
-    export_path (AnyStr): Path of file to export output of list command.
-    feed_rows (List[List[str]]): Array of all listed feed details.
-  """
-  with open(export_path, "w") as file:
-    file_writer = csv.writer(file, delimiter=",")
-    file_writer.writerow(FEED_COLUMN_HEADER)
-    file_writer.writerows(feed_rows)
+  return uri.get_base_url(region, custom_url) + f"/{API_VERSION}/feeds"
 
 
 def export_txt(export_path: AnyStr, feed_rows: List[List[str]]) -> None:
@@ -232,18 +215,6 @@ def write_backup(filename: str, flattened_response: Dict[str, Any],
     flattened_response[schema.KEY_DISPLAY_LOG_TYPE] = display_log_type
     flattened_response[schema.KEY_DISPLAY_NAME] = feed_display_name
     file.write(json.dumps(flattened_response))
-
-
-def lower_or_none(input_str: AnyStr) -> Any:
-  """Convert input string to lowercase if not None.
-
-  Args:
-    input_str (AnyStr): Input string.
-
-  Returns:
-    str: String in lower case if not None.
-  """
-  return input_str.lower() if input_str else None
 
 
 def get_feed_display_name(feed: Dict[str, str]) -> str:

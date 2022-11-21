@@ -49,3 +49,7 @@ KEY_CONTENT_TYPE = "content-type"
 KEY_DISPLAY_LOG_TYPE = "display_log_type"
 KEY_DETAILS_NAMESPACE = "details.namespace"
 KEY_DETAILS_LABELS = "details.labels"
+FEED_COLUMN_HEADER = [
+    "ID", "Display Name", "Source type", "Log type", "State", "Feed Settings",
+    "Namespace", "Labels"
+]

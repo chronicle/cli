@@ -23,6 +23,7 @@ import click
 
 from common import api_utility
 from common import chronicle_auth
+from common import commands_utility
 from common import exception_handler
 from common import file_utility
 from common import options
@@ -60,7 +61,7 @@ def update(credential_file: str, verbose: bool, region: str, url: str) -> None:
     KeyError: Required key is not present in dictionary.
     TypeError: If response data is not JSON.
   """
-  url = feed_utility.lower_or_none(url)
+  url = commands_utility.lower_or_none(url)
   feed_schema = feed_schema_utility.FeedSchema(credential_file, region, url)
   retry = False
 
