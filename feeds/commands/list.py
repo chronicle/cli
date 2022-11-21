@@ -20,6 +20,7 @@ from typing import AnyStr
 import click
 
 from common import api_utility
+from common import commands_utility
 from common import exception_handler
 from common import file_utility
 from common import options
@@ -63,7 +64,7 @@ def list_command(credential_file: AnyStr, verbose: bool, file_format: AnyStr,
     KeyError: Required key is not present in dictionary.
     TypeError: If response data is not JSON.
   """
-  url = feed_utility.lower_or_none(url)
+  url = commands_utility.lower_or_none(url)
   list_feed_errors = []
   feed_schema = feed_schema_utility.FeedSchema(credential_file, region, url)
   full_url = feed_utility.get_feed_url(region, url)
@@ -153,7 +154,7 @@ def list_command(credential_file: AnyStr, verbose: bool, file_format: AnyStr,
   if export:
     export_path = os.path.abspath(export) + f".{file_format.lower()}"
     if file_format == file_utility.FILE_FORMAT_CSV:
-      feed_utility.export_csv(export_path, feed_rows)
+      file_utility.export_csv(export_path, schema.FEED_COLUMN_HEADER, feed_rows)
     elif file_format == file_utility.FILE_FORMAT_JSON:
       file_utility.export_json(export_path, feeds)
     else:

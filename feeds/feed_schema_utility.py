@@ -30,6 +30,8 @@ from common.constants import status
 from feeds import feed_utility
 from feeds.constants import schema
 
+API_VERSION = "v1"
+
 
 @dataclasses.dataclass
 class DetailedSchema:
@@ -183,7 +185,6 @@ class FeedSchema:
       selected_log_type (str): Log type.
       flattened_response (Dict): Flattened response of existing feed.
       feed_display_name (str): Feed display name.
-
 
     Returns:
       AnyStr: Request body.
@@ -394,4 +395,4 @@ def get_feed_schema_url(region: str, custom_url: str) -> str:
   Returns:
     str: Feed schema URL.
   """
-  return uri.get_base_url(region, custom_url) + "/feedSchema"
+  return uri.get_base_url(region, custom_url) + f"/{API_VERSION}/feedSchema"

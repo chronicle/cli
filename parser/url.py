@@ -19,7 +19,7 @@ import urllib.parse
 
 from common import uri
 
-
+API_VERSION = 'v1'
 HTTP_REQUEST_TIMEOUT_IN_SECS = 1200
 HTTP_REQUEST_HEADERS = {'Content-type': 'application/x-www-form-urlencoded'}
 PATH_DICT = {
@@ -40,12 +40,13 @@ def get_url(region: str, command: str, environment: str,
     region (str): Region (US, EUROPE, ASIA_SOUTHEAST1)
     command (str): Command name
     environment (str): Environment (prod, test)
-    **query_params(Dict): Query parameters
+    **query_params(Dict): Query
+      parameters
 
   Returns:
     str: URL to interact with CBN APIs.
   """
-  url = f'{uri.get_base_url(region, "", environment)}/{PATH_DICT[command]}'
+  url = f'{uri.get_base_url(region, "", environment)}/{API_VERSION}/{PATH_DICT[command]}'
   if query_params:
     url += f'?{urllib.parse.urlencode(query_params)}'
   return url
