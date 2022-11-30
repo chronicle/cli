@@ -14,7 +14,7 @@
 #
 """Unit tests for forwarder_utility.py."""
 
-from typing import Any, Dict
+from typing import Any, Dict, List
 from forwarders import forwarder_utility
 
 from forwarders.tests.fixtures import *  # pylint: disable=wildcard-import
@@ -24,6 +24,34 @@ def test_get_forwarder_url() -> None:
   """Test forwarder url."""
   assert forwarder_utility.get_forwarder_url(
       'US', '') == 'https://backstory.googleapis.com/v2/forwarders'
+
+
+def test_get_labels_str() -> None:
+  """Test printing of key-value pair of labels field."""
+  expected_output = ('k: v\n')
+  assert forwarder_utility.get_labels_str(
+      {'labels': [{
+          'key': 'k',
+          'value': 'v'
+      }]}) == expected_output
+
+
+def test_get_regex_filters_str(regex_filters: List[Dict[str, Any]]) -> None:
+  """Test converting of regex filter from list of dict to str format.
+
+  Args:
+    regex_filters (List[Dict[str, Any]]): Test data.
+  """
+  assert forwarder_utility.get_regex_filters_str(
+      regex_filters) in """Description: Describes what is being filtered and why
+Regexp: The regular expression used to match against each incoming line
+Behavior: ALLOW
+
+Description: Describes what is being filtered and why
+Regexp: The regular expression used to match against each incoming line
+Behavior: BLOCK
+
+"""
 
 
 def test_change_dict_keys_order(forwarder_response: Dict[str, Any]) -> None:

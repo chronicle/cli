@@ -20,6 +20,7 @@ from typing import Any, AnyStr, Dict, List
 
 FILE_FORMAT_CSV = "CSV"
 FILE_FORMAT_JSON = "JSON"
+FILE_FORMAT_TXT = "TXT"
 
 
 def read_file(file_path: str) -> bytes:
