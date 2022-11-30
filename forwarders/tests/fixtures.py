@@ -15,13 +15,16 @@
 """Define fixtures."""
 
 import os
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import pytest
 
 from mock_test_utility import MockResponse
 
 TEST_DATA_DIR = os.path.dirname(__file__)
+TEMP_EXPORT_TXT_FILE = os.path.join(TEST_DATA_DIR, "dummy.txt")
+TEMP_EXPORT_CSV_FILE = os.path.join(TEST_DATA_DIR, "dummy.csv")
+TEMP_EXPORT_JSON_FILE = os.path.join(TEST_DATA_DIR, "dummy_export.json")
 TEMP_SERVICE_ACCOUNT_FILE = os.path.join(TEST_DATA_DIR, "service_account.json")
 # Permissions are required to be set for test_data directory recursively,
 # otherwise the test cases are failed.
@@ -92,6 +95,31 @@ def list_error_collectors_data() -> MockResponse:
 
 
 @pytest.fixture()
+def regex_filters() -> List[Dict[str, Any]]:
+  """Test data contains list of regex filters.
+
+  Returns:
+    List of regex filters.
+  """
+  filters = [{
+      "description":
+          "Describes what is being filtered and why",
+      "regexp":
+          "The regular expression used to match against each incoming line",
+      "behavior":
+          "ALLOW"
+  }, {
+      "description":
+          "Describes what is being filtered and why",
+      "regexp":
+          "The regular expression used to match against each incoming line",
+      "behavior":
+          "BLOCK"
+  }]
+  return filters
+
+
+@pytest.fixture()
 def forwarder_response() -> Dict[str, Any]:
   """Test data of sample forwarder response body."""
   response = {
@@ -145,3 +173,21 @@ def forwarder_response() -> Dict[str, Any]:
       }
   }
   return response
+
+
+@pytest.fixture(scope="function", autouse=True)
+def cleanup(request: Any):
+  """Cleanup a testing file once we are finished."""
+
+  def remove_test_files():
+    files = [
+        TEMP_EXPORT_CSV_FILE, TEMP_EXPORT_TXT_FILE, TEMP_EXPORT_JSON_FILE,
+        TEMP_SERVICE_ACCOUNT_FILE
+    ]
+    for file_path in files:
+      try:
+        os.remove(file_path)
+      except FileNotFoundError:
+        pass
+
+  request.addfinalizer(remove_test_files)

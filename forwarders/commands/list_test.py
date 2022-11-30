@@ -13,6 +13,7 @@
 # limitations under the License.
 #
 """Unit tests for list.py."""
+import os
 from typing import Any, Dict
 from unittest import mock
 
@@ -20,6 +21,9 @@ from click.testing import CliRunner
 
 from forwarders.commands.list import list_command
 from forwarders.tests.fixtures import *  # pylint: disable=wildcard-import
+from forwarders.tests.fixtures import TEMP_EXPORT_CSV_FILE
+from forwarders.tests.fixtures import TEMP_EXPORT_JSON_FILE
+from forwarders.tests.fixtures import TEMP_EXPORT_TXT_FILE
 from mock_test_utility import MockResponse
 
 runner = CliRunner()
@@ -205,6 +209,73 @@ def test_credential_file_invalid(mock_client: mock.MagicMock) -> None:
   result = runner.invoke(list_command,
                          ["--credential_file", "dummy.json", "--region", "us"])
   assert expected_message in result.output
+
+
+@mock.patch(
+    "forwarders.commands.list.chronicle_auth.initialize_http_session"
+)
+def test_list_export_txt(mock_client: mock.MagicMock,
+                         list_forwarder_data: Dict[str, str],
+                         list_collectors_data: Dict[str, Any]) -> None:
+  """Test case to check forwarder list details exported in txt format.
+
+  Args:
+    mock_client (mock.MagicMock): Mock object
+    list_forwarder_data (Tuple): Test data to fetch forwarder.
+    list_collectors_data (Tuple): Test data to fetch list of collectors.
+  """
+  mock_client.return_value = mock.Mock()
+  mock_client.return_value.request.side_effect = [
+      list_forwarder_data, list_collectors_data
+  ]
+
+  result = runner.invoke(
+      list_command,
+      ["--export", TEMP_EXPORT_TXT_FILE[:-4], "--file-format", "txt"])
+  assert "Forwarders list details exported successfully" in result.output
+  assert os.path.exists(TEMP_EXPORT_TXT_FILE)
+
+
+@mock.patch(
+    "forwarders.commands.list.chronicle_auth.initialize_http_session"
+)
+def test_list_export_csv(mock_client: mock.MagicMock,
+                         list_forwarder_data: Dict[str, str],
+                         list_collectors_data: Dict[str, Any]) -> None:
+  """Test case to check feed list details exported in csv format.
+
+  Args:
+    mock_client (mock.MagicMock): Mock object
+    list_forwarder_data (Tuple): Test data to fetch forwarder.
+    list_collectors_data (Tuple): Test data to fetch list of collectors.
+  """
+  mock_client.return_value = mock.Mock()
+  mock_client.return_value.request.side_effect = [
+      list_forwarder_data, list_collectors_data
+  ]
+  result = runner.invoke(
+      list_command,
+      ["--export", TEMP_EXPORT_CSV_FILE[:-4], "--file-format", "csv"])
+  assert "Forwarders list details exported successfully" in result.output
+  assert os.path.exists(f"{TEMP_EXPORT_CSV_FILE[:-4]}_forwarders.csv")
+  assert os.path.exists(f"{TEMP_EXPORT_CSV_FILE[:-4]}_collectors.csv")
+
+
+@mock.patch(
+    "forwarders.commands.list.chronicle_auth.initialize_http_session"
+)
+def test_list_export_json(mock_client: mock.MagicMock,
+                          list_forwarder_data: Dict[str, str],
+                          list_collectors_data: Dict[str, Any]) -> None:
+  mock_client.return_value = mock.Mock()
+  mock_client.return_value.request.side_effect = [
+      list_forwarder_data, list_collectors_data
+  ]
+  result = runner.invoke(
+      list_command,
+      ["--export", TEMP_EXPORT_JSON_FILE[:-5], "--file-format", "JSON"])
+  assert "Forwarders list details exported successfully" in result.output
+  assert os.path.exists(TEMP_EXPORT_JSON_FILE)
 
 
 @mock.patch(
