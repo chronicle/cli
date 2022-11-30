@@ -49,8 +49,25 @@ def list_forwarders_data() -> MockResponse:
 
 
 @pytest.fixture()
+def list_collectors_data() -> MockResponse:
+  """Test data to fetch list of collectors."""
+  data = MockResponse(
+      status_code=200,
+      text="""{"collectors":[{"name":"forwarders/asdf1234-1234-abcd-efgh-12345678abcd/collectors/asdf1234-1234-abcd-efgh","displayName":"collector pqr","config":{"logType":"Type of logs collected.","metadata":{"assetNamespace":"test_namespace","labels":[{"key":"my_key_1","value":"my_value_1"},{"key":"my_key_2","value":"my_value_2"}]},"regexFilter":[{"description":"Describes what is being filtered and why","regexp":"The regular expression used to match against each incoming line","behavior":"ALLOW"},{"description":"Describes what is being filtered and why","regexp":"The regular expression used to match against each incoming line","behavior":"BLOCK"}],"diskBuffer":{"state":"ACTIVE","directoryPath":"Directory path for files written.","maxFileBufferBytes":3999},"maxSecondsPerBatch":10,"maxBytesPerBatch":1048576,"fileSettings":{"filePath":"Path of file to monitor."}},"state":"ACTIVE"}]}"""
+  )
+  return data
+
+
+@pytest.fixture()
 def list_empty_forwarders_data() -> MockResponse:
   """Test data to fetch list of forwarders with empty response."""
+  data = MockResponse(status_code=200, text="""{}""")
+  return data
+
+
+@pytest.fixture()
+def list_empty_collectors_data() -> MockResponse:
+  """Test data to fetch list of collectors with empty response."""
   data = MockResponse(status_code=200, text="""{}""")
   return data
 
@@ -61,6 +78,16 @@ def list_error_forwarders_data() -> MockResponse:
   data = MockResponse(
       status_code=400,
       text="""{"error": {"message": "Failed to list forwarders."}}""")
+  return data
+
+
+@pytest.fixture()
+def list_error_collectors_data() -> MockResponse:
+  """Test data to fetch list of collectors with error response."""
+  data = MockResponse(
+      status_code=400,
+      text="""{"error": {"message": "generic::invalid_argument: parent (forwarders/abx-22) does not contain a valid UUID: invalid argument"}}"""
+  )
   return data
 
 

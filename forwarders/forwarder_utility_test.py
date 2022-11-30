@@ -84,3 +84,11 @@ def test_change_dict_keys_order(forwarder_response: Dict[str, Any]) -> None:
           }
       }
   }
+
+
+def test_get_source_id() -> None:
+  """Test to extract source id."""
+  forwarder = {'name': 'forwarders/asdf1234-1234-abcd-efgh-12345678abcd'}
+  assert forwarder_utility.get_resource_id(
+      forwarder) == 'asdf1234-1234-abcd-efgh-12345678abcd'
+

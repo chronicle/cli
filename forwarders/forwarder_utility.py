@@ -51,3 +51,15 @@ def change_dict_keys_order(input_dict: Dict[AnyStr, Any]) -> Dict[AnyStr, Any]:
       schema.KEY_STATE: input_dict[schema.KEY_STATE],
       schema.KEY_CONFIG: input_dict[schema.KEY_CONFIG]
   })
+
+
+def get_resource_id(resource: Dict[str, Any]) -> str:
+  """Extracts resource id from name field.
+
+  Args:
+    resource (Dict[str, Any]): Resource could be forwarder or collector.
+
+  Returns:
+    str: Resource id.
+  """
+  return resource.get(schema.KEY_NAME, "").split("/")[-1]
