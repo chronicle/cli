@@ -19,6 +19,7 @@ import os
 import click
 
 from common import chronicle_auth
+from forwarders.collectors.collectors import collectors
 from forwarders.commands import create
 from forwarders.commands import delete
 from forwarders.commands import get
@@ -35,6 +36,7 @@ def forwarders() -> None:
     os.mkdir(forwarder_dir)
 
 
+forwarders.add_command(collectors)
 forwarders.add_command(get.get)
 forwarders.add_command(list.list_command)
 forwarders.add_command(create.create)
