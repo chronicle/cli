@@ -12,23 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Unit tests for forwarders.py."""
+"""Unit tests for collectors.py."""
 
 from click.testing import CliRunner
 
-from forwarders.forwarders import forwarders
+from forwarders.collectors.collectors import collectors
 
 runner = CliRunner()
 
 
-def test_forwarders() -> None:
-  """Test case for forwarders."""
-  result = runner.invoke(forwarders)
+def test_collectors() -> None:
+  """Test case for collectors."""
+  result = runner.invoke(collectors)
   expected_output = """Commands:
-  collectors  Collector Management Workflows
-  create      Create a Forwarder
-  delete      Delete a forwarder using Forwarder ID
-  get         Get forwarder details using Forwarder ID
-  list        List all forwarders
-  update      Update a forwarder using Forwarder ID."""
-  assert expected_output in result.output
+  create  Create a collector
+  delete  Delete a collector using collector ID.
+  get     Get a collector using collector ID.
+  list    List all collectors.
+  update  Update a collector using collector ID."""
+  assert  expected_output in result.output

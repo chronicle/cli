@@ -22,7 +22,6 @@ runner = CliRunner()
 def test_main() -> None:
   """Test case for main."""
   result = runner.invoke(cli)
-  print(result.output)
   assert """Usage: cli [OPTIONS] COMMAND [ARGS]...
 
   Chronicle CLI is a CLI tool for managing Chronicle user workflows for e.g.
