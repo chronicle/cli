@@ -154,7 +154,7 @@ def export_data(export: str, file_format: str, json_response: Dict[str, Any],
     export (str): Path of file to export output of list command.
     file_format (str): Format of the content to be exported. Supported formats:
       CSV, JSON, TXT
-    json_response (Dict[str, Any]): Json response including all collectors and
+    json_response (Dict[str, Any]): JSON response including all collectors.
     collector_rows (List[List[str]]): List of rows export into csv.
   """
   export_path = os.path.abspath(export) + f".{file_format.lower()}"
