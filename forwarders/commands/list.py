@@ -28,8 +28,8 @@ from common import file_utility
 from common import options
 from common.constants import key_constants
 from common.constants import status
-from forwarders import collector_utility
 from forwarders import forwarder_utility
+from forwarders.collectors import collector_utility
 from forwarders.constants import schema
 
 
@@ -165,19 +165,30 @@ def list_forwarders_and_associated_collectors(export: AnyStr, region: str,
         # "Collector [<collector_uuid>]" for easy readability in yaml output.
         # Example-{"collectors":{"Collector [<collector_uuid>]":{"name":""}}}
         collector_id = forwarder_utility.get_resource_id(collector)
-        collector.update({schema.KEY_NAME: collector_id})
+        collector = forwarder_utility.change_dict_keys_order(collector)
 
-        collectors[schema.KEY_COLLECTORS][
-            f"Collector [{collector_id}]"] = forwarder_utility.change_dict_keys_order(
-                collector)
+        # Remove ID from the dictionary to avoid displaying
+        # it multiple times on the console.
+        collector.pop(schema.KEY_ID, None)
+
+        collectors[
+            schema.KEY_COLLECTORS][f"Collector [{collector_id}]"] = collector
+
         if export:
           collector_rows.append(get_collector_csv_rows(forwarder, collector))
 
+    forwarder_details = commands_utility.convert_dict_keys_to_human_readable(
+        forwarder_utility.change_dict_keys_order(forwarder))
+
+    display_output = {}
+    # Capitalize keyword ID to display output on console.
+    if forwarder_details.get(schema.KEY_ID.capitalize()):
+      display_output[schema.KEY_ID] = forwarder_details.pop(
+          schema.KEY_ID.capitalize())
+    display_output.update(forwarder_details)
+
     click.echo("\nForwarder Details:\n")
-    click.echo(
-        commands_utility.convert_dict_to_yaml(
-            commands_utility.convert_dict_keys_to_human_readable(
-                forwarder_utility.change_dict_keys_order(forwarder))))
+    click.echo(commands_utility.convert_dict_to_yaml(display_output))
     click.echo(
         commands_utility.convert_dict_to_yaml(
             commands_utility.convert_dict_keys_to_human_readable(collectors)))

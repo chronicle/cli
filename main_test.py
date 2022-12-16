@@ -34,5 +34,5 @@ Commands:
   bigquery    Manage Big Query export
   feeds       Feed Management Workflows
   forwarders  Forwarder Management Workflows
-  parser      Manage config based parsers
+  parsers     Manage config based parsers
 """ == result.output

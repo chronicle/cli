@@ -190,7 +190,7 @@ def fetch_feed_request_data(feed_schema: Any, region: str, url: str,
                f"{error_msg}")
     return RequestData(None, None, None, None, error_msg)
 
-  flattened_response = feed_utility.flatten_dict(response)
+  flattened_response = commands_utility.flatten_dict(response)
   selected_source_type = response[schema.KEY_DETAILS][
       schema.KEY_FEED_SOURCE_TYPE]
   selected_log_type = response[schema.KEY_DETAILS][key_constants.KEY_LOG_TYPE]

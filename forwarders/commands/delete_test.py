@@ -106,14 +106,12 @@ def test_delete_404(input_patch: mock.MagicMock,
 )
 @mock.patch(
     "forwarders.commands.get.click.prompt")
-def test_delete_server_error_code(
+def test_delete_internal_server_error_code(
     input_patch: mock.MagicMock, mock_client: mock.MagicMock,
-    get_forwarder_server_error_code: Dict[str, Any]) -> None:
+    internal_server_error: Dict[str, Any]) -> None:
   input_patch.return_value = "123"
   mock_client.return_value = mock.Mock()
-  mock_client.return_value.request.side_effect = [
-      get_forwarder_server_error_code
-  ]
+  mock_client.return_value.request.side_effect = [internal_server_error]
 
   # Method call
   result = runner.invoke(delete)

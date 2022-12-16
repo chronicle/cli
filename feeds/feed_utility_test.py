@@ -19,24 +19,11 @@ from feeds import feed_utility
 from feeds.tests.fixtures import *  # pylint: disable=wildcard-import
 
 
-def test_flatten_dict() -> None:
-  """Test flattening of dict."""
-  input_dict = {"a": {"b": "c"}, 1: {"a": [1]}, "p": {"q": {"r": "s"}}}
-  expected_output = {"a.b": "c", "1.a": [1], "p.q.r": "s"}
-  assert feed_utility.flatten_dict(input_dict) == expected_output
-
-
 def test_defflatten_dict() -> None:
   """Test deflattening of dict."""
   input_dict = {"a.b": "c", "1.a": [1], "p.q.r": "s"}
   expected_output = {"a": {"b": "c"}, "1": {"a": [1]}, "p": {"q": {"r": "s"}}}
   assert feed_utility.deflatten_dict(input_dict) == expected_output
-
-
-def test_swap_with_underscore() -> None:
-  """Test converting of camelcase key name to snakecase key name."""
-  assert feed_utility.swap_with_underscore(
-      "workdaySettings") == "workday_settings"
 
 
 def test_get_feed_details(get_flattened_response: Dict[str, str],

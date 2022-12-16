@@ -76,7 +76,7 @@ def get(credential_file: AnyStr, verbose: bool, region: str,
       click.echo(detail_schema.error)
       return
 
-    flattened_response = feed_utility.flatten_dict(response)
+    flattened_response = commands_utility.flatten_dict(response)
     field_response = feed_utility.get_feed_details(
         flattened_response, detail_schema.log_type_schema)
     namespace = feed_utility.get_namespace(response.get(schema.KEY_DETAILS, {}))

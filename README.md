@@ -4,7 +4,8 @@ Command line tool to interact with Chronicle's APIs.
 
 Chronicle CLI allows customers to manage various operations that can be
 performed on Chronicle. This script provides a command line tool to interact 
-with Feed, Parser and BigQuery APIs. It will gradually expand to cover other APIs.
+with Feed, Parser, Forwarder and BigQuery APIs. It will gradually expand to
+cover other APIs.
 
 ## Setup
 
@@ -20,7 +21,7 @@ library dependencies by running this command:
 pip install -r requirements.txt
 ```
 
-It is assumed that you're using Python 3.6 or above.
+It is assumed that you're using Python 3.7 or above.
 
 ### Setting up a Python development environment
 

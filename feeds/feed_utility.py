@@ -14,9 +14,7 @@
 #
 """Utility functions."""
 
-import collections
 import json
-import re
 from typing import Any, AnyStr, Dict, List
 
 from common import uri
@@ -79,48 +77,6 @@ def get_feed_details(flattened_response: Dict[str, Any],
   if field_response:
     return "  Feed Settings:\n" + "".join(field_response)
   return ""
-
-
-def swap_with_underscore(key: AnyStr) -> AnyStr:
-  """Convert camelcase key name to snakecase key name.
-
-  Args:
-    key (AnyStr): Camelcase key name.
-
-  Returns:
-    AnyStr: Snakecase key name.
-  """
-  s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", key)
-  return re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
-
-
-def flatten_dict(input_dict: Dict[str, Any],
-                 parent_key: AnyStr = "",
-                 sep: AnyStr = ".") -> Dict[str, Any]:
-  """Flatten dictionary.
-
-  Args:
-    input_dict (Dict[str, Any]): Input dictionary from API response.
-    parent_key (AnyStr): The parent key name for which the data is being
-      flattened.
-    sep (AnyStr): The seperator indicates by which the name will be formed for
-      the flattened data.  Example - input_dict - {'name': 'feeds/123',
-      'details': {'logType': 'WORKDAY'}} Output - {'name': 'feeds/123',
-      'details.log_type': 'WORKDAY'}.
-
-  Returns:
-    Dict[str]: Flattened dictionary.
-  """
-  items = []
-  for k, v in input_dict.items():
-    new_key = parent_key + sep + str(k) if parent_key else str(k)
-    if isinstance(v, collections.abc.MutableMapping):
-      items.extend(
-          flatten_dict(v, swap_with_underscore(new_key), sep=sep).items())  # pytype: disable=wrong-arg-types
-    else:
-      items.append((swap_with_underscore(new_key), v))
-
-  return dict(items)
 
 
 def deflatten_dict(input_dict: Dict[AnyStr, Any]) -> Dict[AnyStr, Any]:

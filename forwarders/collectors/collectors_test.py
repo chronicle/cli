@@ -25,9 +25,9 @@ def test_collectors() -> None:
   """Test case for collectors."""
   result = runner.invoke(collectors)
   expected_output = """Commands:
-  create  Create a collector
-  delete  Delete a collector using collector ID.
-  get     Get a collector using collector ID.
+  create  Create a collector.
+  delete  Delete a collector using forwarder and collector ID.
+  get     Get a collector using forwarder and collector ID.
   list    List all collectors.
-  update  Update a collector using collector ID."""
+  update  Update a collector using forwarder and collector ID."""
   assert  expected_output in result.output

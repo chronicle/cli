@@ -13,11 +13,15 @@
 # limitations under the License.
 #
 """Unit tests for forwarder_utility.py."""
-
+import os
 from typing import Any, Dict, List
-from forwarders import forwarder_utility
+from unittest import mock
 
+from click._compat import WIN
+
+from forwarders import forwarder_utility
 from forwarders.tests.fixtures import *  # pylint: disable=wildcard-import
+from forwarders.tests.fixtures import TEMP_CREATE_BACKUP_FILE
 
 
 def test_get_forwarder_url() -> None:
@@ -63,7 +67,7 @@ def test_change_dict_keys_order(forwarder_response: Dict[str, Any]) -> None:
   assert forwarder_utility.change_dict_keys_order(
       forwarder_response['forwarder']
   ) == {
-      'name': 'forwarder 1',
+      'ID': 'forwarder 1',
       'displayName': 'User-specified forwarder name',
       'state': 'ACTIVE',
       'config': {
@@ -120,3 +124,89 @@ def test_get_source_id() -> None:
   assert forwarder_utility.get_resource_id(
       forwarder) == 'asdf1234-1234-abcd-efgh-12345678abcd'
 
+
+def test_preview_changes(capfd) -> None:
+  """Test preview changes."""
+  forwarder_utility.preview_changes({'displayName': 'test'})
+  output, _ = capfd.readouterr()
+  expected_output = """Preview changes:
+
+  - Press Up/b or Down/z keys to paginate.
+  - To switch case-sensitivity, press '-i' and press enter. By default, search
+    is case-sensitive.
+  - To search for specific field, press '/' key, enter text and press enter.
+  - Press 'q' to quit and confirm preview changes.
+  - Press `h` for all the available options to navigate the list.
+=============================================================================
+
+Display name: test"""
+  if WIN:
+    expected_output = """Preview changes:
+
+  - Press ENTER key (scrolls one line at a time) or SPACEBAR key (display next screen).
+  - Press 'q' to quit and confirm preview changes.
+============================================================================="""
+  assert expected_output in output
+
+
+def test_write_backup():
+  """Test to check write data to backup file."""
+  flattend_data = {'display_name': 'tst'}
+  forwarder_utility.write_backup(TEMP_CREATE_BACKUP_FILE, flattend_data,
+                                 '123-abcd-efg-345')
+  assert os.path.exists(TEMP_CREATE_BACKUP_FILE)
+
+
+@mock.patch(
+    'google3.third_party.chronicle.cli.forwarders.forwarder_utility.click.confirm'
+)
+def test_read_backup_retry_true(mock_choice):
+  """Test to read data from backup file if retry.
+
+  Args:
+    mock_choice (mock.MagicMock): Mock object.
+  """
+  flattend_data = {'display_name': 'tst', 'config.log_type': 'WINDOWS_DNS'}
+  expected_output = {
+      'display_name': 'tst',
+      'config.log_type': 'WINDOWS_DNS',
+      'name': '123-abcd-efg-345'
+  }
+  forwarder_utility.write_backup(TEMP_CREATE_BACKUP_FILE, flattend_data,
+                                 '123-abcd-efg-345')
+  mock_choice.return_value = True
+  result = forwarder_utility.read_backup(TEMP_CREATE_BACKUP_FILE,
+                                         '123-abcd-efg-345')
+  assert result == expected_output
+
+
+@mock.patch(
+    'google3.third_party.chronicle.cli.forwarders.forwarder_utility.click.confirm'
+)
+def test_read_backup_retry_false(mock_choice):
+  """Test to read data from backup file if not retry.
+
+  Args:
+    mock_choice (mock.MagicMock): Mock object.
+  """
+  flattend_data = {'display_name': 'tst', 'config.log_type': 'WINDOWS_DNS'}
+  expected_output = {}
+  forwarder_utility.write_backup(TEMP_CREATE_BACKUP_FILE, flattend_data,
+                                 '123-abcd-efg-345')
+  mock_choice.return_value = False
+  result = forwarder_utility.read_backup(TEMP_CREATE_BACKUP_FILE,
+                                         '123-abcd-efg-345')
+  assert result == expected_output
+
+
+def test_prepare_update_mask():
+  """Test to prepare update mask send it with the update API call."""
+  request_body_fields = [
+      'field1', 'field2.field3', 'field2.field4.field5', 'field6.field7'
+  ]
+  repeated_message_fields = ['field2.field4', 'field6']
+  assert forwarder_utility.prepare_update_mask(request_body_fields,
+                                               repeated_message_fields) == [
+                                                   'field1', 'field2.field3',
+                                                   'field2.field4', 'field6'
+                                               ]

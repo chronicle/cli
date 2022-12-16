@@ -125,7 +125,7 @@ def test_list_200(mock_client: mock.MagicMock, list_forwarder_data: Dict[str,
 
 Forwarder Details:
 
-Name: asdf1234-1234-abcd-efgh-12345678abcd
+ID: asdf1234-1234-abcd-efgh-12345678abcd
 Display name: forwarder 1
 State: ACTIVE
 Config:
@@ -162,7 +162,6 @@ Config:
 
 Collectors:
   Collector [asdf1234-1234-abcd-efgh]:
-    Name: asdf1234-1234-abcd-efgh
     Display name: collector pqr
     State: ACTIVE
     Config:
@@ -188,7 +187,9 @@ Collectors:
       Max seconds per batch: 10
       Max bytes per batch: 1048576
       File settings:
-        File path: Path of file to monitor.""" in result.output
+        File path: Path of file to monitor.
+
+================================================================================""" in result.output
 
 
 @mock.patch(
@@ -303,7 +304,7 @@ def test_list_no_collectors_found(mock_client: mock.MagicMock,
 
 Forwarder Details:
 
-Name: asdf1234-1234-abcd-efgh-12345678abcd
+ID: asdf1234-1234-abcd-efgh-12345678abcd
 Display name: forwarder 1
 State: ACTIVE
 Config:
@@ -345,7 +346,7 @@ Collectors:
 
 Forwarder Details:
 
-Name: asdf1234-1234-abcd-efgh-12345678abcd
+ID: asdf1234-1234-abcd-efgh-12345678abcd
 Display name: forwarder 1
 State: ACTIVE
 Config:
@@ -382,7 +383,6 @@ Config:
 
 Collectors:
   Collector [asdf1234-1234-abcd-efgh]:
-    Name: asdf1234-1234-abcd-efgh
     Display name: collector pqr
     State: ACTIVE
     Config:
@@ -408,7 +408,9 @@ Collectors:
       Max seconds per batch: 10
       Max bytes per batch: 1048576
       File settings:
-        File path: Path of file to monitor.""" in result.output
+        File path: Path of file to monitor.
+
+================================================================================""" in result.output
 
 
 @mock.patch(
@@ -421,11 +423,12 @@ def test_verbose_output(mock_client: mock.MagicMock, list_forwarder_data,
       list_forwarder_data, list_collectors_data
   ]
   result = runner.invoke(list_command, ["--verbose"])
+
   assert """Fetching list of forwarders...
 
 Forwarder Details:
 
-Name: asdf1234-1234-abcd-efgh-12345678abcd
+ID: asdf1234-1234-abcd-efgh-12345678abcd
 Display name: forwarder 1
 State: ACTIVE
 Config:
@@ -462,7 +465,6 @@ Config:
 
 Collectors:
   Collector [asdf1234-1234-abcd-efgh]:
-    Name: asdf1234-1234-abcd-efgh
     Display name: collector pqr
     State: ACTIVE
     Config:
@@ -509,4 +511,4 @@ Request:
   Method: GET
   Body: None
 Response:
-  Body: {'collectors': [{'name': 'asdf1234-1234-abcd-efgh', 'displayName': 'collector pqr', 'config': {'logType': 'Type of logs collected.', 'metadata': {'assetNamespace': 'test_namespace', 'labels': [{'key': 'my_key_1', 'value': 'my_value_1'}, {'key': 'my_key_2', 'value': 'my_value_2'}]}, 'regexFilter': [{'description': 'Describes what is being filtered and why', 'regexp': 'The regular expression used to match against each incoming line', 'behavior': 'ALLOW'}, {'description': 'Describes what is being filtered and why', 'regexp': 'The regular expression used to match against each incoming line', 'behavior': 'BLOCK'}], 'diskBuffer': {'state': 'ACTIVE', 'directoryPath': 'Directory path for files written.', 'maxFileBufferBytes': 3999}, 'maxSecondsPerBatch': 10, 'maxBytesPerBatch': 1048576, 'fileSettings': {'filePath': 'Path of file to monitor.'}}, 'state': 'ACTIVE'}]}""" in result.output
+  Body: {'collectors': [{'name': 'forwarders/asdf1234-1234-abcd-efgh-12345678abcd/collectors/asdf1234-1234-abcd-efgh', 'displayName': 'collector pqr', 'config': {'logType': 'Type of logs collected.', 'metadata': {'assetNamespace': 'test_namespace', 'labels': [{'key': 'my_key_1', 'value': 'my_value_1'}, {'key': 'my_key_2', 'value': 'my_value_2'}]}, 'regexFilter': [{'description': 'Describes what is being filtered and why', 'regexp': 'The regular expression used to match against each incoming line', 'behavior': 'ALLOW'}, {'description': 'Describes what is being filtered and why', 'regexp': 'The regular expression used to match against each incoming line', 'behavior': 'BLOCK'}], 'diskBuffer': {'state': 'ACTIVE', 'directoryPath': 'Directory path for files written.', 'maxFileBufferBytes': 3999}, 'maxSecondsPerBatch': 10, 'maxBytesPerBatch': 1048576, 'fileSettings': {'filePath': 'Path of file to monitor.'}}, 'state': 'ACTIVE'}]}""" in result.output

@@ -21,7 +21,7 @@ with open(DEFAULT_REQUIREMENT_DOC) as f:
 
 setup(
     name='chronicle_cli',
-    version='1.0',
+    version='1.1',
     py_modules=['main'],
     install_requires=deps,
     entry_points="""
