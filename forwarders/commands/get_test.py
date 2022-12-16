@@ -98,12 +98,11 @@ def test_get_200(input_patch: mock.MagicMock, mock_client: mock.MagicMock,
   mock_client.return_value.request.side_effect = [
       get_forwarder_data, list_collectors_data
   ]
-
   # Method Call
   result = runner.invoke(get)
   assert """Forwarder Details:
 
-Name: asdf1234-1234-abcd-efgh-12345678abcd
+ID: asdf1234-1234-abcd-efgh-12345678abcd
 Display name: forwarder 1
 State: ACTIVE
 Config:
@@ -140,7 +139,6 @@ Config:
 
 Collectors:
   Collector [asdf1234-1234-abcd-efgh]:
-    Name: asdf1234-1234-abcd-efgh
     Display name: collector pqr
     State: ACTIVE
     Config:
@@ -224,19 +222,26 @@ def test_get_404(input_patch: mock.MagicMock,
 )
 @mock.patch(
     "forwarders.commands.get.click.prompt")
-def test_get_server_error_code(
-    input_patch: mock.MagicMock, mock_client: mock.MagicMock,
-    get_forwarder_server_error_code: Dict[str, Any]) -> None:
+def test_get_forwarder_500(input_patch: mock.MagicMock,
+                           mock_client: mock.MagicMock,
+                           internal_server_error: Dict[str, Any]) -> None:
   input_patch.return_value = "123"
   mock_client.return_value = mock.Mock()
-  mock_client.return_value.request.side_effect = [
-      get_forwarder_server_error_code
-  ]
+  mock_client.return_value.request.side_effect = [internal_server_error]
 
   # Method call
-  result = runner.invoke(get)
-  assert ("Error while fetching forwarder details.\nResponse Code: 500"
-         ) in result.output
+  result = runner.invoke(get, ["--verbose"])
+  assert """Error while fetching forwarder details.
+Response Code: 500""" in result.output
+  assert """==========================================
+========== HTTP Request Details ==========
+==========================================
+Request:
+  URL: https://backstory.googleapis.com/v2/forwarders/123
+  Method: GET
+  Body: None
+Response:
+  Body: {'error': {'message': 'Internal Server Error'}}""" in result.output
 
 
 @mock.patch(
@@ -288,7 +293,7 @@ def test_get_verbose_option(input_patch: mock.MagicMock,
   result = runner.invoke(get, ["--verbose"])
   assert """Forwarder Details:
 
-Name: asdf1234-1234-abcd-efgh-12345678abcd
+ID: asdf1234-1234-abcd-efgh-12345678abcd
 Display name: forwarder 1
 State: ACTIVE
 Config:
@@ -325,7 +330,6 @@ Config:
 
 Collectors:
   Collector [asdf1234-1234-abcd-efgh]:
-    Name: asdf1234-1234-abcd-efgh
     Display name: collector pqr
     State: ACTIVE
     Config:

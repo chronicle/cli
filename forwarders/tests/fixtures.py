@@ -14,6 +14,7 @@
 #
 """Define fixtures."""
 
+import json
 import os
 from typing import Any, Dict, List
 
@@ -25,7 +26,10 @@ TEST_DATA_DIR = os.path.dirname(__file__)
 TEMP_EXPORT_TXT_FILE = os.path.join(TEST_DATA_DIR, "dummy.txt")
 TEMP_EXPORT_CSV_FILE = os.path.join(TEST_DATA_DIR, "dummy.csv")
 TEMP_EXPORT_JSON_FILE = os.path.join(TEST_DATA_DIR, "dummy_export.json")
+TEMP_CREATE_BACKUP_FILE = os.path.join(TEST_DATA_DIR, "create_backup.json")
+TEMP_UPDATE_BACKUP_FILE = os.path.join(TEST_DATA_DIR, "update_backup.json")
 TEMP_SERVICE_ACCOUNT_FILE = os.path.join(TEST_DATA_DIR, "service_account.json")
+TEMP_GENERATE_FILE = os.path.join(TEST_DATA_DIR, "generate_file.conf")
 # Permissions are required to be set for test_data directory recursively,
 # otherwise the test cases are failed.
 os.system(f"chmod -R +rw {TEST_DATA_DIR}")
@@ -121,7 +125,7 @@ def get_forwarder_id_invalid_data() -> MockResponse:
 
 
 @pytest.fixture()
-def get_forwarder_server_error_code() -> MockResponse:
+def internal_server_error() -> MockResponse:
   """Test data to fetch forwarder with server error status code."""
   data = MockResponse(
       status_code=500,
@@ -226,3 +230,303 @@ def cleanup(request: Any):
         pass
 
   request.addfinalizer(remove_test_files)
+
+
+@pytest.fixture()
+def get_forwarder_schema() -> Any:
+  """Test data of sample forwarder schema."""
+  data = {
+      "forwarderSchema": [{
+          "fieldPath": "display_name",
+          "displayName": "Forwarder Display Name",
+          "description": "User-specified forwarder name",
+          "type": "STRING",
+          "isRequired": True
+      }]
+  }
+
+  return data
+
+
+@pytest.fixture()
+def get_collector_schema() -> Any:
+  """Test data of sample collector schema."""
+  data = {
+      "collectorSchema": [{
+          "fieldPath": "displayName",
+          "displayName": "Collector Display Name",
+          "description": "User-specified collector name",
+          "type": "STRING",
+          "isRequired": True
+      }]
+  }
+
+  return data
+
+
+@pytest.fixture()
+def non_primitive_schema() -> Any:
+  """Test data of non-primitive type field schema."""
+  data = [{
+      "fieldPath":
+          "metadata",
+      "displayName":
+          "Forwarder Metadata",
+      "description":
+          "Metadata applied at the Forwarder level",
+      "type":
+          "metadata",
+      "metadata": [{
+          "fieldPath": "asset_namespace",
+          "displayName": "Asset Namespace",
+          "description": "Namespace used for Forwarder or collection",
+          "type": "STRING"
+      }]
+  }, {
+      "fieldPath":
+          "regex_filters",
+      "displayName":
+          "Collector Regex Filters",
+      "description":
+          "Filters applied at the collector level",
+      "type":
+          "regexFilters",
+      "isRequired":
+          True,
+      "regexFilters": [{
+          "fieldPath": "description",
+          "displayName": "Filter Description",
+          "description": "Describes what is being filtered and why",
+          "type": "STRING"
+      }]
+  }, {
+      "fieldPath":
+          "config",
+      "displayName":
+          "Forwarder Cofiguration",
+      "description":
+          "Forwarder configuration settings",
+      "type":
+          "config",
+      "config": [{
+          "fieldPath": "upload_compression",
+          "displayName": "Upload Compression",
+          "description": "Determines if uploaded data will be compressed",
+          "defaultValue": True,
+          "type": "BOOL"
+      }]
+  }]
+
+  return data
+
+
+@pytest.fixture()
+def bool_field_schema() -> Any:
+  """Test data of bool type field schema."""
+  data = {
+      "fieldPath": "upload_compression",
+      "displayName": "Upload Compression",
+      "description": "Determines if uploaded data will be compressed",
+      "defaultValue": True,
+      "isRequired": True,
+      "type": "BOOL"
+  }
+  return data
+
+
+@pytest.fixture()
+def str_field_schema() -> Any:
+  """Test data of bool type field schema."""
+  data = [{
+      "fieldPath": "display_name",
+      "displayName": "Forwarder Display Name",
+      "description": "User-specified forwarder name",
+      "type": "STRING",
+      "isRequired": True
+  }]
+  return data
+
+
+@pytest.fixture()
+def int_field_schema() -> Any:
+  """Test data of bool type field schema."""
+  data = [{
+      "fieldPath": "max_bytes",
+      "displayName": "Maximum bytes",
+      "type": "INT",
+  }]
+  return data
+
+
+@pytest.fixture()
+def enum_field_schema() -> Any:
+  """Test data of enum type field schema."""
+  data = {
+      "fieldPath":
+          "behavior",
+      "displayName":
+          "Filter Behavior",
+      "description":
+          "Filter behavior to apply when a match is found",
+      "type":
+          "ENUM",
+      "enumFieldSchemas": [{
+          "value": "ALLOW",
+          "displayName": "allow"
+      }, {
+          "value": "BLOCK",
+          "displayName": "block"
+      }]
+  }
+  return data
+
+
+@pytest.fixture()
+def label_field_schema() -> Any:
+  """Test data of label type field schema."""
+  data = [{
+      "fieldPath": "labels",
+      "displayName": "Forwarder Labels",
+      "description": "Arbitrary KV labels",
+      "type": "LABEL"
+  }]
+  return data
+
+
+@pytest.fixture()
+def oneof_field_schema() -> Any:
+  """Test data of oneof type field schema."""
+  data = [{
+      "fieldPath":
+          "settings",
+      "displayName":
+          "Configure Ingestion Settings",
+      "description":
+          "Ingestion settings of the collector",
+      "type":
+          "ONEOF",
+      "oneOfFieldSchemas": [{
+          "fieldPath":
+              "file_settings",
+          "displayName":
+              "File Settings",
+          "type":
+              "fileSettings",
+          "fileSettings": [{
+              "fieldPath": "file_path",
+              "displayName": "File Path",
+              "description": "Path of file to monitor",
+              "type": "STRING"
+          }]
+      }, {
+          "fieldPath": "kafka_settings",
+          "displayName": "Kafka Settings",
+          "type": "kafkaSettings"
+      }, {
+          "fieldPath": "pcap_settings",
+          "displayName": "Pcap Settings",
+          "type": "pcapSettings"
+      }, {
+          "fieldPath": "splunk_settings",
+          "displayName": "Splunk Settings",
+          "type": "splunkSettings",
+      }, {
+          "fieldPath": "syslog_settings",
+          "displayName": "Syslog Settings",
+          "description": "Syslog settings",
+      }]
+  }]
+  return data
+
+
+@pytest.fixture()
+def repeated_message_fields_schema() -> Any:
+  """Test data of repeated_message_fields schema."""
+  data = [{
+      "fieldPath":
+          "settings",
+      "displayName":
+          "Configure Ingestion Settings",
+      "description":
+          "Ingestion settings of the collector",
+      "type":
+          "ONEOF",
+      "oneOfFieldSchemas": [{
+          "fieldPath": "file_settings",
+          "displayName": "File Settings",
+          "type": "STRING"
+      }, {
+          "fieldPath":
+              "kafka_settings",
+          "displayName":
+              "Kafka Settings",
+          "type":
+              "kafkaSettings",
+          "kafkaSettings": [{
+              "fieldPath":
+                  "regex_filters",
+              "displayName":
+                  "Forwarder Regex Filters",
+              "description":
+                  "Filters applied at the Forwarder level",
+              "type":
+                  "regexFilters",
+              "isRepeated":
+                  True,
+              "regexFilters": [{
+                  "fieldPath": "description",
+                  "displayName": "Filter Description",
+                  "description": "Describes what is being filtered and why",
+                  "type": "STRING"
+              },]
+          }]
+      }, {
+          "fieldPath": "pcap_settings",
+          "displayName": "Pcap Settings",
+          "type": "pcapSettings"
+      }]
+  }]
+  return data
+
+
+@pytest.fixture()
+def oneof_validate_data() -> Any:
+  """Test data to validate oneof input."""
+  data = [{
+      "fieldPath": "file_path",
+      "displayName": "File Path",
+      "description": "Path of file to monitor",
+      "type": "STRING"
+  }]
+  return data
+
+
+def create_backup_file(file_path: str, content: Dict[str, Any]) -> None:
+  """Create a temporary backup file at the test_data dir with the content.
+
+  Args:
+    file_path (str): Path to create the temp backup file.
+    content (Dict): JSON content to be written in the file.
+  """
+  if not os.path.exists(file_path):
+    with open(file_path, "w") as file:
+      if content:
+        file.write(json.dumps(content))
+
+
+@pytest.fixture()
+def repeated_field_schema() -> Any:
+  """Test data of repeated field schema."""
+  data = [{
+      "fieldPath": "brokers",
+      "displayName": "Kafka Brokers",
+      "type": "REPEATED_STRING"
+  }]
+  return data
+
+
+@pytest.fixture()
+def generate_forwarder_file() -> MockResponse:
+  """Test data of API to generate forwarder file."""
+  data = MockResponse(status_code=200, text="""{"config": "output"}""")
+  return data

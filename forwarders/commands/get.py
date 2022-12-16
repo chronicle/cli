@@ -14,7 +14,8 @@
 #
 """Get forwarder details using forwarder ID."""
 
-from typing import Any, AnyStr, Dict
+import dataclasses
+from typing import Any, AnyStr, Dict, List
 
 import click
 
@@ -25,8 +26,8 @@ from common import exception_handler
 from common import options
 from common.constants import key_constants
 from common.constants import status
-from forwarders import collector_utility
 from forwarders import forwarder_utility
+from forwarders.collectors import collector_utility
 from forwarders.constants import schema
 
 
@@ -62,29 +63,41 @@ def get(credential_file: AnyStr, verbose: bool, region: str, url: str) -> None:
 
   url = commands_utility.lower_or_none(url)
   client = chronicle_auth.initialize_http_session(credential_file)
-  forwarder_url = f"{forwarder_utility.get_forwarder_url(region, url)}/{forwarder_id}"
   method = "GET"
 
   click.echo("\nFetching forwarder and its all associated collectors...")
-  get_forwarder_response = client.request(method, forwarder_url)
-  forwarder_response = api_utility.check_content_type(
-      get_forwarder_response.text)
-  status_code = get_forwarder_response.status_code
+  get_forwarder_response = get_forwarder(region, url, method, client,
+                                         forwarder_id)
 
-  if status_code == status.STATUS_OK:
-    collector_verbose_list = list_collectors(region, url, forwarder_response,
-                                             method, client)
-  elif status_code == status.STATUS_NOT_FOUND:
-    click.echo("Forwarder does not exist.")
-  elif status_code == status.STATUS_BAD_REQUEST:
-    click.echo("Invalid Forwarder ID. Please enter valid Forwarder ID.")
-  else:
-    error_message = forwarder_response[key_constants.KEY_ERROR][
-        key_constants.KEY_MESSAGE]
-    click.echo(
-        f"\nError while fetching forwarder details.\nResponse Code: {status_code}"
-        f"\nError: {error_message}")
-    return
+  (forwarder_url, forwarder_response,
+   collector_verbose_list, collectors_response) = getattr(
+       get_forwarder_response, "forwarder_url",
+       ""), getattr(get_forwarder_response, "forwarder_response",
+                    {}), getattr(get_forwarder_response,
+                                 "collector_verbose_list",
+                                 []), getattr(get_forwarder_response,
+                                              "collectors_response", {})
+
+  if key_constants.KEY_ERROR not in forwarder_response:
+    forwarder_details = commands_utility.convert_dict_keys_to_human_readable(
+        forwarder_utility.change_dict_keys_order(forwarder_response))
+
+    display_output = {}
+    # Capitalize keyword ID to display output on console.
+    if forwarder_details.get(schema.KEY_ID.capitalize()):
+      display_output[schema.KEY_ID] = forwarder_details.pop(
+          schema.KEY_ID.capitalize())
+    display_output.update(forwarder_details)
+
+    click.echo("\nForwarder Details:\n")
+    click.echo(commands_utility.convert_dict_to_yaml(display_output))
+
+    if collectors_response:
+      click.echo(
+          commands_utility.convert_dict_to_yaml(
+              commands_utility.convert_dict_keys_to_human_readable(
+                  collectors_response)))
+      click.echo(f"{forwarder_utility.PRINT_SEPARATOR}")
 
   if verbose:
     api_utility.print_request_details(forwarder_url, method, None,
@@ -95,8 +108,68 @@ def get(credential_file: AnyStr, verbose: bool, region: str, url: str) -> None:
           collector_response.get("response", {}))
 
 
+@dataclasses.dataclass
+class GetForwarderResponse:
+  """GetForwarderResponse dataclass."""
+  forwarder_url: str
+  forwarder_response: Dict[str, Any]
+  collector_verbose_list: List[Dict[str, Any]]
+  collectors_response: Dict[str, Any]
+
+
+def get_forwarder(region: str, url: str, method: str, client: Any,
+                  forwarder_id: str) -> GetForwarderResponse:
+  """Gets forwarder.
+
+  Args:
+    region (str): Option for selecting regions. Available options - US, EUROPE,
+      ASIA_SOUTHEAST1.
+    url (str): Base URL to be used for API calls.
+    method (str): Method to be used for API calls.
+    client (Any): HTTP session object to send authorized requests and receive
+      responses.
+    forwarder_id (str): Id of the forwarder.
+
+  Returns:
+    GetForwarderResponse: Object contains Forwarder url, Forwarder response,
+    list of collectors verbose and list of collectors.
+  """
+  forwarder_url = f"{forwarder_utility.get_forwarder_url(region, url)}/{forwarder_id}"
+  get_forwarder_response = client.request(method, forwarder_url)
+  forwarder_response = api_utility.check_content_type(
+      get_forwarder_response.text)
+  status_code = get_forwarder_response.status_code
+  list_collectors_response = None
+
+  if status_code == status.STATUS_OK:
+    list_collectors_response = list_collectors(region, url, forwarder_response,
+                                               method, client)
+  elif status_code == status.STATUS_NOT_FOUND:
+    click.echo("Forwarder does not exist.")
+  elif status_code == status.STATUS_BAD_REQUEST:
+    click.echo("Invalid Forwarder ID. Please enter valid Forwarder ID.")
+  else:
+    error_message = forwarder_response[key_constants.KEY_ERROR][
+        key_constants.KEY_MESSAGE]
+    click.echo(
+        f"\nError while fetching forwarder details.\nResponse Code: {status_code}"
+        f"\nError: {error_message}")
+
+  return GetForwarderResponse(
+      forwarder_url, forwarder_response,
+      getattr(list_collectors_response, "collector_verbose_list", []),
+      getattr(list_collectors_response, "collectors_response", {}))
+
+
+@dataclasses.dataclass
+class ListCollectorsResponse:
+  """ListCollectorResponse dataclass."""
+  collector_verbose_list: List[Dict[str, Any]]
+  collectors_response: Dict[str, Any]
+
+
 def list_collectors(region: str, url: str, forwarder: Dict[str, Any],
-                    method: str, client: Any) -> list[Any]:
+                    method: str, client: Any) -> ListCollectorsResponse:
   """List all collectors for forwarder.
 
   Args:
@@ -109,7 +182,8 @@ def list_collectors(region: str, url: str, forwarder: Dict[str, Any],
       responses.
 
   Returns:
-    list (Any): List of dictionary with for verbose console output.
+    ListCollectorsResponse: Object contains collector_verbose_list and
+    collectors_response.
   """
   collector_verbose_list = []
 
@@ -135,21 +209,12 @@ def list_collectors(region: str, url: str, forwarder: Dict[str, Any],
       # in yaml output.
       # example-{"collectors":{"Collector [<collector_uuid>]":{"name":""}}}
       collector_id = forwarder_utility.get_resource_id(collector)
-      collector.update({schema.KEY_NAME: collector_id})
+      collector = forwarder_utility.change_dict_keys_order(collector)
 
-      collectors_response[schema.KEY_COLLECTORS][
-          f"Collector [{collector_id}]"] = forwarder_utility.change_dict_keys_order(
-              collector)
+      # Remove ID from the dictionary to avoid
+      # displaying it multiple times on the console.
+      collector.pop(schema.KEY_ID, None)
+      collectors_response[
+          schema.KEY_COLLECTORS][f"Collector [{collector_id}]"] = collector
 
-  click.echo("\nForwarder Details:\n")
-  click.echo(
-      commands_utility.convert_dict_to_yaml(
-          commands_utility.convert_dict_keys_to_human_readable(
-              forwarder_utility.change_dict_keys_order(forwarder))))
-  click.echo(
-      commands_utility.convert_dict_to_yaml(
-          commands_utility.convert_dict_keys_to_human_readable(
-              collectors_response)))
-  click.echo(f"{forwarder_utility.PRINT_SEPARATOR}")
-
-  return collector_verbose_list
+  return ListCollectorsResponse(collector_verbose_list, collectors_response)

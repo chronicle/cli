@@ -30,10 +30,10 @@ def test_lower_or_none_none() -> None:
   assert commands_utility.lower_or_none(None) is None
 
 
-def test_camel_case_to_space() -> None:
+def test_space_separated_str() -> None:
   """Test converting of camel case sentence to space seprated first letter capital.
   """
-  assert commands_utility.camel_case_to_space('dummyTest') == 'Dummy test'
+  assert commands_utility.space_separated_str('dummyTest') == 'Dummy test'
 
 
 def test_convert_dict_to_yaml(forwarder_response: Dict[str, Any]) -> None:
@@ -141,3 +141,81 @@ def test_convert_dict_keys_to_human_readable(
               'State': 'ACTIVE'
           }
       }
+
+
+def test_convert_to_snakecase() -> None:
+  """Test converting of camelcase key name to snakecase key name."""
+  assert commands_utility.convert_to_snakecase(
+      'workdaySettings') == 'workday_settings'
+
+
+def test_flatten_dict() -> None:
+  """Test flattening of dict."""
+  input_dict = {'a': {'b': 'c'}, 1: {'a': [1]}, 'p': {'q': {'r': 's'}}}
+  expected_output = {'a.b': 'c', '1.a': [1], 'p.q.r': 's'}
+  assert commands_utility.flatten_dict(input_dict) == expected_output
+
+
+def test_flatten_dict_with_custom_parent_and_separator() -> None:
+  """Test flattening of dict with custom key and separator."""
+  input_dict = {'a': {'b': 'c'}, 1: {'a': [1]}, 'p': {'q': {'r': 's'}}}
+  expected_output = {
+      'custom_key_a_b': 'c',
+      'custom_key_1_a': [1],
+      'custom_key_p_q_r': 's'
+  }
+  assert commands_utility.flatten_dict(input_dict, 'custom_key',
+                                       '_') == expected_output
+
+
+def test_unpack() -> None:
+  """Test unpacking of dictionary."""
+  data = {'key': 'value'}
+  assert len(commands_utility.unpack(data)) == 1
+
+
+def test_unpack_row_data() -> None:
+  """Test unpacking of row data."""
+  data = 'dummy_data'
+  assert commands_utility.unpack(data) == 'dummy_data'
+
+
+def test_convert_dict_keys_to_snake_case() -> None:
+  """Test converting of dictionary keys to snake case."""
+  data = {'sampleKey1': 'sample', 'sampleKey2': 'sample'}
+  expected_output = {'sample_key1': 'sample', 'sample_key2': 'sample'}
+  assert commands_utility.convert_dict_keys_to_snake_case(
+      data) == expected_output
+
+
+def test_convert_nested_dict_keys_to_snake_case() -> None:
+  """Test converting of nested dictionary keys to snake case."""
+  data = {
+      'sampleKey1': 'sample',
+      'sampleKey2': [{
+          'sampleKey3': 'sample'
+      }],
+      'sampleKey3': ['value1', 'value2']
+  }
+  expected_output = {
+      'sample_key1': 'sample',
+      'sample_key2': [{
+          'sample_key3': 'sample'
+      }],
+      'sample_key3': ['value1', 'value2']
+  }
+  assert commands_utility.convert_nested_dict_keys_to_snake_case(
+      data) == expected_output
+
+
+def test_remove_sensitive_fields():
+  """Test removing sensitive fields."""
+  backup_data = {
+      'key1': 'value1',
+      'key2': {
+          'key3': 'value3',
+          'password': 'dummy_password'
+      }
+  }
+  commands_utility.remove_sensitive_fields(backup_data)
+  assert backup_data == {'key1': 'value1', 'key2': {'key3': 'value3'}}

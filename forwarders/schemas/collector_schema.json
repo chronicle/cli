@@ -3,38 +3,36 @@
     {
       "fieldPath": "display_name",
       "displayName": "Collector Display Name",
-      "description": "User-specified collector name",
       "type": "STRING",
       "isRequired": true
     },
     {
       "fieldPath": "config",
-      "displayName": "Collector Cofiguration",
+      "displayName": "Collector Configuration",
       "description": "Collector configuration settings",
       "type": "config",
       "isRequired": true,
       "config": [
         {
-          "fieldPath": "config.log_type",
+          "fieldPath": "log_type",
           "displayName": "Collector Log Type",
           "description": "Type of logs collected",
           "type": "STRING",
           "isRequired": true
         },
         {
-          "fieldPath": "config.metadata",
+          "fieldPath": "metadata",
           "displayName": "Collector Metadata",
           "description": "Metadata applied at the collector level",
           "type": "metadata",
           "metadata": [
             {
-              "fieldPath": "config.metadata.asset_namespace",
+              "fieldPath": "asset_namespace",
               "displayName": "Asset Namespace",
-              "description": "Namespace used for forwarder or collection",
               "type": "STRING"
             },
             {
-              "fieldPath": "config.metadata.labels",
+              "fieldPath": "labels",
               "displayName": "Forwarder Labels",
               "description": "Arbitrary KV labels",
               "type": "LABEL"
@@ -42,26 +40,26 @@
           ]
         },
         {
-          "fieldPath": "config.regex_filters",
+          "fieldPath": "regex_filters",
           "displayName": "Collector Regex Filters",
           "description": "Filters applied at the collector level",
           "type": "regexFilters",
           "isRepeated": true,
           "regexFilters": [
             {
-              "fieldPath": "config.regex_filters.description",
+              "fieldPath": "description",
               "displayName": "Filter Description",
               "description": "Describes what is being filtered and why",
               "type": "STRING"
             },
             {
-              "fieldPath": "config.regex_filters.regexp",
+              "fieldPath": "regexp",
               "displayName": "Filter Regexp",
               "description": "The regular expression used to match against each incoming line",
               "type": "STRING"
             },
             {
-              "fieldPath": "config.regex_filters.behavior",
+              "fieldPath": "behavior",
               "displayName": "Filter Behavior",
               "description": "Filter behavior to apply when a match is found",
               "type": "ENUM",
@@ -79,13 +77,13 @@
           ]
         },
         {
-          "fieldPath": "config.disk_buffer",
+          "fieldPath": "disk_buffer",
           "displayName": "Collector Disk Buffer",
           "description": "Disk buffering configuration at the collector level",
           "type": "diskBuffer",
           "diskBuffer": [
             {
-              "fieldPath": "config.disk_buffer.state",
+              "fieldPath": "state",
               "displayName": "Disk Buffer State",
               "description": "Disk buffering state for collector",
               "type": "ENUM",
@@ -101,13 +99,13 @@
               ]
             },
             {
-              "fieldPath": "config.disk_buffer.directory_path",
+              "fieldPath": "directory_path",
               "displayName": "Directory Path",
               "description": "Directory path for files written",
               "type": "STRING"
             },
             {
-              "fieldPath": "config.disk_buffer.max_file_buffer_bytes",
+              "fieldPath": "max_file_buffer_bytes",
               "displayName": "Max File Buffer Bytes",
               "description": "Maximum buffered file size",
               "type": "INT"
@@ -115,32 +113,32 @@
           ]
         },
         {
-          "fieldPath": "config.max_seconds_per_batch",
+          "fieldPath": "max_seconds_per_batch",
           "displayName": "Maximum Seconds per Batch",
           "description": "Maximum number of seconds between forwarder batch uploads",
           "defaultValue": 10,
           "type": "INT"
         },
         {
-          "fieldPath": "config.max_bytes_per_batch",
+          "fieldPath": "max_bytes_per_batch",
           "displayName": "Maximum Bytes per Batch",
           "description": "Maximum number of bytes queued before forwarder batch upload",
           "defaultValue": 1048576,
           "type": "INT"
         },
         {
-          "fieldPath": "config.settings",
+          "fieldPath": "settings",
           "displayName": "Configure Ingestion Settings",
           "description": "Ingestion settings of the collector",
           "type": "ONEOF",
           "oneOfFieldSchemas": [
             {
-              "fieldPath": "config.file_settings",
+              "fieldPath": "file_settings",
               "displayName": "File Settings",
               "type": "fileSettings",
               "fileSettings": [
                 {
-                  "fieldPath": "config.file_settings.file_path",
+                  "fieldPath": "file_path",
                   "displayName": "File Path",
                   "description": "Path of file to monitor",
                   "type": "STRING"
@@ -148,70 +146,71 @@
               ]
             },
             {
-              "fieldPath": "config.kafka_settings",
+              "fieldPath": "kafka_settings",
               "displayName": "Kafka Settings",
               "type": "kafkaSettings",
               "kafkaSettings": [
                 {
-                  "fieldPath": "config.kafka_settings.authentication",
+                  "fieldPath": "authentication",
                   "displayName": "Username Password for kafka instance",
                   "type": "UsernamePasswordAuth",
                   "UsernamePasswordAuth": [
                     {
-                      "fieldPath": "config.kafka_settings.authentication.username",
+                      "fieldPath": "username",
                       "displayName": "Username of an identity used for authentication",
                       "type": "STRING"
                     },
                     {
-                      "fieldPath": "config.kafka_settings.authentication.password",
+                      "fieldPath": "password",
                       "displayName": "Password of the account identified by username",
                       "type": "STRING_SECRET"
                     }
                   ]
                 },
                 {
-                  "fieldPath": "config.kafka_settings.topic",
+                  "fieldPath": "topic",
                   "displayName": "Kafka Topic",
                   "type": "STRING"
                 },
                 {
-                  "fieldPath": "config.kafka_settings.group_id",
+                  "fieldPath": "group_id",
                   "displayName": "Kafka Group ID",
                   "type": "STRING"
                 },
                 {
-                  "fieldPath": "config.kafka_settings.timeout",
+                  "fieldPath": "timeout",
                   "displayName": "Kafka Timeout",
                   "defaultValue": 60,
                   "type": "INT"
                 },
                 {
-                  "fieldPath": "config.kafka_settings.brokers",
+                  "fieldPath": "brokers",
                   "displayName": "Kafka Brokers",
                   "type": "REPEATED_STRING"
                 },
                 {
-                  "fieldPath": "config.kafka_settings.tls_settings",
+                  "fieldPath": "tls_settings",
                   "displayName": "TLS Settings",
                   "type": "TLSSettings",
                   "TLSSettings": [
                     {
-                      "fieldPath": "config.kafka_settings.tls_settings.certificate",
+                      "fieldPath": "certificate",
                       "displayName": "TLS Certificate",
                       "type": "STRING"
                     },
                     {
-                      "fieldPath": "config.kafka_settings.tls_settings.certificate_key",
+                      "fieldPath": "certificate_key",
                       "displayName": "TLS Certificate Key",
                       "type": "STRING"
                     },
                     {
-                      "fieldPath": "config.kafka_settings.tls_settings.minimum_tls_version",
+                      "fieldPath": "minimum_tls_version",
                       "displayName": "Minimum TLS Version",
+                      "description": "Expected format is 'TLSv1_X'. For example, TLSv1_0, TLSv1_1 etc.",
                       "type": "STRING"
                     },
                     {
-                      "fieldPath": "config.kafka_settings.tls_settings.insecure_skip_verify",
+                      "fieldPath": "insecure_skip_verify",
                       "displayName": "Disables SSL certification verification",
                       "defaultValue": false,
                       "type": "BOOL"
@@ -221,17 +220,17 @@
               ]
             },
             {
-              "fieldPath": "config.pcap_settings",
+              "fieldPath": "pcap_settings",
               "displayName": "Pcap Settings",
               "type": "pcapSettings",
               "pcapSettings": [
                 {
-                  "fieldPath": "config.pcap_settings.network_interface",
+                  "fieldPath": "network_interface",
                   "displayName": "Interface to listen for PCAP data",
                   "type": "STRING"
                 },
                 {
-                  "fieldPath": "config.pcap_settings.bpf",
+                  "fieldPath": "bpf",
                   "displayName": "Berkely Packet Filter (BPF) for PCAP handle",
                   "description": "Disables SSL certification verification",
                   "type": "STRING"
@@ -239,67 +238,67 @@
               ]
             },
             {
-              "fieldPath": "config.splunk_settings",
+              "fieldPath": "splunk_settings",
               "displayName": "Splunk Settings",
               "type": "splunkSettings",
               "splunkSettings": [
                 {
-                  "fieldPath": "config.splunk_settings.authentication",
+                  "fieldPath": "authentication",
                   "displayName": "Username password for splunk instance",
                   "type": "UsernamePasswordAuth",
                   "UsernamePasswordAuth": [
                     {
-                      "fieldPath": "config.splunk_settings.authentication.username",
+                      "fieldPath": "username",
                       "displayName": "Username of an identity used for authentication",
                       "type": "STRING"
                     },
                     {
-                      "fieldPath": "config.splunk_settings.authentication.password",
+                      "fieldPath": "password",
                       "displayName": "Password of the account identified by username",
                       "type": "STRING_SECRET"
                     }
                   ]
                 },
                 {
-                  "fieldPath": "config.splunk_settings.host",
+                  "fieldPath": "host",
                   "displayName": "Host",
                   "description": "Host or IP for Splunk instance REST API",
                   "type": "STRING"
                 },
                 {
-                  "fieldPath": "config.splunk_settings.port",
+                  "fieldPath": "port",
                   "displayName": "Port",
                   "description": "Port associated with the Splunk instance, used with the host field",
                   "type": "INT"
                 },
                 {
-                  "fieldPath": "config.splunk_settings.minimum_window_size",
+                  "fieldPath": "minimum_window_size",
                   "displayName": "Minimum Window Size",
                   "description": "Minimum time range for Splunk query",
                   "defaultValue": 10,
                   "type": "INT"
                 },
                 {
-                  "fieldPath": "config.splunk_settings.maximum_window_size",
+                  "fieldPath": "maximum_window_size",
                   "displayName": "Maximum Window Size",
                   "description": "Maximum time range for Splunk query",
                   "defaultValue": 30,
                   "type": "INT"
                 },
                 {
-                  "fieldPath": "config.splunk_settings.query_string",
+                  "fieldPath": "query_string",
                   "displayName": "Query String",
                   "description": "Query used to filter records within Splunk",
                   "type": "STRING"
                 },
                 {
-                  "fieldPath": "config.splunk_settings.query_mode",
+                  "fieldPath": "query_mode",
                   "displayName": "Query Mode",
                   "description": "Query mode for Splunk",
                   "type": "STRING"
                 },
                 {
-                  "fieldPath": "config.splunk_settings.cert_ignored",
+                  "fieldPath": "cert_ignored",
                   "displayName": "Cert Ignored",
                   "description": "Ignore Certificate",
                   "type": "BOOL"
@@ -307,13 +306,13 @@
               ]
             },
             {
-              "fieldPath": "config.syslog_settings",
+              "fieldPath": "syslog_settings",
               "displayName": "Syslog Settings",
               "description": "Syslog settings",
               "type": "syslogSettings",
               "syslogSettings": [
                 {
-                  "fieldPath": "config.syslog_settings.protocol",
+                  "fieldPath": "protocol",
                   "displayName": "Protocol",
                   "description": "Syslog collector will listen using this protocol",
                   "type": "ENUM",
@@ -329,52 +328,55 @@
                   ]
                 },
                 {
-                  "fieldPath": "config.syslog_settings.address",
+                  "fieldPath": "address",
                   "displayName": "IP Address or Hostname",
-                  "description": "IP Address or Hostname (will be resolved to an IP) on which the Forwarder's syslog collector will listen",
+                  "description": "This will be resolved to an IP on which the Forwarder's syslog collector will listen",
                   "type": "STRING"
                 },
                 {
-                  "fieldPath": "config.syslog_settings.port",
+                  "fieldPath": "port",
                   "displayName": "Port",
                   "description": "Port on which the Forwarder's syslog collector will listen",
                   "type": "INT"
                 },
                 {
-                  "fieldPath": "config.syslog_settings.buffer_size",
+                  "fieldPath": "buffer_size",
                   "displayName": "Buffer Size",
-                  "description": "Protocol Buffer Size for TCP [65536] UDP[8192]",
+                  "description": "Protocol Buffer Size for TCP[65536] UDP[8192]",
                   "type": "INT"
                 },
                 {
-                  "fieldPath": "config.syslog_settings.connection_timeout",
+                  "fieldPath": "connection_timeout",
                   "displayName": "Connection Timeout",
                   "defaultValue": 60,
                   "description": "TCP connections will drop-off after being inactive for this many seconds",
                   "type": "INT"
                 },
                 {
-                  "fieldPath": "config.syslog_settings.tls_settings",
+                  "fieldPath": "tls_settings",
                   "displayName": "TLS Settings",
                   "type": "TLSSettings",
                   "TLSSettings": [
                     {
-                      "fieldPath": "config.syslog_settings.tls_settings.certificate",
+                      "fieldPath": "certificate",
                       "displayName": "TLS Certificate",
+                      "description": "Path to cert file, accessible within the forwarder container",
                       "type": "STRING"
                     },
                     {
-                      "fieldPath": "config.syslog_settings.tls_settings.certificate_key",
+                      "fieldPath": "certificate_key",
                       "displayName": "TLS Certificate Key",
+                      "description": "Path to key file, accessible within the forwarder container",
                       "type": "STRING"
                     },
                     {
-                      "fieldPath": "config.syslog_settings.tls_settings.minimum_tls_version",
+                      "fieldPath": "minimum_tls_version",
                       "displayName": "Minimum TLS Version",
+                      "description": "Expected format is 'TLSv1_X'. For example, TLSv1_0, TLSv1_1 etc.",
                       "type": "STRING"
                     },
                     {
-                      "fieldPath": "config.syslog_settings.tls_settings.insecure_skip_verify",
+                      "fieldPath": "insecure_skip_verify",
                       "displayName": "Insecure Skip Verify",
                       "description": "Disables SSL certification verification",
                       "defaultValue": false,

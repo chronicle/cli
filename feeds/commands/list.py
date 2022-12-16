@@ -100,7 +100,7 @@ def list_command(credential_file: AnyStr, verbose: bool, file_format: AnyStr,
         })
         continue
 
-      flattened_response = feed_utility.flatten_dict(feed)
+      flattened_response = commands_utility.flatten_dict(feed)
       field_response = feed_utility.get_feed_details(
           flattened_response, detail_schema.log_type_schema)
       namespace = feed_utility.get_namespace(feed.get(schema.KEY_DETAILS, {}))

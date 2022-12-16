@@ -13,11 +13,19 @@
 # limitations under the License.
 #
 """Utility functions."""
+
 import collections
-from typing import Any, AnyStr, Dict, List
+import json
+import os.path
+from typing import Any, AnyStr, Dict, List, Optional
+
+import click
+from click._compat import WIN
 
 from common import commands_utility
+from common import file_utility
 from common import uri
+from forwarders import forwarder_templates
 from forwarders.constants import schema
 
 API_VERSION = "v2"
@@ -120,7 +128,7 @@ def change_dict_keys_order(input_dict: Dict[AnyStr, Any]) -> Dict[AnyStr, Any]:
     Dict: Modified dict.
   """
   return collections.OrderedDict({
-      schema.KEY_NAME: input_dict[schema.KEY_NAME],
+      schema.KEY_ID: input_dict[schema.KEY_NAME],
       schema.KEY_DISPLAY_NAME: input_dict[schema.KEY_DISPLAY_NAME],
       schema.KEY_STATE: input_dict[schema.KEY_STATE],
       schema.KEY_CONFIG: input_dict[schema.KEY_CONFIG]
@@ -137,3 +145,94 @@ def get_resource_id(resource: Dict[str, Any]) -> str:
     str: Resource id.
   """
   return resource.get(schema.KEY_NAME, "").split("/")[-1]
+
+
+def preview_changes(request_body: Dict[str, Any]):
+  """Preview changes to user for approval.
+
+  Args:
+    request_body (Dict[str, Any]): Request body.
+  """
+  preview_template_str = f"{forwarder_templates.preview_template.template}\n"
+  if WIN:
+    preview_template_str = f"{forwarder_templates.preview_template_win.template}\n"
+  preview_template_str = preview_template_str + commands_utility.convert_dict_to_yaml(
+      commands_utility.convert_dict_keys_to_human_readable(request_body))
+  click.echo_via_pager(preview_template_str)
+
+
+def write_backup(file_path: str,
+                 backup_data: Dict[str, Any],
+                 backup_id: Optional[str] = None) -> None:
+  """Write the data to the backup file.
+
+  Args:
+    file_path (str): The path of the file to write the data.
+    backup_data (Dict): Backup data of existing forwarder or collector.
+    backup_id (str): ID of forwarder or collector for backup.
+  """
+  # Check backup data exists or not.
+  if backup_data:
+    if backup_id:
+      backup_data[schema.KEY_NAME] = backup_id
+    commands_utility.remove_sensitive_fields(backup_data)
+    with open(file_path, "w") as file:
+      file.write(json.dumps(backup_data))
+
+
+def read_backup(file_path: str,
+                backup_id: Optional[str] = None) -> Dict[str, Any]:
+  """Read the data from backup file.
+
+  Args:
+    file_path (str): Name of the backup file to read.
+    backup_id (str): ID of forwarder or collector for backup.
+
+  Returns:
+    Dict: Backup data of existing forwarder.
+  """
+  backup_response = {}
+
+  # Check whether file exists and its contents are not empty.
+  if os.path.exists(file_path) and (os.path.getsize(file_path)) != 0:
+
+    # Read backup data.
+    with open(file_path, "r") as file:
+      backup_data = json.load(file)
+
+    retry_template_str = forwarder_templates.retry_template.substitute(
+        display_name=backup_data["display_name"])
+
+    # Checks the backup data against the appropriate forwarder/collector id.
+    if backup_id == backup_data.get(schema.KEY_NAME):
+
+      # Ask user to confirm use of backup data.
+      retry = click.confirm(f"{retry_template_str}", default=False)
+
+      if retry:
+        backup_response = backup_data
+      else:
+        file_utility.remove_file(file_path)
+
+  return backup_response
+
+
+def prepare_update_mask(request_body_fields: List[str],
+                        repeated_message_fields: List[str]) -> List[str]:
+  """Prepare update_mask used for update forwarder API request.
+
+  Args:
+    request_body_fields (List[str]): List of key names of request body. Example:
+      ['field1', 'field2.field3', 'field2.field4.field5', 'field6.field7']
+    repeated_message_fields (List[str]): List of fields with type repeated in
+      schema. Example: ['field2.field4', 'field6']
+
+  Returns:
+    List[str]: Update mask.
+  """
+  update_mask_fields = []
+  for updated_field in request_body_fields:
+    if not updated_field.startswith(tuple(repeated_message_fields)):
+      update_mask_fields.append(updated_field)
+  update_mask_fields.extend(repeated_message_fields)
+  return update_mask_fields

@@ -3,37 +3,36 @@
     {
       "fieldPath": "display_name",
       "displayName": "Forwarder Display Name",
-      "description": "User-specified forwarder name",
       "type": "STRING",
       "isRequired": true
     },
     {
       "fieldPath": "config",
-      "displayName": "Forwarder Cofiguration",
+      "displayName": "Forwarder Configuration",
       "description": "Forwarder configuration settings",
       "type": "config",
+      "isRequired": true,
       "config": [
         {
-          "fieldPath": "config.upload_compression",
+          "fieldPath": "upload_compression",
           "displayName": "Upload Compression",
           "description": "Determines if uploaded data will be compressed",
           "defaultValue": true,
           "type": "BOOL"
         },
         {
-          "fieldPath": "config.metadata",
+          "fieldPath": "metadata",
           "displayName": "Forwarder Metadata",
           "description": "Metadata applied at the Forwarder level",
           "type": "metadata",
           "metadata": [
             {
-              "fieldPath": "config.metadata.asset_namespace",
+              "fieldPath": "asset_namespace",
               "displayName": "Asset Namespace",
-              "description": "Namespace used for Forwarder or collection",
               "type": "STRING"
             },
             {
-              "fieldPath": "config.metadata.labels",
+              "fieldPath": "labels",
               "displayName": "Forwarder Labels",
               "description": "Arbitrary KV labels",
               "type": "LABEL"
@@ -41,26 +40,26 @@
           ]
         },
         {
-          "fieldPath": "config.regex_filters",
+          "fieldPath": "regex_filters",
           "displayName": "Forwarder Regex Filters",
           "description": "Filters applied at the Forwarder level",
           "type": "regexFilters",
           "isRepeated": true,
           "regexFilters": [
             {
-              "fieldPath": "config.regex_filters.description",
+              "fieldPath": "description",
               "displayName": "Filter Description",
               "description": "Describes what is being filtered and why",
               "type": "STRING"
             },
             {
-              "fieldPath": "config.regex_filters.regexp",
+              "fieldPath": "regexp",
               "displayName": "Filter Regexp",
               "description": "The regular expression used to match against each incoming line",
               "type": "STRING"
             },
             {
-              "fieldPath": "config.regex_filters.behavior",
+              "fieldPath": "behavior",
               "displayName": "Filter Behavior",
               "description": "Filter behavior to apply when a match is found",
               "type": "ENUM",
@@ -78,13 +77,13 @@
           ]
         },
         {
-          "fieldPath": "config.server_settings",
+          "fieldPath": "server_settings",
           "displayName": "Server Settings",
           "description": "Server settings for load balancing and high availability config",
           "type": "serverSettings",
           "serverSettings": [
             {
-              "fieldPath": "config.server_settings.state",
+              "fieldPath": "state",
               "displayName": "Server State",
               "description": "Server State for Collector",
               "type": "ENUM",
@@ -100,88 +99,88 @@
               ]
             },
             {
-              "fieldPath": "config.server_settings.graceful_timeout",
+              "fieldPath": "graceful_timeout",
               "displayName": "Graceful Timeout",
               "description": "Number of seconds after which the forwarder returns a bad readiness/health check and still accepts new connections",
               "defaultValue": 15,
               "type": "INT"
             },
             {
-              "fieldPath": "config.server_settings.drain_timeout",
+              "fieldPath": "drain_timeout",
               "displayName": "Drain timeout",
               "description": "Number of seconds after which the forwarder waits for active connections to successfully close on their own before being closed by the server",
               "defaultValue": 10,
               "type": "INT"
             },
             {
-              "fieldPath": "config.server_settings.http_settings",
+              "fieldPath": "http_settings",
               "displayName": "HTTP-specific server settings",
               "type": "httpSettings",
               "httpSettings": [
                 {
-                  "fieldPath": "config.server_settings.http_settings.host",
+                  "fieldPath": "host",
                   "displayName": "Host",
                   "description": "IP address, or hostname that can be resolved to IP addresses, that the server should listen on",
                   "defaultValue": "0.0.0.0",
                   "type": "STRING"
                 },
                 {
-                  "fieldPath": "config.server_settings.http_settings.port",
+                  "fieldPath": "port",
                   "displayName": "Port",
                   "description": "Port number that the HTTP server listens on for health checks from the load balancer",
                   "defaultValue": 8080,
                   "type": "INT"
                 },
                 {
-                  "fieldPath": "config.server_settings.http_settings.read_timeout",
+                  "fieldPath": "read_timeout",
                   "displayName": "Read Timeout",
                   "description": "Maximum amount of time allowed to read the entire request, both the header and the body",
                   "defaultValue": 3,
                   "type": "INT"
                 },
                 {
-                  "fieldPath": "config.server_settings.http_settings.read_header_timeout",
+                  "fieldPath": "read_header_timeout",
                   "displayName": "Read Header Timeout",
                   "description": "Maximum amount of time allowed to read request headers",
                   "defaultValue": 3,
                   "type": "INT"
                 },
                 {
-                  "fieldPath": "config.server_settings.http_settings.write_timeout",
+                  "fieldPath": "write_timeout",
                   "displayName": "Write Timeout",
                   "description": "Maximum amount of time allowed to send a response",
                   "defaultValue": 3,
                   "type": "INT"
                 },
                 {
-                  "fieldPath": "config.server_settings.http_settings.idle_timeout",
+                  "fieldPath": "idle_timeout",
                   "displayName": "Idle Timeout",
                   "description": "Maximum amount of time (in seconds) to wait for the next request when idle connections are enabled",
                   "defaultValue": 3,
                   "type": "INT"
                 },
                 {
-                  "fieldPath": "config.server_settings.http_settings.route_settings",
+                  "fieldPath": "route_settings",
                   "displayName": "Route Settings",
                   "description": "Route-specific settings for the HTTP server",
                   "type": "routeSettings",
                   "routeSettings": [
                     {
-                      "fieldPath": "config.server_settings.http_settings.route_settings.available_status_code",
+                      "fieldPath": "available_status_code",
                       "displayName": "Available Status Code",
                       "description": "Status code returned when a liveness check is received and the forwarder is available",
                       "defaultValue": 204,
                       "type": "INT"
                     },
                     {
-                      "fieldPath": "config.server_settings.http_settings.route_settings.ready_status_code",
+                      "fieldPath": "ready_status_code",
                       "displayName": "Ready Status Code",
                       "description": "Status code returned when it is ready to accept traffic",
                       "defaultValue": 204,
                       "type": "INT"
                     },
                     {
-                      "fieldPath": "config.server_settings.http_settings.route_settings.unready_status_code",
+                      "fieldPath": "unready_status_code",
                       "displayName": "Unready Status Code",
                       "description": "Status code returned when it is not ready to accept traffic",
                       "defaultValue": 503,

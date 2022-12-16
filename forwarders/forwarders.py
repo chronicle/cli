@@ -22,6 +22,7 @@ from common import chronicle_auth
 from forwarders.collectors.collectors import collectors
 from forwarders.commands import create
 from forwarders.commands import delete
+from forwarders.commands import generate_file
 from forwarders.commands import get
 from forwarders.commands import list  # pylint: disable=redefined-builtin
 from forwarders.commands import update
@@ -42,3 +43,4 @@ forwarders.add_command(list.list_command)
 forwarders.add_command(create.create)
 forwarders.add_command(update.update)
 forwarders.add_command(delete.delete)
+forwarders.add_command(generate_file.generate_file)
