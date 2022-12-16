@@ -34,26 +34,33 @@ PRINT_SEPARATOR = "=" * 80
 
 def export_txt(export_path: AnyStr, final_json_response: Dict[str,
                                                               Any]) -> None:
-  """Writes forwarder list data into txt.
+  """Exports forwarder or collectors data to a txt file.
 
   Args:
     export_path (AnyStr): Path of file to export output of list command.
     final_json_response (Dict[str, Any]): Json with all required details.
   """
-
   with open(export_path, "w") as f:
-    for forwarder in final_json_response.get(schema.KEY_FORWARDERS, []):
-
-      f.write("\n\nForwarder Details:\n\n")
-      f.write(
-          commands_utility.convert_dict_to_yaml(
-              commands_utility.convert_dict_keys_to_human_readable(
-                  change_dict_keys_order(forwarder))))
-      f.write(
-          commands_utility.convert_dict_to_yaml(
-              commands_utility.convert_dict_keys_to_human_readable(
-                  {schema.KEY_COLLECTORS: forwarder[schema.KEY_COLLECTORS]})))
-      f.write(f"{PRINT_SEPARATOR}")
+    if schema.KEY_COLLECTORS in final_json_response:
+      for each_collector in final_json_response[schema.KEY_COLLECTORS]:
+        f.write("\n\nCollector Details:\n\n")
+        f.write(
+            commands_utility.convert_dict_to_yaml(
+                commands_utility.convert_dict_keys_to_human_readable(
+                    each_collector)))
+        f.write(f"\n{PRINT_SEPARATOR}")
+    else:
+      for forwarder in final_json_response.get(schema.KEY_FORWARDERS, []):
+        f.write("\n\nForwarder Details:\n\n")
+        f.write(
+            commands_utility.convert_dict_to_yaml(
+                commands_utility.convert_dict_keys_to_human_readable(
+                    change_dict_keys_order(forwarder))))
+        f.write(
+            commands_utility.convert_dict_to_yaml(
+                commands_utility.convert_dict_keys_to_human_readable(
+                    {schema.KEY_COLLECTORS: forwarder[schema.KEY_COLLECTORS]})))
+        f.write(f"{PRINT_SEPARATOR}")
 
 
 def get_labels_str(forwarder_response: Dict[str, Any]) -> str:
