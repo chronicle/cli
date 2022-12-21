@@ -13,6 +13,7 @@
 # limitations under the License.
 #
 """List all collectors for the customer."""
+import copy
 import os
 from typing import Any, AnyStr, Dict, List
 
@@ -36,6 +37,7 @@ from forwarders.constants import schema
 @options.verbose_option
 @options.export_option
 @click.option(
+    "-f",
     "--file-format",
     type=click.Choice(["TXT", "CSV", "JSON"], case_sensitive=False),
     default="CSV",
@@ -81,7 +83,7 @@ def list_command(credential_file: AnyStr, verbose: bool, file_format: AnyStr,
       schema.KEY_COLLECTORS] and collectors_api_response.get(
           schema.KEY_COLLECTORS):
 
-    collectors = collectors_api_response[schema.KEY_COLLECTORS]
+    collectors = copy.deepcopy(collectors_api_response[schema.KEY_COLLECTORS])
     final_json_response, collector_rows = list_collectors(export, collectors)
 
     if export:
@@ -90,9 +92,6 @@ def list_command(credential_file: AnyStr, verbose: bool, file_format: AnyStr,
     if verbose:
       api_utility.print_request_details(collector_url, method, None,
                                         collectors_api_response)
-      for collector_response in collectors:
-        api_utility.print_request_details(collector_url, method, None,
-                                          collector_response)
   else:
     click.echo(
         commands_utility.convert_dict_to_yaml(
@@ -135,6 +134,9 @@ def list_collectors(
     click.echo("\nCollector Details:\n")
     click.echo(commands_utility.convert_dict_to_yaml(display_output))
     click.echo(f"{forwarder_utility.PRINT_SEPARATOR}")
+
+    collector.update({schema.KEY_ID: collector.get(schema.KEY_NAME)})
+    collector.pop(schema.KEY_NAME, None)
 
     if export:
       # Export collector rows without forwarder ID

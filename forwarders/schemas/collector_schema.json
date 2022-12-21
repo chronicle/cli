@@ -211,8 +211,8 @@
                     },
                     {
                       "fieldPath": "insecure_skip_verify",
-                      "displayName": "Disables SSL certification verification",
-                      "defaultValue": false,
+                      "displayName": "Insecure Skip Verify",
+                      "description": "Disables SSL certification verification",
                       "type": "BOOL"
                     }
                   ]
@@ -379,7 +379,6 @@
                       "fieldPath": "insecure_skip_verify",
                       "displayName": "Insecure Skip Verify",
                       "description": "Disables SSL certification verification",
-                      "defaultValue": false,
                       "type": "BOOL"
                     }
                   ]

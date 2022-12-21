@@ -40,6 +40,7 @@ CONF_FILE_EXTENSION = "conf"
 @options.verbose_option
 @options.credential_file_option
 @click.option(
+    "-f",
     "--file-path",
     default="",
     help="Download generated forwarder file to the specified path.")

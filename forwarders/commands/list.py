@@ -39,6 +39,7 @@ from forwarders.constants import schema
 @options.verbose_option
 @options.export_option
 @click.option(
+    "-f",
     "--file-format",
     type=click.Choice(["TXT", "CSV", "JSON"], case_sensitive=False),
     default="CSV",
@@ -165,7 +166,11 @@ def list_forwarders_and_associated_collectors(export: AnyStr, region: str,
         # "Collector [<collector_uuid>]" for easy readability in yaml output.
         # Example-{"collectors":{"Collector [<collector_uuid>]":{"name":""}}}
         collector_id = forwarder_utility.get_resource_id(collector)
+        collector.update({schema.KEY_NAME: collector_id})
         collector = forwarder_utility.change_dict_keys_order(collector)
+
+        if export:
+          collector_rows.append(get_collector_csv_rows(forwarder, collector))
 
         # Remove ID from the dictionary to avoid displaying
         # it multiple times on the console.
@@ -173,9 +178,6 @@ def list_forwarders_and_associated_collectors(export: AnyStr, region: str,
 
         collectors[
             schema.KEY_COLLECTORS][f"Collector [{collector_id}]"] = collector
-
-        if export:
-          collector_rows.append(get_collector_csv_rows(forwarder, collector))
 
     forwarder_details = commands_utility.convert_dict_keys_to_human_readable(
         forwarder_utility.change_dict_keys_order(forwarder))
@@ -303,7 +305,7 @@ def get_collector_csv_rows(forwarder: Dict[str, Any],
 
   return [
       forwarder.get(schema.KEY_NAME, ""),
-      collector.get(schema.KEY_NAME, ""),
+      collector.get(schema.KEY_ID, ""),
       collector.get(schema.KEY_DISPLAY_NAME, ""),
       collector.get(schema.KEY_STATE, ""),
       config.get(schema.KEY_LOG_TYPE, ""),

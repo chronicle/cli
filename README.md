@@ -3,7 +3,7 @@
 Command line tool to interact with Chronicle's APIs.
 
 Chronicle CLI allows customers to manage various operations that can be
-performed on Chronicle. This script provides a command line tool to interact 
+performed on Chronicle. This script provides a command line tool to interact
 with Feed, Parser, Forwarder and BigQuery APIs. It will gradually expand to
 cover other APIs.
 
@@ -14,8 +14,13 @@ Follow these instructions: https://cloud.google.com/python/setup
 You may skip installing the Cloud Client Libraries and the Cloud SDK, they are
 unnecessary for interacting with Chronicle.
 
-After creating and activating the virtual environment `venv`, install Python
-library dependencies by running this command:
+After creating and activating the virtual environment `venv`, clone the repository using following command:
+
+```shell
+git clone https://github.com/chronicle/cli.git
+```
+
+After cloning, install Python library dependencies by running this command:
 
 ```shell
 pip install -r requirements.txt
@@ -34,7 +39,7 @@ Go to root directory and execute following command:\
 
 Running the samples requires a JSON credentials file. By default, all the
 samples try to use the file `.chronicle_credentials.json` from inside a hidden
-directory `.chronicle_cli` in the user's home directory. If this file is not 
+directory `.chronicle_cli` in the user's home directory. If this file is not
 found, you need to specify it explicitly by adding the following argument to the
 sample's command-line:
 
@@ -45,9 +50,6 @@ sample's command-line:
 ## Run the chronicle_cli
 
 ```$ chronicle_cli --help```
-
-Note: On MacOS, you might have to run below command first :\
-```$ alias chronicle_cli="python3 main.py"```
 
 ## Unit test case execution
 

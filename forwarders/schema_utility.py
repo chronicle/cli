@@ -401,7 +401,14 @@ class Schema:
         schema.BOOL_FIELD_TYPE, schema.STR_SECRET_FIELD_TYPE
     ]:
       field_value = process_field_input(each, existing_value)
-      if field_value and field_value != -1:
+
+      # In case if the type of field is integer and the user does not provide
+      # the value,it would consider that field's value as -1.
+      # In case if the type of field is boolean and its value is False,
+      # the request body should be updated with the same.
+      # Update the request body only when the field value is available,not equal
+      # to -1 or if the type of field value is boolean as mentioned above.
+      if (field_value and field_value != -1) or isinstance(field_value, bool):
         request_body.update({each[schema.KEY_FIELD_PATH]: field_value})
 
     # Processing label type input.

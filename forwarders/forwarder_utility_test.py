@@ -158,7 +158,7 @@ def test_write_backup():
 
 
 @mock.patch(
-    'google3.third_party.chronicle.cli.forwarders.forwarder_utility.click.confirm'
+    'forwarders.forwarder_utility.click.confirm'
 )
 def test_read_backup_retry_true(mock_choice):
   """Test to read data from backup file if retry.
@@ -181,7 +181,7 @@ def test_read_backup_retry_true(mock_choice):
 
 
 @mock.patch(
-    'google3.third_party.chronicle.cli.forwarders.forwarder_utility.click.confirm'
+    'forwarders.forwarder_utility.click.confirm'
 )
 def test_read_backup_retry_false(mock_choice):
   """Test to read data from backup file if not retry.
