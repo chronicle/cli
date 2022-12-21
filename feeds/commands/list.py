@@ -37,6 +37,7 @@ from feeds.constants import schema
 @options.region_option
 @options.export_option
 @click.option(
+    "-f",
     "--file-format",
     type=click.Choice(["TXT", "CSV", "JSON"], case_sensitive=False),
     default="CSV",

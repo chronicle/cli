@@ -17,7 +17,6 @@
           "fieldPath": "upload_compression",
           "displayName": "Upload Compression",
           "description": "Determines if uploaded data will be compressed",
-          "defaultValue": true,
           "type": "BOOL"
         },
         {

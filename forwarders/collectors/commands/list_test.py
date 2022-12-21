@@ -277,17 +277,7 @@ Request:
   Method: GET
   Body: None
 Response:
-  Body: {'collectors': [{'name': 'abc123-def457-ghi891-234', 'displayName': 'SplunkCollector', 'config': {'logType': 'WINDOWS_DNS', 'maxSecondsPerBatch': 10, 'maxBytesPerBatch': '1048576', 'splunkSettings': {'host': '127.0.0.1', 'minimumWindowSize': 10, 'maximumWindowSize': 30, 'queryString': 'search index=* sourcetype=dns', 'queryMode': 'realtime', 'port': 8089}}, 'state': 'ACTIVE'}]}
-
-==========================================
-========== HTTP Request Details ==========
-==========================================
-Request:
-  URL: https://backstory.googleapis.com/v2/forwarders/1/collectors
-  Method: GET
-  Body: None
-Response:
-  Body: {'name': 'abc123-def457-ghi891-234', 'displayName': 'SplunkCollector', 'config': {'logType': 'WINDOWS_DNS', 'maxSecondsPerBatch': 10, 'maxBytesPerBatch': '1048576', 'splunkSettings': {'host': '127.0.0.1', 'minimumWindowSize': 10, 'maximumWindowSize': 30, 'queryString': 'search index=* sourcetype=dns', 'queryMode': 'realtime', 'port': 8089}}, 'state': 'ACTIVE'}""" in result.output
+  Body: {'collectors': [{'name': 'forwarders/abc123-def457-ghi891-567/collectors/abc123-def457-ghi891-234', 'displayName': 'SplunkCollector', 'config': {'logType': 'WINDOWS_DNS', 'maxSecondsPerBatch': 10, 'maxBytesPerBatch': '1048576', 'splunkSettings': {'host': '127.0.0.1', 'minimumWindowSize': 10, 'maximumWindowSize': 30, 'queryString': 'search index=* sourcetype=dns', 'queryMode': 'realtime', 'port': 8089}}, 'state': 'ACTIVE'}]}""" in result.output
 
 
 def test_prompt_text() -> None:

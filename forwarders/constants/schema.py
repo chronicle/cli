@@ -82,7 +82,7 @@ ROW_AVAILABLE_STATUS_CODE = (
     "[CONFIG][SERVER_SETTINGS][HTTP_SETTINGS][ROUTE_SETTINGS]"
     " Available status code")
 FORWARDER_COLUMN_HEADER = [
-    "Name", "Display name", "Forwarder state", "[CONFIG] Upload compression",
+    "ID", "Display name", "Forwarder state", "[CONFIG] Upload compression",
     "[CONFIG][METADATA] Asset namespace", "[CONFIG][METADATA] Labels",
     "[CONFIG] Regex filters", "[CONFIG][SERVER_SETTINGS] Server state",
     "[CONFIG][SERVER_SETTINGS] Graceful timeout",
@@ -98,7 +98,7 @@ FORWARDER_COLUMN_HEADER = [
     "[CONFIG][SERVER_SETTINGS][HTTP_SETTINGS][ROUTE_SETTINGS] Unready status code"
 ]
 COLLECTOR_COLUMN_HEADER = [
-    "Forwarder ID", "Name", "Display Name", "Collector state",
+    "Forwarder ID", "Collector ID", "Display Name", "Collector state",
     "[CONFIG] Log type", "[CONFIG] Max seconds per batch",
     "[CONFIG] Max bytes per batch", "[CONFIG][METADATA] Asset namespace",
     "[CONFIG][METADATA] Labels", "[CONFIG] Regex filters",
