@@ -179,7 +179,7 @@ class Schema:
     except FileNotFoundError as e:  # pylint: disable=broad-except
       click.echo("Failed with exception:" + str(e))
 
-    return detailed_schema
+    return detailed_schema  # pytype: disable=name-error  # py310-upgrade
 
   def validate_syslog_udp_settings(self, field_schema: Dict[str, Any],
                                    request_body) -> bool:
