@@ -20,9 +20,10 @@ After creating and activating the virtual environment `venv`, clone the reposito
 git clone https://github.com/chronicle/cli.git
 ```
 
-After cloning, install Python library dependencies by running this command:
+After cloning, switch directory to `cli` and install Python library dependencies by running this command:
 
 ```shell
+cd cli
 pip install -r requirements.txt
 ```
 
@@ -33,7 +34,9 @@ It is assumed that you're using Python 3.7 or above.
 https://cloud.google.com/python/docs/setup
 
 Go to root directory and execute following command:\
-```python3 -m pip install --editable .```
+```shell
+python3 -m pip install --editable .
+```
 
 ## Credentials
 
@@ -49,12 +52,16 @@ sample's command-line:
 
 ## Run the chronicle_cli
 
-```$ chronicle_cli --help```
+```shell
+chronicle_cli --help
+```
 
 ## Unit test case execution
 
 Execute the following command from root directory:\
-```$ python3 -m pytest --cov=./ --cov-report term-missing -vv```
+```shell
+python3 -m pytest --cov=./ --cov-report term-missing -vv
+```
 
 
 ## Documentation

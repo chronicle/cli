@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Unit tests for generate_file.py."""
+"""Unit tests for generate_files.py."""
 
 import os
 from typing import Dict, Tuple, Any
@@ -20,18 +20,18 @@ from unittest import mock
 
 from click.testing import CliRunner
 
-from forwarders.commands.generate_file import generate_file
+from forwarders.commands.generate_files import generate_files
 from forwarders.tests.fixtures import *  # pylint: disable=wildcard-import
-from forwarders.tests.fixtures import TEMP_GENERATE_FILE
+from forwarders.tests.fixtures import TEMP_GENERATE_FILES
 
 runner = CliRunner()
 
 
 @mock.patch(
-    "forwarders.commands.generate_file.chronicle_auth.initialize_http_session"
+    "forwarders.commands.generate_files.chronicle_auth.initialize_http_session"
 )
 @mock.patch(
-    "forwarders.commands.generate_file.click.prompt"
+    "forwarders.commands.generate_files.click.prompt"
 )
 def test_forwarder_id_absent(
     input_patch: mock.MagicMock, mock_client: mock.MagicMock,
@@ -48,19 +48,19 @@ def test_forwarder_id_absent(
   mock_client.return_value.request.side_effect = [get_forwarder_data]
 
   # Method call.
-  result = runner.invoke(generate_file)
+  result = runner.invoke(generate_files)
   assert "Forwarder ID not provided. Please enter Forwarder ID." in result.output
 
 
 @mock.patch(
-    "forwarders.commands.generate_file.chronicle_auth.initialize_http_session"
+    "forwarders.commands.generate_files.chronicle_auth.initialize_http_session"
 )
 @mock.patch(
-    "forwarders.commands.generate_file.click.prompt"
+    "forwarders.commands.generate_files.click.prompt"
 )
-def test_generate_file_500(input_patch: mock.MagicMock,
-                           mock_client: mock.MagicMock,
-                           internal_server_error: Dict[str, Any]) -> None:
+def test_generate_files_500(input_patch: mock.MagicMock,
+                            mock_client: mock.MagicMock,
+                            internal_server_error: Dict[str, Any]) -> None:
   """Test case to check the server error code.
 
   Args:
@@ -73,10 +73,10 @@ def test_generate_file_500(input_patch: mock.MagicMock,
   mock_client.return_value.request.side_effect = [internal_server_error]
 
   # Method call.
-  result = runner.invoke(generate_file, ["--verbose"])
-  assert """Generating forwarder file ...
+  result = runner.invoke(generate_files, ["--verbose"])
+  assert """Generating forwarder files ...
 
-Error while generating forwarder file.
+Error while generating forwarder files.
 Response Code: 500""" in result.output
   assert """==========================================
 ========== HTTP Request Details ==========
@@ -90,15 +90,15 @@ Response:
 
 
 @mock.patch(
-    "forwarders.commands.generate_file.chronicle_auth.initialize_http_session"
+    "forwarders.commands.generate_files.chronicle_auth.initialize_http_session"
 )
 @mock.patch(
-    "forwarders.commands.generate_file.click.prompt"
+    "forwarders.commands.generate_files.click.prompt"
 )
-def test_file_generated(input_patch: mock.MagicMock,
-                        mock_client: mock.MagicMock,
-                        generate_forwarder_file: str) -> None:
-  """Test case to check config file generated.
+def test_files_generated(input_patch: mock.MagicMock,
+                         mock_client: mock.MagicMock,
+                         generate_forwarder_file: str) -> None:
+  """Test case to check config files generated.
 
 
   Args:
@@ -109,18 +109,22 @@ def test_file_generated(input_patch: mock.MagicMock,
   input_patch.return_value = "123"
   mock_client.return_value = mock.Mock()
   mock_client.return_value.request.side_effect = [generate_forwarder_file]
-  result = runner.invoke(generate_file,
-                         ["--file-path", TEMP_GENERATE_FILE[:-5]])
-  assert os.path.exists(TEMP_GENERATE_FILE)
-  assert f"""Generating forwarder file ...
-Forwarder configuration generated successfully at the following path: {TEMP_GENERATE_FILE}""" in result.output
+  result = runner.invoke(generate_files, ["--file-path", TEMP_GENERATE_FILES])
+  file_path = f"{TEMP_GENERATE_FILES}_forwarder.conf"
+  auth_file_path = f"{TEMP_GENERATE_FILES}_forwarder_auth.conf"
+  assert os.path.exists(file_path)
+  assert os.path.exists(auth_file_path)
+  assert f"""Generating forwarder files ...
+Forwarder files generated successfully.
+Configuration file: {file_path}
+Auth file: {auth_file_path}""" in result.output
 
 
 @mock.patch(
-    "forwarders.commands.generate_file.chronicle_auth.initialize_http_session"
+    "forwarders.commands.generate_files.chronicle_auth.initialize_http_session"
 )
 @mock.patch(
-    "forwarders.commands.generate_file.click.prompt"
+    "forwarders.commands.generate_files.click.prompt"
 )
 def test_get_credential_file_invalid(input_patch: mock.MagicMock,
                                      mock_client: mock.MagicMock) -> None:
@@ -135,7 +139,7 @@ def test_get_credential_file_invalid(input_patch: mock.MagicMock,
   mock_client.side_effect = OSError("Credential Path not found.")
   expected_message = "Failed with exception: Credential Path not found."
 
-  result = runner.invoke(generate_file, ["--credential_file", "my_dummy.json"])
+  result = runner.invoke(generate_files, ["--credential_file", "my_dummy.json"])
   assert expected_message in result.output
 
 
@@ -143,15 +147,15 @@ def test_prompt_text() -> None:
   """Test case to check prompt text."""
 
   # Method call.
-  result = runner.invoke(generate_file)
+  result = runner.invoke(generate_files)
   assert "Enter Forwarder ID:" in result.output
 
 
 @mock.patch(
-    "forwarders.commands.generate_file.chronicle_auth.initialize_http_session"
+    "forwarders.commands.generate_files.chronicle_auth.initialize_http_session"
 )
 @mock.patch(
-    "forwarders.commands.generate_file.click.prompt"
+    "forwarders.commands.generate_files.click.prompt"
 )
 def test_verbose_output(input_patch: mock.MagicMock,
                         mock_client: mock.MagicMock,
@@ -167,8 +171,8 @@ def test_verbose_output(input_patch: mock.MagicMock,
   input_patch.return_value = "123"
   mock_client.return_value = mock.Mock()
   mock_client.return_value.request.side_effect = [generate_forwarder_file]
-  result = runner.invoke(generate_file,
-                         ["--file-path", TEMP_GENERATE_FILE[:-5], "--verbose"])
+  result = runner.invoke(generate_files,
+                         ["--file-path", TEMP_GENERATE_FILES, "--verbose"])
   assert """==========================================
 ========== HTTP Request Details ==========
 ==========================================
@@ -177,4 +181,4 @@ Request:
   Method: GET
   Body: None
 Response:
-  Body: {'config': 'output'}""" in result.output
+  Body: {'config': 'output', 'auth': 'authoutput'}""" in result.output

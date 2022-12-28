@@ -25,11 +25,11 @@ def test_forwarders() -> None:
   """Test case for forwarders."""
   result = runner.invoke(forwarders)
   expected_output = """Commands:
-  collectors     Collector Management Workflows
-  create         Create a Forwarder
-  delete         Delete a forwarder using Forwarder ID
-  generate_file  Generate forwarder configuration using Forwarder ID
-  get            Get forwarder details using Forwarder ID
-  list           List all forwarders
-  update         Update a forwarder using Forwarder ID"""
+  collectors      Collector Management Workflows
+  create          Create a Forwarder
+  delete          Delete a forwarder using Forwarder ID
+  generate_files  Generate forwarder configuration files using Forwarder ID
+  get             Get forwarder details using Forwarder ID
+  list            List all forwarders
+  update          Update a forwarder using Forwarder ID"""
   assert expected_output in result.output
