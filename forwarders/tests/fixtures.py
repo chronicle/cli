@@ -29,7 +29,7 @@ TEMP_EXPORT_JSON_FILE = os.path.join(TEST_DATA_DIR, "dummy_export.json")
 TEMP_CREATE_BACKUP_FILE = os.path.join(TEST_DATA_DIR, "create_backup.json")
 TEMP_UPDATE_BACKUP_FILE = os.path.join(TEST_DATA_DIR, "update_backup.json")
 TEMP_SERVICE_ACCOUNT_FILE = os.path.join(TEST_DATA_DIR, "service_account.json")
-TEMP_GENERATE_FILE = os.path.join(TEST_DATA_DIR, "generate_file.conf")
+TEMP_GENERATE_FILES = os.path.join(TEST_DATA_DIR, "generate_files")
 # Permissions are required to be set for test_data directory recursively,
 # otherwise the test cases are failed.
 os.system(f"chmod -R +rw {TEST_DATA_DIR}")
@@ -528,5 +528,6 @@ def repeated_field_schema() -> Any:
 @pytest.fixture()
 def generate_forwarder_file() -> MockResponse:
   """Test data of API to generate forwarder file."""
-  data = MockResponse(status_code=200, text="""{"config": "output"}""")
+  data = MockResponse(
+      status_code=200, text="""{"config": "output","auth": "authoutput"}""")
   return data

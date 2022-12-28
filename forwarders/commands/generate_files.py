@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Generate Forwarders File."""
+"""Generate Forwarders Files."""
 
 import os
 from typing import AnyStr
@@ -28,13 +28,14 @@ from common import options
 from common.constants import key_constants
 from common.constants import status
 from forwarders import forwarder_utility
+from forwarders.constants import schema
 
 CONF_FILE_EXTENSION = "conf"
 
 
 @click.command(
-    name="generate_file",
-    help="Generate forwarder configuration using Forwarder ID")
+    name="generate_files",
+    help="Generate forwarder configuration files using Forwarder ID")
 @options.url_option
 @options.region_option
 @options.verbose_option
@@ -43,11 +44,11 @@ CONF_FILE_EXTENSION = "conf"
     "-f",
     "--file-path",
     default="",
-    help="Download generated forwarder file to the specified path.")
+    help="Download generated forwarder files to the specified path.")
 @exception_handler.catch_exception()
-def generate_file(credential_file: AnyStr, verbose: bool, region: str, url: str,
-                  file_path: AnyStr) -> None:
-  """Generate forwarder file using Forwarder ID.
+def generate_files(credential_file: AnyStr, verbose: bool, region: str,
+                   url: str, file_path: AnyStr) -> None:
+  """Generate forwarder files using Forwarder ID.
 
   Args:
     credential_file (AnyStr): Path of Service Account JSON.
@@ -55,7 +56,8 @@ def generate_file(credential_file: AnyStr, verbose: bool, region: str, url: str,
     region (str): Option for selecting regions. Available options - US, EUROPE,
       ASIA_SOUTHEAST1.
     url (str): Base URL to be used for API calls.
-    file_path (AnyStr): Path where the generated forwarder file would be stored.
+    file_path (AnyStr): Path where the generated forwarder files would be
+      stored.
   """
   forwarder_id = click.prompt(
       "Enter Forwarder ID", default="", show_default=False)
@@ -76,19 +78,22 @@ def generate_file(credential_file: AnyStr, verbose: bool, region: str, url: str,
   download_path = os.path.abspath(file_path) if file_path else os.path.abspath(
       forwarder_id)
 
-  click.echo("Generating forwarder file ...")
+  click.echo("Generating forwarder files ...")
 
   if status_code == status.STATUS_OK:
-    file_utility.export_txt(f"{download_path}.{CONF_FILE_EXTENSION}",
-                            forwarder_response["config"])
+    file_utility.export_txt(f"{download_path}_forwarder.{CONF_FILE_EXTENSION}",
+                            forwarder_response[schema.KEY_CONFIG])
+    file_utility.export_txt(
+        f"{download_path}_forwarder_auth.{CONF_FILE_EXTENSION}",
+        forwarder_response[schema.KEY_AUTH])
     click.echo(
-        f"Forwarder configuration generated successfully at the following path: {download_path}.{CONF_FILE_EXTENSION}"
+        f"Forwarder files generated successfully.\nConfiguration file: {download_path}_forwarder.{CONF_FILE_EXTENSION}\nAuth file: {download_path}_forwarder_auth.{CONF_FILE_EXTENSION}"
     )
   else:
     error_message = forwarder_response[key_constants.KEY_ERROR][
         key_constants.KEY_MESSAGE]
     click.echo(
-        f"\nError while generating forwarder file.\nResponse Code: {status_code}"
+        f"\nError while generating forwarder files.\nResponse Code: {status_code}"
         f"\nError: {error_message}")
 
   if verbose:

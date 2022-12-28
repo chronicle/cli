@@ -154,3 +154,4 @@ CONNECTION_TIMEOUT_FIELD_PATH = "connection_timeout"
 PROTOCOL_FIELD_PATH = "protocol"
 KEY_ID = "ID"
 SENSITIVE_FIELDS = ["password"]
+KEY_AUTH = "auth"
