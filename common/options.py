@@ -19,20 +19,33 @@ import click
 from common import chronicle_auth
 
 verbose_option = click.option(
-    "--verbose", is_flag=True, help="Prints verbose output to the console.")
+    "--verbose", is_flag=True, help="Prints verbose output to the console."
+)
 
 credential_file_option = click.option(
     "-c",
     "--credential_file",
-    help=f"Path of Service Account JSON. Default: {chronicle_auth.default_cred_file_path}"
+    help=(
+        "Path of Service Account JSON. Default:"
+        f" {chronicle_auth.default_cred_file_path}"
+    ),
 )
 
 region_option = click.option(
     "--region",
-    type=click.Choice(["US", "ASIA-SOUTHEAST1", "EUROPE"],
-                      case_sensitive=False),
+    type=click.Choice(
+        [
+            "US",
+            "ASIA-SOUTHEAST1",
+            "EUROPE",
+            "EUROPE-WEST2",
+            "AUSTRALIA-SOUTHEAST1",
+        ],
+        case_sensitive=False,
+    ),
     default="US",
-    help="Select region")
+    help="Select region",
+)
 
 url_option = click.option("--url", help="Base URL to be used for API calls")
 
@@ -41,7 +54,9 @@ env_option = click.option(
     type=click.Choice(["prod", "test"], case_sensitive=False),
     default="prod",
     help="""Optionally specify
-                        the environment for API calls""")
+                        the environment for API calls""",
+)
 
 export_option = click.option(
-    "--export", help="Export output to specified file path")
+    "--export", help="Export output to specified file path"
+)
