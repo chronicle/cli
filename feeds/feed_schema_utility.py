@@ -89,7 +89,7 @@ class FeedSchema:
 
     Returns:
       dataclass: Consists of -
-        1. Display nane of Source type
+        1. Display name of Source type
         2. Schema of Log type
         3. Error message.
     """
@@ -254,7 +254,7 @@ class FeedSchema:
     self.pre_body[schema.KEY_DETAILS_NAMESPACE] = namespace
 
   def process_labels_input(self, flattened_response: Dict[str, Any]) -> None:
-    """Prompt input for lables field.
+    """Prompt input for labels field.
 
     Args:
       flattened_response (Dict): Flattened response of existing feed.
