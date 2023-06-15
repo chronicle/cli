@@ -225,7 +225,7 @@ def test_process_input_detailed_schema_non_primitive(
 ========================================
 
 ========================================
-======== Forwarder Configuration ========
+======= Forwarder Configuration ========
 ========================================""" in output
 
 
