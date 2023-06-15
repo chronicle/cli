@@ -18,6 +18,14 @@ import click
 
 from common import chronicle_auth
 
+REGION_LIST = [
+    "US",
+    "ASIA-SOUTHEAST1",
+    "EUROPE",
+    "EUROPE-WEST2",
+    "AUSTRALIA-SOUTHEAST1",
+]
+
 verbose_option = click.option(
     "--verbose", is_flag=True, help="Prints verbose output to the console."
 )
@@ -34,13 +42,7 @@ credential_file_option = click.option(
 region_option = click.option(
     "--region",
     type=click.Choice(
-        [
-            "US",
-            "ASIA-SOUTHEAST1",
-            "EUROPE",
-            "EUROPE-WEST2",
-            "AUSTRALIA-SOUTHEAST1",
-        ],
+        REGION_LIST,
         case_sensitive=False,
     ),
     default="US",
