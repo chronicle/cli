@@ -17,6 +17,9 @@
 BASE_URL = "https://backstory.googleapis.com"
 CHRONICLE_TEST_API_URL = "https://test-backstory.sandbox.googleapis.com"
 
+DATAPLANE_BASE_URL = "https://{region}-chronicle.googleapis.com"
+DATAPLANE_TEST_URL = "https://test-chronicle.sandbox.googleapis.com"
+
 
 def get_base_url(region: str, custom_url: str, env: str = "prod") -> str:
   """Get base URL according to selected region.
@@ -37,3 +40,23 @@ def get_base_url(region: str, custom_url: str, env: str = "prod") -> str:
   if env == "test":
     return CHRONICLE_TEST_API_URL
   return BASE_URL
+
+
+def get_dataplane_base_url(region: str,
+                           custom_url: str,
+                           env: str = "prod") -> str:
+  """Get base URL for DataPlane API according to selected region.
+
+  Args:
+    region (str): Region (US, EUROPE, ASIA_SOUTHEAST1, EUROPE_WEST2)
+    custom_url (str): Base URL to be used for API calls
+    env (str): Environment for API calls (prod, test)
+
+  Returns:
+    str: Base URL
+  """
+  if custom_url:
+    return custom_url
+  if env == "test":
+    return DATAPLANE_TEST_URL
+  return DATAPLANE_BASE_URL.format(region=region)

@@ -22,17 +22,30 @@ import pytest
 from mock_test_utility import MockResponse
 
 TEST_DATA_DIR = os.path.dirname(__file__)
-TEMP_TEST_TXT_FILE = os.path.join(TEST_DATA_DIR, "test.txt")
-TEMP_TEST_JSON_FILE = os.path.join(TEST_DATA_DIR, "test.json")
 TEMP_CONF_FILE = os.path.join(TEST_DATA_DIR,
                               "test_log_type_20220824062200.conf")
 TEMP_SUBMIT_CONF_FILE = os.path.join(TEST_DATA_DIR, "test_config_file.conf")
+TEMP_SUBMIT_LOG_FILE = os.path.join(TEST_DATA_DIR, "test_log_file.conf")
+TEMP_TEST_JSON_FILE = os.path.join(TEST_DATA_DIR, "test.json")
+TEMP_TEST_TXT_FILE = os.path.join(TEST_DATA_DIR, "test.txt")
 
 os.system(f"chmod -R +rw {TEST_DATA_DIR}")
 
 
 def create_temp_config_file(file_path: str, content: str) -> None:
   """Create temporary config file with the content.
+
+  Args:
+    file_path (str): Path to create the temp config file.
+    content (str): content to be written in the file.
+  """
+  with open(file_path, "w") as file:
+    if content:
+      file.write(content)
+
+
+def create_temp_log_file(file_path: str, content: str) -> None:
+  """Create temporary log file with the content.
 
   Args:
     file_path (str): Path to create the temp config file.
@@ -168,7 +181,7 @@ def cleanup(request: Any):
   def remove_test_files():
     files = [
         TEMP_TEST_TXT_FILE, TEMP_TEST_JSON_FILE, TEMP_CONF_FILE,
-        TEMP_SUBMIT_CONF_FILE
+        TEMP_SUBMIT_CONF_FILE, TEMP_SUBMIT_LOG_FILE,
     ]
     for file_path in files:
       try:
@@ -216,3 +229,406 @@ def generate_logs() -> MockResponse:
       status_code=200,
       text="""{"data": ["MDAsMDcvMTQvMjEsMTE6Mjk6MTcsU3RhcnRlZCwsLCwsMCw2LCwsLCwsLCwsMA=="]}"""
   )
+
+
+@pytest.fixture()
+def test_v2flag_not_provided() -> MockResponse:
+  """Test input data for v2 flag not provided."""
+  return MockResponse(
+      status_code=200,
+      text="--v2 flag not provided. "
+      "Please provide the flag to run the new commands"
+  )
+
+
+@pytest.fixture()
+def test_empty_project_id() -> MockResponse:
+  """Test input data for empty Project ID."""
+  return MockResponse(
+      status_code=200,
+      text="Project ID not provided. Please enter Porject ID")
+
+
+@pytest.fixture()
+def test_empty_customer_id() -> MockResponse:
+  """Test input data for empty Customer ID."""
+  return MockResponse(
+      status_code=200,
+      text="Customer ID not provided. Please enter Customer ID")
+
+
+@pytest.fixture()
+def test_empty_log_type() -> MockResponse:
+  """Test input data for empty Log type."""
+  return MockResponse(
+      status_code=200,
+      text="Log Type not provided. Please enter Log Type")
+
+
+@pytest.fixture()
+def test_empty_parser_id() -> MockResponse:
+  """Test input data for empty Parser ID."""
+  return MockResponse(
+      status_code=200,
+      text="Parser ID not provided. Please enter Parser ID")
+
+
+@pytest.fixture()
+def test_empty_parserextension_id() -> MockResponse:
+  """Test input data for empty ParserExtension ID."""
+  return MockResponse(
+      status_code=200,
+      text="ParserExtension ID not provided. Please enter ParserExtension ID")
+
+
+@pytest.fixture()
+def test_data_activate_parser() -> MockResponse:
+  """Test input data for activate parser."""
+  return MockResponse(
+      status_code=200,
+      text="""{}""")
+
+
+@pytest.fixture()
+def test_data_deactivate_parser() -> MockResponse:
+  """Test input data for deactivate parser."""
+  return MockResponse(
+      status_code=200,
+      text="""{}""")
+
+
+@pytest.fixture()
+def test_data_delete_parser() -> MockResponse:
+  """Test input data for delete parser."""
+  return MockResponse(
+      status_code=200,
+      text="""{}""")
+
+
+@pytest.fixture()
+def test_data_delete_extension() -> MockResponse:
+  """Test input data for delete extension."""
+  return MockResponse(
+      status_code=200,
+      text="""{}""")
+
+
+@pytest.fixture()
+def test_data_get_extension() -> MockResponse:
+  """Test input data for get parserextension."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "cbnSnippet": "test_cbn_snippet",
+          "createTime": "2023-01-01T00:00:00.000000Z",
+          "extensionValidationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id",
+          "log": "test_log",
+          "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id",
+          "state": "LIVE",
+          "stateLastChangedTime": "2023-01-01T00:00:00.000000Z",
+          "validationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id/validationReports/test_validation_report_id"
+      }
+      """)
+
+
+@pytest.fixture()
+def test_data_get_extension_missing_key() -> MockResponse:
+  """Test input data for missing key in get parserextension."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "cbnSnippet": "test_cbn_snippet",
+          "createTime": "2023-01-01T00:00:00.000000Z",
+          "extensionValidationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id2",
+          "log": "test_log",
+          "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id2",
+          "stateLastChangedTime": "2023-01-01T00:00:00.000000Z",
+          "validationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id2/validationReports/test_validation_report_id"
+      }
+      """)
+
+
+@pytest.fixture()
+def test_data_get_parser() -> MockResponse:
+  """Test input data for get parser."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "cbn": "test_cbn",
+          "changelogs": {},
+          "createTime": "2023-01-01T00:00:00.000000Z",
+          "creator": {
+              "customer": "projects/test_project/locations/us/instances/test_instance",
+              "author": "test_author",
+              "source": "CUSTOMER"
+          },
+          "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parsers/test_parser_id",
+          "releaseStage": "RELEASE",
+          "state": "ACTIVE",
+          "type": "CUSTOM",
+          "validationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parsers/test_parser_id/validationReports/test_validation_report_id",
+          "validationStage": "PASSED"
+      }
+      """)
+
+
+@pytest.fixture()
+def test_data_get_parser_missing_key() -> MockResponse:
+  """Test input data for missing key in get parser."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "cbn": "test_cbn",
+          "changelogs": {},
+          "createTime": "2023-01-01T00:00:00.000000Z",
+          "creator": {
+              "customer": "projects/test_project/locations/us/instances/test_instance",
+              "author": "test_author",
+              "source": "CUSTOMER"
+          },
+          "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parsers/test_parser_id",
+          "releaseStage": "RELEASE",
+          "type": "CUSTOM",
+          "validationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parsers/test_parser_id/validationReports/test_validation_report_id",
+          "validationStage": "PASSED"
+      }
+      """)
+
+
+@pytest.fixture()
+def test_data_list_extensions() -> MockResponse:
+  """Test input data."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "parserExtensions": [
+              {
+                  "cbnSnippet": "test_cbn_snippet",
+                  "createTime": "2023-01-01T00:00:00.000000Z",
+                  "extensionValidationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id",
+                  "log": "test_log",
+                  "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id",
+                  "state": "LIVE",
+                  "stateLastChangedTime": "2023-01-01T00:00:00.000000Z",
+                  "validationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id/validationReports/test_validation_report_id"
+              }
+          ]
+      }
+      """)
+
+
+@pytest.fixture()
+def test_data_list_extensions_missing_key() -> MockResponse:
+  """Test input data."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "parserExtensions": [
+              {
+                  "cbnSnippet": "test_cbn_snippet",
+                  "createTime": "2023-01-01T00:00:00.000000Z",
+                  "extensionValidationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id1",
+                  "log": "test_log",
+                  "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id1",
+                  "state": "LIVE",
+                  "stateLastChangedTime": "2023-01-01T00:00:00.000000Z",
+                  "validationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id1/validationReports/test_validation_report_id1"
+              },
+              {
+                  "cbnSnippet": "test_cbn_snippet",
+                  "createTime": "2023-01-01T00:00:00.000000Z",
+                  "extensionValidationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id2",
+                  "log": "test_log",
+                  "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id2",
+                  "stateLastChangedTime": "2023-01-01T00:00:00.000000Z",
+                  "validationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id2/validationReports/test_validation_report_id2"
+              },
+              {
+                  "cbnSnippet": "test_cbn_snippet",
+                  "createTime": "2023-01-01T00:00:00.000000Z",
+                  "extensionValidationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id3",
+                  "log": "test_log",
+                  "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id3",
+                  "state": "REJECTED",
+                  "stateLastChangedTime": "2023-01-01T00:00:00.000000Z",
+                  "validationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id3/validationReports/test_validation_report_id3"
+              }
+          ]
+      }
+      """)
+
+
+@pytest.fixture()
+def test_data_list_parsers() -> MockResponse:
+  """Test input data for list parsers."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "parsers": [
+              {
+                  "cbn": "test_cbn",
+                  "changelogs": {},
+                  "createTime": "2023-01-01T00:00:00.000000Z",
+                  "creator": {
+                      "customer": "projects/test_project/locations/us/instances/test_instance",
+                      "author": "test_author",
+                      "source": "CUSTOMER"
+                  },
+                  "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parsers/test_parser_id",
+                  "releaseStage": "RELEASE",
+                  "state": "ACTIVE",
+                  "type": "CUSTOM",
+                  "validationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parsers/test_parser_id/validationReports/test_validation_report_id",
+                  "validationStage": "PASSED"
+              }
+          ]
+      }
+      """)
+
+
+@pytest.fixture()
+def test_data_list_parsers_missing_key() -> MockResponse:
+  """Test input data for list parsers."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "parsers": [
+              {
+                  "cbn": "test_cbn",
+                  "changelogs": {},
+                  "createTime": "2023-01-01T00:00:00.000000Z",
+                  "creator": {
+                      "customer": "projects/test_project/locations/us/instances/test_instance",
+                      "author": "test_author1",
+                      "source": "CUSTOMER"
+                  },
+                  "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type1/parsers/test_parser_id1",
+                  "state": "ACTIVE",
+                  "type": "CUSTOM",
+                  "validationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type1/parsers/test_parser_id1/validationReports/test_validation_report_id1",
+                  "validationStage": "PASSED"
+              },
+              {
+                  "cbn": "test_cbn",
+                  "changelogs": {},
+                  "creator": {
+                      "customer": "projects/test_project/locations/us/instances/test_instance",
+                      "author": "test_author2",
+                      "source": "CUSTOMER"
+                  },
+                  "createTime": "2023-01-01T00:00:00.000000Z",
+                  "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type2/parsers/test_parser_id2",
+                  "type": "CUSTOM",
+                  "validationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type2/parsers/test_parser_id2/validationReports/test_validation_report_id2",
+                  "validationStage": "PASSED"
+              },
+              {
+                  "cbn": "test_cbn",
+                  "changelogs": {},
+                  "createTime": "2023-01-01T00:00:00.000000Z",
+                  "creator": {
+                      "customer": "projects/test_project/locations/us/instances/test_instance",
+                      "author": "test_author3",
+                      "source": "CUSTOMER"
+                  },
+                  "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type3/parsers/test_parser_id3",
+                  "state": "INACTIVE",
+                  "type": "CUSTOM",
+                  "validationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type3/parsers/test_parser_id3/validationReports/test_validation_report_id3",
+                  "validationStage": "FAILED"
+              }
+          ]
+      }
+      """)
+
+
+@pytest.fixture()
+def test_data_non_existing_config_file() -> MockResponse:
+  """Test input data for non existing config file."""
+  return MockResponse(
+      status_code=200,
+      text="test_config_file does not exist. "
+      "Please enter valid config file path")
+
+
+@pytest.fixture()
+def test_data_non_existing_log_file() -> MockResponse:
+  """Test input data."""
+  return MockResponse(
+      status_code=200,
+      text="test_log_file does not exist. "
+      "Please enter valid log file path")
+
+
+@pytest.fixture()
+def test_data_run_parser() -> MockResponse:
+  """Test input data for run parser."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "runParserResults": [
+              {
+                  "log": "dGVzdF9sb2c=",
+                  "parsedEvents": "result"
+              },
+              {
+                  "error": {
+                      "message": "error: test_error_message"
+                  }
+              }
+          ]
+      }
+      """)
+
+
+@pytest.fixture()
+def test_data_submit_extension() -> MockResponse:
+  """Test input data for submit extension."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "cbnSnippet": "test_cbn_snippet",
+          "createTime": "2023-01-01T00:00:00.000000Z",
+          "extensionValidationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id",
+          "log": "test_log",
+          "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id",
+          "state": "LIVE",
+          "stateLastChangedTime": "2023-01-01T00:00:00.000000Z",
+          "validationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id/validationReports/test_validation_report_id"
+      }
+      """)
+
+
+@pytest.fixture()
+def test_data_submit_parser() -> MockResponse:
+  """Test input data for submit parser."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "cbn": "test_cbn",
+          "changelogs": {},
+          "createTime": "2023-01-01T00:00:00.000000Z",
+          "creator": {
+              "customer": "projects/test_project/locations/us/instances/test_instance",
+              "author": "test_author",
+              "source": "CUSTOMER"
+          },
+          "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parsers/test_parser_id",
+          "releaseStage": "RELEASE",
+          "state": "INACTIVE",
+          "type": "CUSTOM",
+          "validationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parsers/test_parser_id/validationReports/test_validation_report_id",
+          "validationStage": "NEW"
+      }
+      """)

@@ -303,7 +303,7 @@ def non_primitive_schema() -> Any:
       "fieldPath":
           "config",
       "displayName":
-          "Forwarder Configuration",
+          "Forwarder Cofiguration",
       "description":
           "Forwarder configuration settings",
       "type":

@@ -13,7 +13,10 @@
 # limitations under the License.
 #
 """Parser utility functions."""
+
 import base64
+
+from typing import Dict
 
 
 def decode_log(log: str) -> str:
@@ -27,3 +30,19 @@ def decode_log(log: str) -> str:
   """
   log_bytes = base64.b64decode(log)
   return log_bytes.decode(encoding='utf-8', errors='surrogateescape')
+
+
+def process_resource_name(name: str) -> Dict[str, str]:
+  """Extract resource components from the resource name.
+
+  Args:
+    name (str): The resource name
+
+  Returns:
+    (Dict): Resource components
+  """
+  processed_fields = {}
+  name_split = name.split('/')
+  for i in range(0, len(name_split), 2):
+    processed_fields[name_split[i]] = name_split[i + 1]
+  return processed_fields
