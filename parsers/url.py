@@ -20,15 +20,30 @@ import urllib.parse
 from common import uri
 
 API_VERSION = 'v1'
+DATAPLANE_API_VERSION = 'v1alpha'
 HTTP_REQUEST_TIMEOUT_IN_SECS = 1200
 HTTP_REQUEST_HEADERS = {'Content-type': 'application/x-www-form-urlencoded'}
+PARENT = 'projects/{project}/locations/{location}/instances/{instance}/logTypes/{log_type}'
 PATH_DICT = {
+    # Backstory APIs
     'list': 'tools/cbnParsers',
     'run': 'tools:validateCbnParser',
     'history': 'tools/cbnParsers:listCbnParserHistory',
     'generate': 'tools:retrieveSampleLogs',
     'status': 'tools/cbnParsers',
-    'list_errors': 'tools/cbnParsers:listCbnParserErrors'
+    'list_errors': 'tools/cbnParsers:listCbnParserErrors',
+    # Dataplane APIs
+    'activate_parser': f'{PARENT}/parsers/{{parser}}:activate',
+    'deactivate_parser': f'{PARENT}/parsers/{{parser}}:deactivate',
+    'delete_parser': f'{PARENT}/parsers/{{parser}}',
+    'delete_extension': f'{PARENT}/parserExtensions/{{parser_extension}}',
+    'get_parser': f'{PARENT}/parsers/{{parser}}',
+    'get_extension': f'{PARENT}/parserExtensions/{{parser_extension}}',
+    'list_parsers': f'{PARENT}/parsers',
+    'list_extensions': f'{PARENT}/parserExtensions',
+    'run_parser': f'{PARENT}:runParser',
+    'submit_parser': f'{PARENT}/parsers',
+    'submit_extension': f'{PARENT}/parserExtensions',
 }
 
 
@@ -47,6 +62,34 @@ def get_url(region: str, command: str, environment: str,
     str: URL to interact with CBN APIs.
   """
   url = f'{uri.get_base_url(region, "", environment)}/{API_VERSION}/{PATH_DICT[command]}'
+  if query_params:
+    url += f'?{urllib.parse.urlencode(query_params)}'
+  return url
+
+
+def get_dataplane_url(
+    region: str,
+    command: str,
+    environment: str,
+    resources: Dict[str, str],
+    **query_params) -> str:
+  """Get Dataplane URL for the given command.
+
+  Args:
+    region (str): Region (US, EUROPE, ASIA_SOUTHEAST1, EUROPE_WEST2)
+    command (str): Command name
+    environment (str): Environment (prod, test)
+    resources (Dict): The resources for the URL
+    **query_params: Optional keyword options for query parameters
+
+  Returns:
+    str: URL to interact with Chronicle APIs.
+  """
+  if region == 'EUROPE':
+    region = 'eu'
+  url = (
+      f'{uri.get_dataplane_base_url(region.lower(), "", environment)}'
+      f'/{DATAPLANE_API_VERSION}/{PATH_DICT[command].format(**resources)}')
   if query_params:
     url += f'?{urllib.parse.urlencode(query_params)}'
   return url

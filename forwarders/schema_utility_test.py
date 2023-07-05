@@ -225,7 +225,7 @@ def test_process_input_detailed_schema_non_primitive(
 ========================================
 
 ========================================
-======= Forwarder Configuration ========
+======== Forwarder Cofiguration ========
 ========================================""" in output
 
 
@@ -390,7 +390,7 @@ def test_process_input_detailed_schema_repeated_message_fields(
   Args:
     confirm_patch: Mock object for click confirm.
     input_patch: Mock object for click prompt.
-    repeated_message_fields_schema: (Fixture) Repeated fields type schema.
+    repeated_message_fields_schema: (Fixture) Repeated fileds type schema.
   """
   schema_object = schema_utility.Schema(schema.KEY_COLLECTOR_SCHEMA, {})
   confirm_patch.side_effect = [True, False]

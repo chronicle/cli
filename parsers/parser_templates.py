@@ -62,3 +62,25 @@ Parser History:
   Submit Time: ${submit_time}
   State Last Changed Time: ${state_last_changed_time}\
 ${last_live_time}${validationErrors}""")
+
+parserextension_details_template = string.Template("""\
+
+ParserExtension Details:
+  ParserExtension ID: ${parserextension_id}
+  Log type: ${log_type}
+  State: ${state}
+  Validation Report ID: ${validation_report_id}
+  Create Time: ${create_time}
+  State Last Changed Time: ${state_last_changed_time}
+  Last Live Time: ${last_live_time}""")
+
+parserv2_details_template = string.Template("""\
+
+Parser Details:
+  Parser ID: ${parser_id}
+  Log type: ${log_type}
+  State: ${state}
+  Type: ${type}
+  Author: ${author}
+  Validation Report ID: ${validation_report_id}
+  Create Time: ${create_time}""")

@@ -26,6 +26,9 @@ CHRONICLE_CLI_ROOT_DIR = os.path.join(
 default_cred_file_path = os.path.join(CHRONICLE_CLI_ROOT_DIR,
                                       "chronicle_credentials.json")
 AUTHORIZATION_SCOPES = ["https://www.googleapis.com/auth/chronicle-backstory"]
+DATAPLANE_AUTHORIZATION_SCOPES = [
+    "https://www.googleapis.com/auth/cloud-platform"
+    ]
 
 
 def initialize_http_session(credential_file_path: AnyStr) -> Any:
@@ -43,4 +46,22 @@ def initialize_http_session(credential_file_path: AnyStr) -> Any:
   credentials = service_account.Credentials.from_service_account_file(
       filename=os.path.abspath(credential_file_path or default_cred_file_path),
       scopes=AUTHORIZATION_SCOPES)
+  return requests.AuthorizedSession(credentials)
+
+
+def initialize_dataplane_http_session(credential_file_path: AnyStr) -> Any:
+  """Initalizes an authorized HTTP session for Dataplane APIs, based on the given credential.
+
+  Args:
+    credential_file_path: Absolute or relative path to a JSON file containing
+      private OAuth 2.0 credentials of a Google Cloud Platform service account.
+      Default path is ".chronicle_credentials.json" in the .chronicle_cli
+      directory inside user's home directory.
+
+  Returns:
+    HTTP session object to send authorized requests and receive responses.
+  """
+  credentials = service_account.Credentials.from_service_account_file(
+      filename=os.path.abspath(credential_file_path or default_cred_file_path),
+      scopes=DATAPLANE_AUTHORIZATION_SCOPES)
   return requests.AuthorizedSession(credentials)

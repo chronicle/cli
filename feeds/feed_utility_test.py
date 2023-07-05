@@ -70,5 +70,5 @@ def test_get_feed_display_name() -> None:
 
 
 def test_get_feed_display_name_none() -> None:
-  """Test feed display name if not exist in feed dictionary."""
+  """Test feed display name if not exist in feed dictonary."""
   assert not feed_utility.get_feed_display_name({})

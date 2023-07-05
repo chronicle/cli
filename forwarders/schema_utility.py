@@ -351,7 +351,7 @@ class Schema:
       backup_request_body (Any): Request body of existing forwarder or
         collector.
       each_field_mask_path (str): String containing field path from parent field
-        separated by ".".
+        seperated by ".".
     """
     for each in detailed_schema:
 
@@ -393,7 +393,7 @@ class Schema:
       request_body (Any): API request body.
       existing_value (Any): Existing value of feilds.
       each_field_mask_path (str): String containing field path from parent field
-        separated by ".".
+        seperated by ".".
     """
     # Processing user input for primitive types.
     if each.get(schema.KEY_FIELD_TYPE) in [
@@ -527,7 +527,7 @@ class Schema:
       existing_value: Existing value of feilds. {"description": "sample",
         "regexp": ".*"}.
       each_field_mask_path (str): String containing field path from parent field
-        separated by ".".
+        seperated by ".".
     """
     each_non_primitive_dict = {}
     for each in each_field_schema.get(

@@ -19,11 +19,12 @@ import click
 from common import chronicle_auth
 
 REGION_LIST = [
-    "US",
     "ASIA-SOUTHEAST1",
+    "AUSTRALIA-SOUTHEAST1",
     "EUROPE",
     "EUROPE-WEST2",
-    "AUSTRALIA-SOUTHEAST1",
+    "ME-WEST1",
+    "US",
 ]
 
 verbose_option = click.option(
@@ -61,4 +62,8 @@ env_option = click.option(
 
 export_option = click.option(
     "--export", help="Export output to specified file path"
+)
+
+v2_option = click.option(
+    "--v2", is_flag=True, help="Enable v2 commands."
 )

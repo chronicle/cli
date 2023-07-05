@@ -50,3 +50,32 @@ def test_initialize_http_session_with_custom_json_credentials(
   mock_from_service_account_file.assert_called_once_with(
       filename=TEMP_SERVICE_ACCOUNT_FILE,
       scopes=chronicle_auth.AUTHORIZATION_SCOPES)
+
+
+@mock.patch.object(service_account.Credentials, "from_service_account_file")
+def test_initialize_chronicle_http_session(mock_from_service_account_file):
+  """Test to check if http session is initialize or not.
+
+  Args:
+    mock_from_service_account_file (mock.MagicMock): Mock object
+  """
+  create_service_account_file()
+  chronicle_auth.initialize_dataplane_http_session("")
+  mock_from_service_account_file.assert_called_once_with(
+      filename=str(chronicle_auth.default_cred_file_path),
+      scopes=chronicle_auth.DATAPLANE_AUTHORIZATION_SCOPES)
+
+
+@mock.patch.object(service_account.Credentials, "from_service_account_file")
+def test_initialize_chronicle_http_session_with_custom_json_credentials(
+    mock_from_service_account_file):
+  """Test to check if http session is initialize with custom credentials.
+
+  Args:
+    mock_from_service_account_file (mock.MagicMock): Mock object
+  """
+  create_service_account_file()
+  chronicle_auth.initialize_dataplane_http_session(TEMP_SERVICE_ACCOUNT_FILE)
+  mock_from_service_account_file.assert_called_once_with(
+      filename=TEMP_SERVICE_ACCOUNT_FILE,
+      scopes=chronicle_auth.DATAPLANE_AUTHORIZATION_SCOPES)
