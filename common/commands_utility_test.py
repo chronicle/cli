@@ -31,7 +31,7 @@ def test_lower_or_none_none() -> None:
 
 
 def test_space_separated_str() -> None:
-  """Test converting of camel case sentence to space seprated first letter capital.
+  """Test converting of camel case sentence to space separated first letter capital.
   """
   assert commands_utility.space_separated_str('dummyTest') == 'Dummy test'
 
