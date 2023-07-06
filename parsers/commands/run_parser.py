@@ -35,7 +35,7 @@ from parsers.constants import key_constants as parser_constants
                help="[New]Run a parser(with extension) against given logs")
 @click.option(
     "--parserextension_config_file",
-    help="Path",
+    help="Path of parser extension config file",
 )
 @click.argument("project_id", required=True, default="")
 @click.argument("customer_id", required=True, default="")
@@ -148,7 +148,7 @@ def run_parser(
       parser_constants.KEY_PARSER: {
           parser_constants.KEY_CBN: parser_config_data
       },
-      parser_constants.KEY_LOG: log_data,
+      parser_constants.KEY_LOG: log_data
   }
   if parser_extension_config_data:
     data[parser_constants.KEY_PARSER_EXTENSION] = {
