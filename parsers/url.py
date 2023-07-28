@@ -38,8 +38,13 @@ PATH_DICT = {
     'delete_parser': f'{PARENT}/parsers/{{parser}}',
     'delete_extension': f'{PARENT}/parserExtensions/{{parser_extension}}',
     'get_parser': f'{PARENT}/parsers/{{parser}}',
+    'get_parser_validation_report': (
+        f'{PARENT}/parsers/{{parser}}/validationReports/{{validationReport}}'),
+    'get_parserextension_validation_report': f'{PARENT}/parserExtensions/{{parserExtension}}/validationReports/{{validationReport}}',
     'get_extension': f'{PARENT}/parserExtensions/{{parser_extension}}',
     'list_parsers': f'{PARENT}/parsers',
+    'list_parser_parsing_errors': f'{PARENT}/parsers/{{parser}}/validationReports/{{validationReport}}/parsingErrors',
+    'list_parserextension_parsing_errors': f'{PARENT}/parserExtensions/{{parserExtension}}/validationReports/{{validationReport}}/parsingErrors',
     'list_extensions': f'{PARENT}/parserExtensions',
     'run_parser': f'{PARENT}:runParser',
     'submit_parser': f'{PARENT}/parsers',

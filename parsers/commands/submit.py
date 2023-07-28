@@ -38,7 +38,9 @@ from parsers.constants import key_constants as parser_constants
 @options.verbose_option
 @options.credential_file_option
 @exception_handler.catch_exception()
-def submit(credential_file: AnyStr, verbose: bool, region: str,
+def submit(credential_file: AnyStr,
+           verbose: bool,
+           region: str,
            env: str) -> None:
   """Submit a new parser.
 
@@ -60,6 +62,11 @@ def submit(credential_file: AnyStr, verbose: bool, region: str,
   conf_file = click.prompt(
       'Enter Config file path', show_default=False, default='')
   author = click.prompt('Enter author', show_default=False, default='')
+  skip_validation_on_no_logs = click.prompt(
+      'Skip validation if no logs found',
+      type=bool,
+      show_default=True,
+      default=False)
 
   if (not log_type) or (not conf_file) or (not author):
     click.echo('Log Type, Config file path and Author fields are required. '
@@ -74,10 +81,12 @@ def submit(credential_file: AnyStr, verbose: bool, region: str,
   with open(conf_file, 'rb') as config_file:
     config_data = config_file.read()
 
+  skip_validation_key = parser_constants.KEY_SKIP_VALIDATION_ON_NO_LOGS
   data = {
       parser_constants.KEY_LOG_TYPE: log_type,
       parser_constants.KEY_CONFIG: base64.urlsafe_b64encode(config_data),
-      parser_constants.KEY_AUTHOR: author
+      parser_constants.KEY_AUTHOR: author,
+      skip_validation_key: skip_validation_on_no_logs,
   }
 
   click.echo('Submitting parser...')

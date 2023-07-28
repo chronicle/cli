@@ -148,7 +148,8 @@ def run_parser(
       parser_constants.KEY_PARSER: {
           parser_constants.KEY_CBN: parser_config_data
       },
-      parser_constants.KEY_LOG: log_data
+      parser_constants.KEY_LOG: log_data,
+      parser_constants.KEY_STATEDUMP_ALLOWED: True,
   }
   if parser_extension_config_data:
     data[parser_constants.KEY_PARSER_EXTENSION] = {
@@ -182,10 +183,16 @@ def run_parser(
       error = result[parser_constants.KEY_ERROR]
       click.echo(error[parser_constants.KEY_MESSAGE])
       continue
-    # Handle parsed events
+    # Handle log data
     log = result[parser_constants.KEY_LOG]
     log = base64.urlsafe_b64decode(log).decode()
     click.echo(f"Log: {log}")
+    # Handle statedump
+    if parser_constants.KEY_STATEDUMP_RESULTS in result:
+      dumps = result[parser_constants.KEY_STATEDUMP_RESULTS]
+      for dump in dumps:
+        click.echo(f"Statedump: {dump[parser_constants.KEY_STATEDUMP_RESULT]}")
+    # Handle parsed events
     click.echo(f"Events: {result[parser_constants.KEY_PARSED_EVENTS]}")
 
   time_elapsed = time.time() - start_time

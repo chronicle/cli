@@ -25,6 +25,7 @@ from parsers.commands import download
 from parsers.commands import generate
 from parsers.commands import get_extension
 from parsers.commands import get_parser
+from parsers.commands import get_validation_report
 from parsers.commands import history
 from parsers.commands import list  # pylint: disable=redefined-builtin
 from parsers.commands import list_errors
@@ -52,6 +53,7 @@ parsers.add_command(download.download)
 parsers.add_command(generate.generate)
 parsers.add_command(get_extension.get_extension)
 parsers.add_command(get_parser.get_parser)
+parsers.add_command(get_validation_report.get_validation_report)
 parsers.add_command(history.history)
 parsers.add_command(list.list_command)
 parsers.add_command(list_errors.list_errors)

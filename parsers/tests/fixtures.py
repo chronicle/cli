@@ -274,11 +274,38 @@ def test_empty_parser_id() -> MockResponse:
 
 
 @pytest.fixture()
+def test_empty_parser_id_and_parserextension_id() -> MockResponse:
+  """Test input data for empty Parser and ParserExtension ID."""
+  return MockResponse(
+      status_code=200,
+      text="Parser ID or ParserExtension ID not provided. "
+      "Please enter Parser or ParserExtension ID")
+
+
+@pytest.fixture()
 def test_empty_parserextension_id() -> MockResponse:
   """Test input data for empty ParserExtension ID."""
   return MockResponse(
       status_code=200,
       text="ParserExtension ID not provided. Please enter ParserExtension ID")
+
+
+@pytest.fixture()
+def test_empty_valdiation_report_id() -> MockResponse:
+  """Test input data for empty ValidationReport ID."""
+  return MockResponse(
+      status_code=200,
+      text="Validation Report ID not provided. "
+      "Please enter Validation Report ID")
+
+
+@pytest.fixture()
+def test_non_empty_parser_id_and_parserextension_id() -> MockResponse:
+  """Test input data for non empty Parser and ParserExtension ID."""
+  return MockResponse(
+      status_code=200,
+      text="Parser ID and ParserExtension ID provided. "
+      "Please enter Parser or ParserExtension ID")
 
 
 @pytest.fixture()
@@ -400,6 +427,78 @@ def test_data_get_parser_missing_key() -> MockResponse:
 
 
 @pytest.fixture()
+def test_data_get_validation_report_for_parser() -> MockResponse:
+  """Test input data for validation report."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parsers/test_parser_id/validationReports/test_validation_report_id",
+          "stats": {
+              "logEntryCount": "1",
+              "successfullyNormalizedLogCount": "1",
+              "onErrorCount": "1",
+              "eventCount": "1",
+              "genericEventCount": "1",
+              "eventCategoryCounts": {
+                  "valid_event": "1"
+              },
+              "dropTagCounts": {
+                  "TAG_UNSUPPORTED": "0"
+              },
+              "maxParseDuration": "1s",
+              "avgParseDuration": "1s",
+              "normalizationPercentage": "100",
+              "genericEventPercentage": "100"
+          },
+          "verdict": "PASS"
+      }
+      """)
+
+
+@pytest.fixture()
+def test_data_get_validation_report_for_parserextension() -> MockResponse:
+  """Test input data for validation report."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id/validationReports/test_validation_report_id",
+          "stats": {
+              "logEntryCount": "1",
+              "successfullyNormalizedLogCount": "1",
+              "onErrorCount": "1",
+              "eventCount": "1",
+              "genericEventCount": "1",
+              "eventCategoryCounts": {
+                  "valid_event": "1"
+              },
+              "dropTagCounts": {
+                  "TAG_UNSUPPORTED": "0"
+              },
+              "maxParseDuration": "1s",
+              "avgParseDuration": "1s",
+              "normalizationPercentage": "100",
+              "genericEventPercentage": "100"
+          },
+          "verdict": "PASS"
+      }
+      """)
+
+
+@pytest.fixture()
+def test_data_get_validation_report_missing_key() -> MockResponse:
+  """Test input data for missing key in validation report."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parsers/test_parser_id/validationReports/test_validation_report_id"
+      }
+      """)
+
+
+@pytest.fixture()
 def test_data_list_extensions() -> MockResponse:
   """Test input data."""
   return MockResponse(
@@ -487,6 +586,42 @@ def test_data_list_parsers() -> MockResponse:
                   "type": "CUSTOM",
                   "validationReport": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parsers/test_parser_id/validationReports/test_validation_report_id",
                   "validationStage": "PASSED"
+              }
+          ]
+      }
+      """)
+
+
+@pytest.fixture()
+def test_data_list_parsing_errors_for_parser() -> MockResponse:
+  """Test input data for list parsers."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "parsingErrors": [
+              {
+                  "logData": "test_log",
+                  "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parsers/test_parser_id/validationReports/test_validation_report_id",
+                  "error": "test_error"
+              }
+          ]
+      }
+      """)
+
+
+@pytest.fixture()
+def test_data_list_parsing_errors_for_parserextension() -> MockResponse:
+  """Test input data for list parsers."""
+  return MockResponse(
+      status_code=200,
+      text="""
+      {
+          "parsingErrors": [
+              {
+                  "logData": "test_log",
+                  "name": "projects/test_project/locations/us/instances/test_instance/logTypes/test_log_type/parserExtensions/test_parserextension_id/validationReports/test_validation_report_id",
+                  "error": "test_error"
               }
           ]
       }
