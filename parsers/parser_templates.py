@@ -84,3 +84,30 @@ Parser Details:
   Author: ${author}
   Validation Report ID: ${validation_report_id}
   Create Time: ${create_time}""")
+
+parsing_errors_details_template = string.Template("""\
+
+    Log: ${log}
+    Error: ${error}""")
+
+validation_report_template = string.Template("""\
+
+Validation Report:
+  Verdict: ${verdict}
+  Stats:
+    LogEntry Count: ${log_entry_count}
+    Successfully Normalized Log Count: ${successfully_normalized_log_count}
+    Failed Log Count: ${failed_log_count}
+    Invalid Log Count: ${invalid_log_count}
+    On Error Count: ${on_error_count}
+    Event Count: ${event_count}
+    Generic Event Count: ${generic_event_count}
+    Event Category:
+      ${event_category_count}
+    Drop Tag:
+      ${drop_tag_count}
+    Max Parse Duration: ${max_parse_duration}
+    Avg Parse Duration: ${avg_parse_duration}
+    Normalization percent: ${normalization_percentage}
+    Generic Event percent: ${generic_event_percentage}
+  Errors: ${errors}""")

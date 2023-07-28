@@ -29,7 +29,7 @@ from parsers import url
 from parsers.constants import key_constants as parser_constants
 
 
-@click.command(name="archive", help="Archives a parser given the config ID.")
+@click.command(name="archive", help="Archives a parser given the config ID")
 @options.env_option
 @options.region_option
 @options.verbose_option

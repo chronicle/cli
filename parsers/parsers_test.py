@@ -26,24 +26,25 @@ def test_parser() -> None:
   """Test case for parsers."""
   result = runner.invoke(parsers)
   expected_output = """Commands:
-  activate_parser    [New]Activate a parser
-  archive            Archives a parser given the config ID.
-  deactivate_parser  [New]Deactivate a parser
-  delete_extension   [New]Delete an extension
-  delete_parser      [New]Delete a parser
-  download           Download parser code given config ID or log type
-  generate           Generate sample logs for a given log type
-  get_extension      [New]Get details of an extension
-  get_parser         [New]Get details of a parser
-  history            History retrieves all parser submissions given a log type
-  list               List all parsers of a given customer
-  list_errors        List errors of a log type between specific timestamps
-  list_extensions    [New]List all extensions for a given customer
-  list_parsers       [New]List all parsers for a given customer
-  run                Run the parser against given logs
-  run_parser         [New]Run a parser(with extension) against given logs
-  status             Get status of a submitted parser
-  submit             Submit a new parser
-  submit_extension   [New]Submit a new extension
-  submit_parser      [New]Submit a new parser"""
+  activate_parser        [New]Activate a parser
+  archive                Archives a parser given the config ID
+  deactivate_parser      [New]Deactivate a parser
+  delete_extension       [New]Delete an extension
+  delete_parser          [New]Delete a parser
+  download               Download parser code given config ID or log type
+  generate               Generate sample logs for a given log type
+  get_extension          [New]Get details of an extension
+  get_parser             [New]Get details of a parser
+  get_validation_report  [New]Get validation report for a parser/extension
+  history                History retrieves all parser submissions given a...
+  list                   List all parsers of a given customer
+  list_errors            List errors of a log type between specific timestamps
+  list_extensions        [New]List all extensions for a given customer
+  list_parsers           [New]List all parsers for a given customer
+  run                    Run the parser against given logs
+  run_parser             [New]Run a parser(with extension) against given logs
+  status                 Get status of a submitted parser
+  submit                 Submit a new parser
+  submit_extension       [New]Submit a new extension
+  submit_parser          [New]Submit a new parser"""
   assert expected_output in result.output
