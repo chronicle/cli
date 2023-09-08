@@ -85,7 +85,63 @@ Parser Details:
           },
           "creator": {
               "author": "test_author"
-          }
+          },
+          "validatedOnEmptyLogs": False,
+      }, timeout=url.HTTP_REQUEST_TIMEOUT_IN_SECS)
+
+
+@mock.patch(
+    "common.chronicle_auth.initialize_dataplane_http_session"
+)
+@mock.patch("parsers.url.get_dataplane_url")
+def test_submit_parser_skip_validation(
+    mock_get_dataplane_url: mock.MagicMock,
+    mock_http_session: mock.MagicMock,
+    test_data_submit_parser: mock_test_utility.MockResponse) -> None:
+  """Test case to check success response.
+
+  Args:
+    mock_get_dataplane_url (mock.MagicMock): Mock object
+    mock_http_session (mock.MagicMock): Mock object
+    test_data_submit_parser (mock_test_utility.MockResponse): Test input data
+  """
+  create_temp_config_file(TEMP_SUBMIT_CONF_FILE, "test_config")
+  mock_get_dataplane_url.return_value = SUBMIT_URL
+  client = mock.Mock()
+  client.request.side_effect = [test_data_submit_parser]
+  mock_http_session.return_value = client
+  result = runner.invoke(submit_parser_command.submit_parser, [
+      "test_project", "test_instance", "test_log_type",
+      TEMP_SUBMIT_CONF_FILE, "test_author",
+      "--v2", "--skip_validation_on_no_logs",
+      "--env", "PROD", "--region", "US"])
+  assert """Submitting Parser...
+
+Parser Details:
+  Parser ID: test_parser_id
+  Log type: test_log_type
+  State: INACTIVE
+  Type: CUSTOM
+  Author: test_author
+  Validation Report ID: -
+  Create Time: 2023-01-01T00:00:00.000000Z
+
+============================================================
+
+""" == result.output
+  mock_get_dataplane_url.assert_called_once_with(
+      "US", "submit_parser", "prod", RESOURCES)
+  mock_http_session.return_value.request.assert_called_once_with(
+      "POST", SUBMIT_URL, json={
+          "cbn": "dGVzdF9jb25maWc=",
+          "type": "CUSTOM",
+          "changelogs": {
+              "entries": []
+          },
+          "creator": {
+              "author": "test_author"
+          },
+          "validatedOnEmptyLogs": True,
       }, timeout=url.HTTP_REQUEST_TIMEOUT_IN_SECS)
 
 
