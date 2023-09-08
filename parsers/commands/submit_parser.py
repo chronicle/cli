@@ -33,6 +33,12 @@ from parsers.constants import key_constants as parser_constants
 
 
 @click.command(name="submit_parser", help="[New]Submit a new parser")
+@click.option(
+    "--skip_validation_on_no_logs",
+    is_flag=True,
+    help="Skip validation if no logs are found",
+    default=False,
+)
 @click.argument("project_id", required=True, default="")
 @click.argument("customer_id", required=True, default="")
 @click.argument("log_type", required=True, default="")
@@ -45,6 +51,7 @@ from parsers.constants import key_constants as parser_constants
 @options.v2_option
 @exception_handler.catch_exception()
 def submit_parser(
+    skip_validation_on_no_logs: bool,
     v2: bool,
     credential_file: str,
     verbose: bool,
@@ -58,6 +65,8 @@ def submit_parser(
   """Submit a new parser.
 
   Args:
+    skip_validation_on_no_logs (bool): Option to skip validation if no logs are
+     are found.
     v2 (bool): Option for enabling v2 commands.
     credential_file (AnyStr): Path of Service Account JSON.
     verbose (bool): Option for printing verbose output to console.
@@ -121,6 +130,8 @@ def submit_parser(
       parser_constants.KEY_CREATOR: {
           parser_constants.KEY_AUTHOR: author
       },
+      parser_constants.KEY_VALIDATED_ON_EMPTY_LOGS: (
+          skip_validation_on_no_logs),
   }
 
   submit_parser_url = url.get_dataplane_url(
