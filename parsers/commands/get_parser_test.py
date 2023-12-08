@@ -126,7 +126,7 @@ def test_get_parser_empty_project_id(
   mock_http_session.return_value = client
   result = runner.invoke(get_parser.get_parser, [
       "--v2", "--env", "PROD", "--region", "US"])
-  assert """Project ID not provided. Please enter Porject ID
+  assert """Project ID not provided. Please enter Project ID
 """ == result.output
 
 

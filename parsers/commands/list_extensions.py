@@ -88,7 +88,7 @@ def list_extensions(
     return
 
   if not project_id:
-    click.echo("Project ID not provided. Please enter Porject ID")
+    click.echo("Project ID not provided. Please enter Project ID")
     return
 
   if not customer_id:
@@ -108,7 +108,8 @@ def list_extensions(
       region,
       "list_extensions",
       env,
-      resources)
+      resources,
+      page_size=1000)
   client = chronicle_auth.initialize_dataplane_http_session(credential_file)
   method = "GET"
   response = client.request(
