@@ -91,7 +91,7 @@ def get_parser(
     return
 
   if not project_id:
-    click.echo("Project ID not provided. Please enter Porject ID")
+    click.echo("Project ID not provided. Please enter Project ID")
     return
 
   if not customer_id:

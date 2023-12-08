@@ -19,11 +19,14 @@ import click
 from common import chronicle_auth
 
 REGION_LIST = [
+    "ASIA-SOUTH1",
     "ASIA-SOUTHEAST1",
     "AUSTRALIA-SOUTHEAST1",
     "EUROPE",
     "EUROPE-WEST2",
+    "EUROPE-WEST3",
     "EUROPE-WEST6",
+    "ME-CENTRAL2",
     "ME-WEST1",
     "US",
 ]

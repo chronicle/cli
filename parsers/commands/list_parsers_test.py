@@ -76,7 +76,7 @@ Parser Details:
 """ == result.output
   mock_get_dataplane_url.assert_called_once_with(
       "US", "list_parsers", "prod",
-      RESOURCES, filter="TYPE = CUSTOM")
+      RESOURCES, filter="TYPE = CUSTOM", page_size=1000)
   mock_http_session.return_value.request.assert_called_once_with(
       "GET", LIST_URL, timeout=url.HTTP_REQUEST_TIMEOUT_IN_SECS)
 
@@ -126,7 +126,7 @@ def test_list_parsers_empty_project_id(
   mock_http_session.return_value = client
   result = runner.invoke(list_parsers.list_parsers, [
       "--v2", "--env", "PROD", "--region", "US"])
-  assert """Project ID not provided. Please enter Porject ID
+  assert """Project ID not provided. Please enter Project ID
 """ == result.output
 
 

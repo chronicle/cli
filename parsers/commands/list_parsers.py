@@ -105,7 +105,7 @@ def list_parsers(
     return
 
   if not project_id:
-    click.echo("Project ID not provided. Please enter Porject ID")
+    click.echo("Project ID not provided. Please enter Project ID")
     return
 
   if not customer_id:
@@ -131,7 +131,8 @@ def list_parsers(
       "list_parsers",
       env,
       resources,
-      filter=construct_filter(filter_options))
+      filter=construct_filter(filter_options),
+      page_size=1000)
   client = chronicle_auth.initialize_dataplane_http_session(credential_file)
   method = "GET"
   response = client.request(
