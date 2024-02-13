@@ -76,7 +76,7 @@ Parser Details:
 """ == result.output
   mock_get_dataplane_url.assert_called_once_with(
       "US", "list_parsers", "prod",
-      RESOURCES, filter="TYPE = CUSTOM", page_size=1000)
+      RESOURCES, filter="", page_size=1000)
   mock_http_session.return_value.request.assert_called_once_with(
       "GET", LIST_URL, timeout=url.HTTP_REQUEST_TIMEOUT_IN_SECS)
 
