@@ -76,6 +76,8 @@ class FeedSchema:
     if status_code != status.STATUS_OK:
       error_message = response[key_constants.KEY_ERROR][
           key_constants.KEY_MESSAGE]
+      if status_code == status.STATUS_NOT_FOUND:
+        error_message += "\nIs the region specified correctly?"
       raise Exception(error_message)
     return response
 

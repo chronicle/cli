@@ -33,7 +33,8 @@ from parsers.constants import key_constants as parser_constants
 
 ALL_STATE = "ALL"
 STATE_LIST = [ALL_STATE, "ACTIVE", "INACTIVE"]
-TYPE = "CUSTOM"
+ALL_TYPE = "ALL"
+TYPE_LIST = [ALL_TYPE, "CUSTOM", "PREBUILT"]
 
 
 @click.command(name="list_parsers",
@@ -44,6 +45,14 @@ TYPE = "CUSTOM"
     type=click.Choice(STATE_LIST, case_sensitive=False),
     default=STATE_LIST[0],
     help="Filter on Parser State",
+    required=False
+)
+@click.option(
+    "-pt",
+    "--parser-type",
+    type=click.Choice(TYPE_LIST, case_sensitive=False),
+    default=TYPE_LIST[0],
+    help="Filter on Parser Type",
     required=False
 )
 @click.option(
@@ -73,6 +82,7 @@ def list_parsers(
     customer_id: str,
     log_type: str,
     state: str,
+    parser_type: str,
     file_format: str) -> None:
   """List all parsers of a given customer.
 
@@ -89,6 +99,8 @@ def list_parsers(
     log_type (str): The Log Type.
     state (str): Option for selecting states. Available options - ALL, ACTIVE,
       INACTIVE.
+    parser_type (str): Option for selecting type. Available options - ALL,
+      CUSTOM, PREBUILT.
     file_format (str): Options for selecting the format of the content to be
       exported. Availabel options - TXT, JSON.
 
@@ -122,9 +134,11 @@ def list_parsers(
       "log_type": log_type,
   }
   # Set filter
-  filter_options = {"TYPE": TYPE}
+  filter_options = {}
   if state != ALL_STATE:
     filter_options["STATE"] = state
+  if parser_type != ALL_TYPE:
+    filter_options["TYPE"] = parser_type
 
   list_parser_url = url.get_dataplane_url(
       region,

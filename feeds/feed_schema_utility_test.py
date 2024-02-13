@@ -40,6 +40,23 @@ def test_get_latest_schema(get_schema_response: List[Any],
   assert client.get_latest_schema() == expected_output
 
 
+def test_get_latest_schema_not_found(client: feed_schema_utility.FeedSchema):
+  """Test case to check handling of error while fetching feed schema.
+
+  Args:
+    client: Patch object of class FeedSchema.
+  """
+  client.client.request.return_value = MockResponse(
+      status_code=404, text='{"error": {"message": "customer not found"}}'
+  )
+  with pytest.raises(Exception) as not_found_err:
+    client.get_latest_schema()
+  assert (
+      not_found_err.value.args[0]
+      == "customer not found\nIs the region specified correctly?"
+  )
+
+
 def test_get_latest_schema_400(client: feed_schema_utility.FeedSchema):
   """Test case to check handling of error while fetching feed schema.
 
@@ -48,8 +65,10 @@ def test_get_latest_schema_400(client: feed_schema_utility.FeedSchema):
   """
   client.client.request.return_value = MockResponse(
       status_code=400, text='{"error": {"message": "400 error"}}')
-  with pytest.raises(Exception):
+  with pytest.raises(Exception) as error:
     client.get_latest_schema()
+
+  assert error.value.args[0] == "400 error"
 
 
 def test_get_detailed_schema_success(client: feed_schema_utility.FeedSchema,

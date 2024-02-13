@@ -19,6 +19,7 @@ import click
 from common import chronicle_auth
 
 REGION_LIST = [
+    "ASIA-NORTHEAST1",
     "ASIA-SOUTH1",
     "ASIA-SOUTHEAST1",
     "AUSTRALIA-SOUTHEAST1",
