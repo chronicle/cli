@@ -15,6 +15,7 @@
 """Parser utility functions."""
 
 import base64
+import click
 
 from typing import Dict
 
@@ -46,3 +47,22 @@ def process_resource_name(name: str) -> Dict[str, str]:
   for i in range(0, len(name_split), 2):
     processed_fields[name_split[i]] = name_split[i + 1]
   return processed_fields
+
+
+def json_to_dot_notation(obj, parent=""):
+    if isinstance(obj, dict):
+        if obj:
+          for k in obj.keys():
+            next_key = parent + "." + str(k) if parent != "" else str(k)
+            json_to_dot_notation(obj[k], next_key)
+        else:
+          click.echo("\t\t{} : {}".format(parent,"{}"))
+    elif isinstance(obj, list):
+        if obj:
+          for i,k in enumerate(obj):
+            next_key = parent + "." + str(i) if parent != "" else str(i)
+            json_to_dot_notation(k, parent + "." + str(i))
+        else:
+          click.echo("\t\t{} : []".format(parent,"{}"))
+    else:
+        click.echo("\t\t{} : {}".format(parent,str(obj)))

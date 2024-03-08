@@ -15,6 +15,7 @@
 """Run a parser(with extension) against given logs."""
 
 import base64
+import json
 import os
 import time
 
@@ -28,8 +29,8 @@ from common import options
 from common.constants import key_constants as common_constants
 from common.constants import status
 from parsers import url
+from parsers import parser_utility
 from parsers.constants import key_constants as parser_constants
-
 
 @click.command(name="run_parser",
                help="[New]Run a parser(with extension) against given logs")
@@ -193,7 +194,10 @@ def run_parser(
       for dump in dumps:
         click.echo(f"Statedump: {dump[parser_constants.KEY_STATEDUMP_RESULT]}")
     # Handle parsed events
-    click.echo(f"Events: {result[parser_constants.KEY_PARSED_EVENTS]}")
+    for i,event in enumerate(result[parser_constants.KEY_PARSED_EVENTS][parser_constants.KEY_EVENTS]):
+      click.echo(f"Event {i}:")
+      parser_utility.json_to_dot_notation(event[parser_constants.KEY_EVENT])
+    click.echo()
 
   time_elapsed = time.time() - start_time
   click.echo(f"\nRuntime: {time_elapsed:.5}s")

@@ -56,5 +56,5 @@ def print_request_details(url: AnyStr, method: AnyStr,
           request_url=url,
           method=method,
           request_body=request_body,
-          response_body=response_body,
+          response_body=json.dumps(response_body),
       ))
