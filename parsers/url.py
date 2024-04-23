@@ -35,6 +35,7 @@ PATH_DICT = {
     # Dataplane APIs
     'activate_parser': f'{PARENT}/parsers/{{parser}}:activate',
     'deactivate_parser': f'{PARENT}/parsers/{{parser}}:deactivate',
+    'classify_log_type': 'projects/{project}/locations/{location}/instances/{instance}/logs:classify',
     'delete_parser': f'{PARENT}/parsers/{{parser}}',
     'delete_extension': f'{PARENT}/parserExtensions/{{parser_extension}}',
     'get_parser': f'{PARENT}/parsers/{{parser}}',

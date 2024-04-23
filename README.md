@@ -1,9 +1,9 @@
-# Chronicle CLI
+# Google Security Operations CLI
 
-Command line tool to interact with Chronicle's APIs.
+Command line tool to interact with Google Security Operations' APIs.
 
-Chronicle CLI allows customers to manage various operations that can be
-performed on Chronicle. This script provides a command line tool to interact
+Google Security Operations CLI allows customers to manage various operations that can be
+performed on Google Security Operations. This script provides a command line tool to interact
 with Feed, Parser, Forwarder and BigQuery APIs. It will gradually expand to
 cover other APIs.
 
@@ -12,7 +12,7 @@ cover other APIs.
 Follow these instructions: https://cloud.google.com/python/setup
 
 You may skip installing the Cloud Client Libraries and the Cloud SDK, they are
-unnecessary for interacting with Chronicle.
+unnecessary for interacting with Google Security Operations.
 
 After creating and activating the virtual environment `venv`, clone the repository using following command:
 
