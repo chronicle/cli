@@ -144,6 +144,17 @@ def test_archive_data() -> MockResponse:
 
 
 @pytest.fixture()
+def test_data_classify_log_type() -> MockResponse:
+  """Test response data."""
+  return MockResponse(
+      status_code=200,
+      text="""{"predictions": [
+          { "logType": "LOG_TYPE_1", "score": 0.998 },
+          { "logType": "LOG_TYPE_2", "score": 0.001 },
+          { "logType": "LOG_TYPE_3", "score": 0.001 }]}""")
+
+
+@pytest.fixture()
 def error_list() -> MockResponse:
   """Test input data."""
   data = MockResponse(

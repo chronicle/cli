@@ -28,6 +28,7 @@ def test_parser() -> None:
   expected_output = """Commands:
   activate_parser        [New]Activate a parser
   archive                Archives a parser given the config ID
+  classify_log_type      [New]Classify the provided logs to the log types.
   deactivate_parser      [New]Deactivate a parser
   delete_extension       [New]Delete an extension
   delete_parser          [New]Delete a parser

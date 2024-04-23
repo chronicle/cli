@@ -18,6 +18,7 @@ import click
 
 from parsers.commands import activate_parser
 from parsers.commands import archive
+from parsers.commands import classify_log_type
 from parsers.commands import deactivate_parser
 from parsers.commands import delete_extension
 from parsers.commands import delete_parser
@@ -46,6 +47,7 @@ def parsers() -> None:
 
 parsers.add_command(activate_parser.activate_parser)
 parsers.add_command(archive.archive)
+parsers.add_command(classify_log_type.classify_log_type)
 parsers.add_command(deactivate_parser.deactivate_parser)
 parsers.add_command(delete_extension.delete_extension)
 parsers.add_command(delete_parser.delete_parser)
