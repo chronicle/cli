@@ -18,7 +18,7 @@ from unittest import mock
 
 from click import testing
 
-from google3.third_party.chronicle.cli import mock_test_utility
+from mock_test_utility import MockResponse
 from parsers import url
 from parsers.commands import activate_parser
 from parsers.tests.fixtures import *  # pylint: disable=wildcard-import
@@ -41,13 +41,13 @@ ACTIVATE_URL = url.get_dataplane_url("us", "activate_parser", "prod", RESOURCES)
 def test_activate_parser(
     mock_get_dataplane_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_data_activate_parser: mock_test_utility.MockResponse) -> None:
+    test_data_activate_parser: MockResponse) -> None:
   """Test case to check response for activate parser.
 
   Args:
     mock_get_dataplane_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_data_activate_parser (mock_test_utility.MockResponse): Test input data
+    test_data_activate_parser (MockResponse): Test input data
   """
   mock_get_dataplane_url.return_value = ACTIVATE_URL
   client = mock.Mock()
@@ -68,13 +68,13 @@ Parser activated successfully.
 def test_activate_parser_v2_flag_not_provided(
     mock_get_dataplane_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_v2flag_not_provided: mock_test_utility.MockResponse) -> None:
+    test_v2flag_not_provided: MockResponse) -> None:
   """Test case to check response for v2 flag not provided.
 
   Args:
     mock_get_dataplane_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_v2flag_not_provided (mock_test_utility.MockResponse): Test input data
+    test_v2flag_not_provided (MockResponse): Test input data
   """
   mock_get_dataplane_url.return_value = ACTIVATE_URL
   client = mock.Mock()
@@ -92,13 +92,13 @@ def test_activate_parser_v2_flag_not_provided(
 def test_activate_parser_empty_project_id(
     mock_get_dataplane_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_empty_project_id: mock_test_utility.MockResponse) -> None:
+    test_empty_project_id: MockResponse) -> None:
   """Test case to check response for empty Project ID.
 
   Args:
     mock_get_dataplane_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_empty_project_id (mock_test_utility.MockResponse): Test input data
+    test_empty_project_id (MockResponse): Test input data
   """
   mock_get_dataplane_url.return_value = ACTIVATE_URL
   client = mock.Mock()
@@ -117,13 +117,13 @@ def test_activate_parser_empty_project_id(
 def test_activate_parser_empty_customer_id(
     mock_get_dataplane_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_empty_customer_id: mock_test_utility.MockResponse) -> None:
+    test_empty_customer_id: MockResponse) -> None:
   """Test case to check response for empty Customer ID.
 
   Args:
     mock_get_dataplane_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_empty_customer_id (mock_test_utility.MockResponse): Test input data
+    test_empty_customer_id (MockResponse): Test input data
   """
   mock_get_dataplane_url.return_value = ACTIVATE_URL
   client = mock.Mock()
@@ -143,13 +143,13 @@ def test_activate_parser_empty_customer_id(
 def test_activate_parser_empty_log_type(
     mock_get_dataplane_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_empty_log_type: mock_test_utility.MockResponse) -> None:
+    test_empty_log_type: MockResponse) -> None:
   """Test case to check response for empty Log Type.
 
   Args:
     mock_get_dataplane_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_empty_log_type (mock_test_utility.MockResponse): Test input data
+    test_empty_log_type (MockResponse): Test input data
   """
   mock_get_dataplane_url.return_value = ACTIVATE_URL
   client = mock.Mock()
@@ -169,13 +169,13 @@ def test_activate_parser_empty_log_type(
 def test_activate_parser_empty_parser_id(
     mock_get_dataplane_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_empty_parser_id: mock_test_utility.MockResponse) -> None:
+    test_empty_parser_id: MockResponse) -> None:
   """Test case to check response for empty Parser ID.
 
   Args:
     mock_get_dataplane_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_empty_parser_id (mock_test_utility.MockResponse): Test input data
+    test_empty_parser_id (MockResponse): Test input data
   """
   mock_get_dataplane_url.return_value = ACTIVATE_URL
   client = mock.Mock()
@@ -195,13 +195,13 @@ def test_activate_parser_empty_parser_id(
 def test_activate_parser_500(
     mock_get_dataplane_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_500_resp: mock_test_utility.MockResponse) -> None:
+    test_500_resp: MockResponse) -> None:
   """Test case to check response for activate parser for 500 response code.
 
   Args:
     mock_get_dataplane_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_500_resp (mock_test_utility.MockResponse): Test input data
+    test_500_resp (MockResponse): Test input data
   """
   mock_get_dataplane_url.return_value = ACTIVATE_URL
   client = mock.Mock()

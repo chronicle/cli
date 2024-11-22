@@ -18,7 +18,7 @@ from unittest import mock
 
 from click import testing
 
-from google3.third_party.chronicle.cli import mock_test_utility
+from mock_test_utility import MockResponse
 from parsers import url
 from parsers.commands import delete_extension
 from parsers.tests.fixtures import *  # pylint: disable=wildcard-import
@@ -41,13 +41,13 @@ DELETE_URL = url.get_dataplane_url("us", "delete_extension", "prod", RESOURCES)
 def test_delete_extension(
     mock_get_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_data_delete_extension: mock_test_utility.MockResponse) -> None:
+    test_data_delete_extension: MockResponse) -> None:
   """Test case to check response for delete extension.
 
   Args:
     mock_get_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_data_delete_extension (mock_test_utility.MockResponse): Test input data
+    test_data_delete_extension (MockResponse): Test input data
   """
   mock_get_url.return_value = DELETE_URL
   client = mock.Mock()
@@ -69,13 +69,13 @@ Parser Extension deleted successfully.
 def test_delete_extension_v2_flag_not_provided(
     mock_get_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_v2flag_not_provided: mock_test_utility.MockResponse) -> None:
+    test_v2flag_not_provided: MockResponse) -> None:
   """Test case to check response for v2 flag not provided.
 
   Args:
     mock_get_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_v2flag_not_provided (mock_test_utility.MockResponse): Test input data
+    test_v2flag_not_provided (MockResponse): Test input data
   """
   mock_get_url.return_value = DELETE_URL
   client = mock.Mock()
@@ -93,13 +93,13 @@ def test_delete_extension_v2_flag_not_provided(
 def test_delete_extension_empty_project_id(
     mock_get_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_empty_project_id: mock_test_utility.MockResponse) -> None:
+    test_empty_project_id: MockResponse) -> None:
   """Test case to check response for empty Project ID.
 
   Args:
     mock_get_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_empty_project_id (mock_test_utility.MockResponse): Test input data
+    test_empty_project_id (MockResponse): Test input data
   """
   mock_get_url.return_value = DELETE_URL
   client = mock.Mock()
@@ -118,13 +118,13 @@ def test_delete_extension_empty_project_id(
 def test_delete_extension_empty_customer_id(
     mock_get_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_empty_customer_id: mock_test_utility.MockResponse) -> None:
+    test_empty_customer_id: MockResponse) -> None:
   """Test case to check response for empty Customer ID.
 
   Args:
     mock_get_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_empty_customer_id (mock_test_utility.MockResponse): Test input data
+    test_empty_customer_id (MockResponse): Test input data
   """
   mock_get_url.return_value = DELETE_URL
   client = mock.Mock()
@@ -144,13 +144,13 @@ def test_delete_extension_empty_customer_id(
 def test_delete_extension_empty_log_type(
     mock_get_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_empty_log_type: mock_test_utility.MockResponse) -> None:
+    test_empty_log_type: MockResponse) -> None:
   """Test case to check response for empty Log Type.
 
   Args:
     mock_get_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_empty_log_type (mock_test_utility.MockResponse): Test input data
+    test_empty_log_type (MockResponse): Test input data
   """
   mock_get_url.return_value = DELETE_URL
   client = mock.Mock()
@@ -170,13 +170,13 @@ def test_delete_extension_empty_log_type(
 def test_delete_extension_empty_parserextension_id(
     mock_get_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_empty_parserextension_id: mock_test_utility.MockResponse) -> None:
+    test_empty_parserextension_id: MockResponse) -> None:
   """Test case to check response for empty ParserExtension ID.
 
   Args:
     mock_get_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_empty_parserextension_id (mock_test_utility.MockResponse): Test input
+    test_empty_parserextension_id (MockResponse): Test input
       data
   """
   mock_get_url.return_value = DELETE_URL
@@ -197,13 +197,13 @@ def test_delete_extension_empty_parserextension_id(
 def test_delete_extension_500(
     mock_get_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_500_resp: mock_test_utility.MockResponse) -> None:
+    test_500_resp: MockResponse) -> None:
   """Test case to check response for 500 response code.
 
   Args:
     mock_get_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_500_resp (mock_test_utility.MockResponse): Test input data
+    test_500_resp (MockResponse): Test input data
   """
   mock_get_url.return_value = DELETE_URL
   client = mock.Mock()
