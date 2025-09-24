@@ -1,3 +1,7 @@
+# ** REPOSITORY DEPRECATED **
+This repository is no longer actively maintained.The CLI features previously found here have been moved 
+to the secops-wrapper repository. Please find the updated CLI documentation at:https://github.com/google/secops-wrapper/blob/main/CLI.md
+
 # Google Security Operations CLI
 
 Command line tool to interact with Google Security Operations' APIs.
