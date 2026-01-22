@@ -18,7 +18,7 @@ from unittest import mock
 
 from click import testing
 
-from google3.third_party.chronicle.cli import mock_test_utility
+from mock_test_utility import MockResponse
 from parsers import url
 from parsers.commands import submit_extension
 from parsers.tests.fixtures import *  # pylint: disable=wildcard-import
@@ -45,13 +45,13 @@ SUBMIT_URL = url.get_dataplane_url("us", "submit_extension", "prod", RESOURCES)
 def test_submit_extension(
     mock_get_dataplane_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_data_submit_extension: mock_test_utility.MockResponse) -> None:
+    test_data_submit_extension: MockResponse) -> None:
   """Test case to check success response.
 
   Args:
     mock_get_dataplane_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_data_submit_extension (mock_test_utility.MockResponse): Test input data
+    test_data_submit_extension (MockResponse): Test input data
   """
   create_temp_config_file(TEMP_SUBMIT_CONF_FILE, "test_config")
   create_temp_log_file(TEMP_SUBMIT_LOG_FILE, "test_log")
@@ -93,13 +93,13 @@ ParserExtension Details:
 def test_submit_extension_v2_flag_not_provided(
     mock_get_dataplane_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_v2flag_not_provided: mock_test_utility.MockResponse) -> None:
+    test_v2flag_not_provided: MockResponse) -> None:
   """Test case to check response for v2 flag not provided.
 
   Args:
     mock_get_dataplane_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_v2flag_not_provided (mock_test_utility.MockResponse): Test input data
+    test_v2flag_not_provided (MockResponse): Test input data
   """
   mock_get_dataplane_url.return_value = SUBMIT_URL
   client = mock.Mock()
@@ -117,13 +117,13 @@ def test_submit_extension_v2_flag_not_provided(
 def test_submit_extension_empty_project_id(
     mock_get_dataplane_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_empty_project_id: mock_test_utility.MockResponse) -> None:
+    test_empty_project_id: MockResponse) -> None:
   """Test case to check response for empty Project ID.
 
   Args:
     mock_get_dataplane_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_empty_project_id (mock_test_utility.MockResponse): Test input data
+    test_empty_project_id (MockResponse): Test input data
   """
   mock_get_dataplane_url.return_value = SUBMIT_URL
   client = mock.Mock()
@@ -142,13 +142,13 @@ def test_submit_extension_empty_project_id(
 def test_submit_extension_empty_customer_id(
     mock_get_dataplane_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_empty_customer_id: mock_test_utility.MockResponse) -> None:
+    test_empty_customer_id: MockResponse) -> None:
   """Test case to check response for empty Customer ID.
 
   Args:
     mock_get_dataplane_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_empty_customer_id (mock_test_utility.MockResponse): Test input data
+    test_empty_customer_id (MockResponse): Test input data
   """
   mock_get_dataplane_url.return_value = SUBMIT_URL
   client = mock.Mock()
@@ -168,13 +168,13 @@ def test_submit_extension_empty_customer_id(
 def test_submit_extension_empty_log_type(
     mock_get_dataplane_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_empty_log_type: mock_test_utility.MockResponse) -> None:
+    test_empty_log_type: MockResponse) -> None:
   """Test case to check response for empty Log Type.
 
   Args:
     mock_get_dataplane_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_empty_log_type (mock_test_utility.MockResponse): Test input data
+    test_empty_log_type (MockResponse): Test input data
   """
   mock_get_dataplane_url.return_value = SUBMIT_URL
   client = mock.Mock()
@@ -194,13 +194,13 @@ def test_submit_extension_empty_log_type(
 def test_submit_extension_non_existing_config_file(
     mock_get_dataplane_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_data_non_existing_config_file: mock_test_utility.MockResponse) -> None:
+    test_data_non_existing_config_file: MockResponse) -> None:
   """Test case to check response for non existing config file.
 
   Args:
     mock_get_dataplane_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_data_non_existing_config_file (mock_test_utility.MockResponse): Test
+    test_data_non_existing_config_file (MockResponse): Test
       input data
   """
   mock_get_dataplane_url.return_value = SUBMIT_URL
@@ -222,13 +222,13 @@ def test_submit_extension_non_existing_config_file(
 def test_submit_extension_non_existing_log_file(
     mock_get_dataplane_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_data_non_existing_log_file: mock_test_utility.MockResponse) -> None:
+    test_data_non_existing_log_file: MockResponse) -> None:
   """Test case to check response for non existing log file.
 
   Args:
     mock_get_dataplane_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_data_non_existing_log_file (mock_test_utility.MockResponse): Test
+    test_data_non_existing_log_file (MockResponse): Test
       input data
   """
   create_temp_config_file(TEMP_SUBMIT_CONF_FILE, "test_config")
@@ -251,13 +251,13 @@ def test_submit_extension_non_existing_log_file(
 def test_submit_extension_500(
     mock_get_dataplane_url: mock.MagicMock,
     mock_http_session: mock.MagicMock,
-    test_500_resp: mock_test_utility.MockResponse) -> None:
+    test_500_resp: MockResponse) -> None:
   """Test case to check response for 500 response code.
 
   Args:
     mock_get_dataplane_url (mock.MagicMock): Mock object
     mock_http_session (mock.MagicMock): Mock object
-    test_500_resp (mock_test_utility.MockResponse): Test input data
+    test_500_resp (MockResponse): Test input data
   """
   create_temp_config_file(TEMP_SUBMIT_CONF_FILE, "test_config")
   create_temp_log_file(TEMP_SUBMIT_LOG_FILE, "test_log")
